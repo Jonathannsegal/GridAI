@@ -20,9 +20,15 @@ function App() {
         <img src={logo} className="App-logo" alt="logo" />
         <TestComponent />
         <p> The date is {currentTime}.</p>
+        <button onClick={getPred}>Predict</button>
       </header>
     </div>
   );
 }
+
+/*function getPred(){
+
+}
+*/
 
 export default App;
