@@ -3,7 +3,7 @@ import React from 'react';
 export function TestComponent(){
     return (
         <>
-            <p>Welcome to Patrick Wenzel's "Hello World" App</p>
+            <p>Welcome to Our "Hello World" App</p>
             <a
                 className="App-link"
                 href="http://sdmay21-23.sd.ece.iastate.edu/"
