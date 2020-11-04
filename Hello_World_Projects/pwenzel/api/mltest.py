@@ -138,7 +138,7 @@ def train_pred_eval_model(x_train_scaled, \
     return rmse, mape, est, model
 
 def load_data(stock):
-    df = pdr.data.DataReader('DIS.US', 'quandl', '2017-01-01', '2020-01-01', api_key='yMvb5-wqKEZFE5zt9zif')
+    df = pdr.data.DataReader(stock, 'quandl', '2017-01-01', '2020-01-01', api_key='yMvb5-wqKEZFE5zt9zif')
 
     # Change all column headings to be lower case, and remove spacing
     df.columns = [str(x).lower() for x in df.columns]
