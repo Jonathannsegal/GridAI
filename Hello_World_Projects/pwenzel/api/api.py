@@ -6,7 +6,7 @@ app = flask.Flask(__name__)
 
 @app.route('/time')
 def get_current_time():
-    return {'time': time.strftime('%a, %B %d, %Y %I:%M:%S')}
+    return {'time': 'hello'}
 
 @app.route('/stock/<id>')
 def get_pred(id):

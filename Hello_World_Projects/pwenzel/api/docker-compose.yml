@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+
+  neo4j:
+    image: neo4j:4.0
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - ./neo4j/plugins:/plugins
+      - ./neo4j/data:/data
+      - ./neo4j/import:/import
+      - ./neo4j/conf:/conf
+    environment: 
+      - NEO4J_dbms_default__database=test
+      - NEO4J_AUTH=neo4j/test
+
+  webapp:
+    ports:
+      - "5000:5000"
+    build: .
+    volumes:
+      - ./api.py:/app/api.py
+    restart: on-failure
