@@ -11,7 +11,7 @@ meter_fp = ("/home/ubuntu/Documents/sdmay21-23/Hello_World_Projects/Tensorflow_t
 # cols = dist_tran_sheet.ncols
 
 # print(dist_tran_sheet.row_values(2))
-transformers = pd.read_excel(trans_fp, sheet_name = 'Distribution Transformer', header = 1, index_col = 0, usecols = [0,1,2,3,4,5,6,7,8], nrows = 54)
+transformers = pd.read_excel(trans_fp, sheet_name = 'Distribution Transformer', header = 58, index_col = 0, usecols = [0,1,2,3,4,5,6,7,8,9,10], nrows = 2)
 #print(x.loc['T_1003'])
 #Reads in the line segments
 feeder_A_line_Segments = pd.read_excel(trans_fp, sheet_name = 'Line Data', header = 1, index_col = 0,usecols = [0,1,2,3,4,5], nrows = 16)
@@ -41,6 +41,7 @@ for index, value in smart_meter_a.items():
 
         indexList.append(bus_num)
         prev_val = 0
+        current_val = 0
         for busIndex, busValue in value.items():
 
             #print(bus_attr)
@@ -78,13 +79,12 @@ for index, value in smart_meter_a.items():
             newListItem.append(busIndex.hour)
             #print(newListItem)
             #Value
-            newListItem.append(busValue)
+            newListItem.append(current_val)
             newListItem.append(smart_meter_a.loc[busIndex].loc['Bus ' + str(prev_bus.array[0])])
             newListItem.append(prev_val)
-            prev_val = busValue
-            # newListItem.append(smart_meter_a.loc[busIndex - 1].loc['Bus ' + bus_num])
-            # print(smart_meter_a.loc[busIndex].loc['Bus ' + str(prev_bus.array[0])])
-            #print(newListItem)
+            newListItem.append(busValue)
+            prev_val = current_val
+            current_val = busValue
             newList.append(newListItem)
    
     #Primary voltage rating (kV)
@@ -93,5 +93,5 @@ for index, value in smart_meter_a.items():
     # %R
     # %x
 #should have a new spreadsheet
-df = pd.DataFrame(newList, columns = ['Primary voltage rating (kV)', 'Secondary voltage rating (kV)', 'kVA rating (kVA)', '%R', '%X','Year', 'Month', 'Day', 'Hour', 'Value','Prev Node', 'Prev Time'])
+df = pd.DataFrame(newList, columns = ['Primary voltage rating (kV)', 'Secondary voltage rating (kV)', 'kVA rating (kVA)', '%R', '%X','Year', 'Month', 'Day', 'Hour', 'Value','Prev Node', 'Prev Time','Future Value'])
 df.to_csv('test.csv')
