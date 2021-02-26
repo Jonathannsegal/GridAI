@@ -9,6 +9,7 @@
     "@material-ui/icons": "4.9.1",
     "chartist": "0.10.1",
     "classnames": "2.2.6",
+    "create-react-app": "^4.0.3",
     "history": "4.10.1",
     "perfect-scrollbar": "1.5.0",
     "prop-types": "15.7.2",
@@ -62,5 +63,6 @@
       "not op_mini all"
     ],
     "development": []
-  }
+  },
+  "proxy": "http://localhost:5000"
 }
