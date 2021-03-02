@@ -26,7 +26,7 @@ def plot_loss(history):
 #                                                  verbose=1)
 
 
-fp = ('../Data/SinglePhase_Secondary.csv')
+fp = ('Data/SinglePhase_Secondary.csv')
 dataset = pd.read_csv(fp)
 
 train_dataset = dataset.sample(frac=0.8, random_state=0)
@@ -65,8 +65,7 @@ history = linear_model.fit(
     # suppress logging
     verbose=1,
     # Calculate validation results on 20% of the training data
-    validation_split = 0.2,
-    callbacks = [cp_callback])
+    validation_split = 0.2)
 
 linear_model.save('SinglePhaseSecondaryModelNoIndex')
 plot_loss(history)

@@ -15,7 +15,7 @@ def plot_loss(history):
   plt.ylabel('Error [Future kWh]')
   plt.legend()
   plt.grid(True)
-  plt.savefig('Loss_SinglePhase_SecondaryNoIndex.png')
+  plt.savefig('Loss_futureNoIndex.png')
 
 # checkpoint_path = "/home/ubuntu/Documents/sdmay21-23/Hello_World_Projects/pwenzel/api/future_cp.ckpt"
 # checkpoint_dir = os.path.dirname(checkpoint_path)
@@ -25,8 +25,9 @@ def plot_loss(history):
 #                                                  save_weights_only=True,
 #                                                  verbose=1)
 
-
-fp = ('../Data/SinglePhase_Secondary.csv')
+tf.config.set_visible_devices([], 'GPU')
+print("asserted")
+fp = ('Data/Single_Phase_Center_Tap_Future.csv')
 dataset = pd.read_csv(fp)
 
 train_dataset = dataset.sample(frac=0.8, random_state=0)
@@ -38,9 +39,9 @@ test_features = test_dataset.copy()
 #remove value label since that is what you are predicting
 train_labels = train_features.pop('Future Value')
 test_labels = test_features.pop('Future Value')
-#Remove index
-garbage = train_features.pop('Unnamed: 0')
-garbage_test = test_features.pop('Unnamed: 0')
+
+garbage = train_features.pop("Unnamed: 0")
+garbage_test = test_features.pop("Unnamed: 0")
 
 normalizer = preprocessing.Normalization()
 normalizer.adapt(np.array(train_features))
@@ -66,9 +67,9 @@ history = linear_model.fit(
     verbose=1,
     # Calculate validation results on 20% of the training data
     validation_split = 0.2,
-    callbacks = [cp_callback])
+    batch_size=250)
 
-linear_model.save('SinglePhaseSecondaryModelNoIndex')
+linear_model.save('SinglePhaseCenterTapFutureNoIndex')
 plot_loss(history)
 
 
@@ -86,4 +87,4 @@ lims = [0, 70]
 plt.xlim(lims)
 plt.ylim(lims)
 _ = plt.plot(lims, lims)
-plt.savefig('SinglePhase_SecondaryNoIndex.png')
+plt.savefig('Future PredictionsNoIndex.png')

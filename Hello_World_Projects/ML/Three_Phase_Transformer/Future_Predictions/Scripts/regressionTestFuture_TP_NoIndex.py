@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import seaborn as sns
 import os
 import tensorflow as tf
 from tensorflow import keras
@@ -18,16 +17,16 @@ def plot_loss(history):
   plt.grid(True)
   plt.savefig('Loss_future.png')
 
-checkpoint_path = "/home/ubuntu/Documents/sdmay21-23/Hello_World_Projects/pwenzel/api/future_cp.ckpt"
-checkpoint_dir = os.path.dirname(checkpoint_path)
+# checkpoint_path = "/home/ubuntu/Documents/sdmay21-23/Hello_World_Projects/pwenzel/api/future_cp.ckpt"
+# checkpoint_dir = os.path.dirname(checkpoint_path)
 
-# Create a callback that saves the model's weights
-cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
-                                                 save_weights_only=True,
-                                                 verbose=1)
+# # Create a callback that saves the model's weights
+# cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
+#                                                  save_weights_only=True,
+#                                                  verbose=1)
 
 
-fp = ('/home/ubuntu/Documents/sdmay21-23/Hello_World_Projects/pwenzel/api/Single_Phase_Center_Tap_Future.csv')
+fp = ('C:/Users/Justr/Documents/491/FuturePrediction.csv')
 dataset = pd.read_csv(fp)
 
 train_dataset = dataset.sample(frac=0.8, random_state=0)
@@ -39,6 +38,9 @@ test_features = test_dataset.copy()
 #remove value label since that is what you are predicting
 train_labels = train_features.pop('Future Value')
 test_labels = test_features.pop('Future Value')
+#Remove the index
+garbage = train_features.pop('Unnamed: 0')
+garbage_test = test_features.pop('Unnamed: 0')
 
 normalizer = preprocessing.Normalization()
 normalizer.adapt(np.array(train_features))
@@ -59,14 +61,13 @@ linear_model.compile(
 
 history = linear_model.fit(
     train_features, train_labels, 
-    epochs=200,
+    epochs=100,
     # suppress logging
-    verbose=0,
+    verbose=1,
     # Calculate validation results on 20% of the training data
-    validation_split = 0.2,
-    callbacks = [cp_callback])
+    validation_split = 0.2)
 
-linear_model.save('SinglePhaseCenterTapFuture')
+linear_model.save('FuturePredictionsModel')
 plot_loss(history)
 
 

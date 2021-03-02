@@ -2,22 +2,27 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import os
+import sys
 import tensorflow as tf
 from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental import preprocessing
 
+print(tf.config.list_physical_devices('GPU'))
+# Hide GPU from visible devices
+# tf.config.set_visible_devices([], 'GPU')
+# print("asserted")
 def plot_loss(history):
-  plt.plot(history.history['loss'], label='loss (MAE)')
+  plt.plot(history.history['loss'], label='binary_crossentropy')
   plt.plot(history.history['val_loss'], label='val_loss')
   plt.ylim([0, 10])
   plt.xlabel('Epoch')
-  plt.ylabel('Error [Future kWh]')
+  plt.ylabel('Cross Entropy Error')
   plt.legend()
   plt.grid(True)
-  plt.savefig('Loss_SinglePhase_SecondaryNoIndex.png')
+  plt.savefig('Loss_SPCTLogistic.png')
 
-# checkpoint_path = "/home/ubuntu/Documents/sdmay21-23/Hello_World_Projects/pwenzel/api/future_cp.ckpt"
+# checkpoint_path = "C:/Users/Justr/Documents/491/Cp/Anomaly_SPCT.ckpt"
 # checkpoint_dir = os.path.dirname(checkpoint_path)
 
 # # Create a callback that saves the model's weights
@@ -26,64 +31,54 @@ def plot_loss(history):
 #                                                  verbose=1)
 
 
-fp = ('../Data/SinglePhase_Secondary.csv')
+
+fp = ('C:/Users/Justr/Documents/491/Anomaly_SPCT.csv')
 dataset = pd.read_csv(fp)
 
 train_dataset = dataset.sample(frac=0.8, random_state=0)
 test_dataset = dataset.drop(train_dataset.index)
-
+# train_dataset = dataset.drop(train_dataset.index)
+print(test_dataset)
 train_features = train_dataset.copy()
 test_features = test_dataset.copy()
-
-#remove value label since that is what you are predicting
-train_labels = train_features.pop('Future Value')
-test_labels = test_features.pop('Future Value')
-#Remove index
+print(train_features)
+# #remove value label since that is what you are predicting
+train_labels = train_features.pop('Anomaly')
+test_labels = test_features.pop('Anomaly')
 garbage = train_features.pop('Unnamed: 0')
 garbage_test = test_features.pop('Unnamed: 0')
 
 normalizer = preprocessing.Normalization()
 normalizer.adapt(np.array(train_features))
 
-linear_model = tf.keras.Sequential([
+print("running")
+Logistic_Model = keras.Sequential([
     normalizer,
     layers.Dense(256, activation='relu'),
     layers.Dense(256, activation='relu'),
     layers.Dense(256, activation='relu'),
-    layers.Dense(1)
+    keras.layers.Dense(3, activation = 'softmax')
 ])
 
-linear_model.compile(
-    optimizer=tf.optimizers.Adam(learning_rate=0.001),
-    loss='mean_absolute_error')
+Logistic_Model.compile(optimizer='rmsprop', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
-#linear_model.load_weights(checkpoint_path)
-
-history = linear_model.fit(
+history = Logistic_Model.fit(
     train_features, train_labels, 
-    epochs=200,
+    epochs=100,
     # suppress logging
     verbose=1,
+    batch_size=1000,
     # Calculate validation results on 20% of the training data
-    validation_split = 0.2,
-    callbacks = [cp_callback])
+    validation_split = 0.2)
 
-linear_model.save('SinglePhaseSecondaryModelNoIndex')
+
+
+Logistic_Model.save('Test_Logistic_SPCT_no_Index')
 plot_loss(history)
 
 
 test_results = {}
-test_results['linear_model'] = linear_model.evaluate(
-    test_features, test_labels, verbose=0)
-
-test_predictions = linear_model.predict(test_features).flatten()
-
-a = plt.axes(aspect='equal')
-plt.scatter(test_labels, test_predictions)
-plt.xlabel('True Values [Future Value kWh]')
-plt.ylabel('Predictions [Future Value kWh]')
-lims = [0, 70]
-plt.xlim(lims)
-plt.ylim(lims)
-_ = plt.plot(lims, lims)
-plt.savefig('SinglePhase_SecondaryNoIndex.png')
+test_results['Logistic_Model'] = Logistic_Model.evaluate(
+    test_features, test_labels, verbose=1)
+print(test_results)
+test_predictions = Logistic_Model.predict(test_features).flatten()
