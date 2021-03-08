@@ -2,10 +2,10 @@ import math
 import matplotlib
 import numpy as np
 import pandas as pd
-import pandas_datareader as pdr
 import seaborn as sns
 import time
 import tensorflow as tf
+import pandas_datareader as pdr
 
 from datetime import date
 from matplotlib import pyplot as plt

@@ -16,9 +16,11 @@ services:
       - NEO4J_AUTH=neo4j/test
 
   webapp:
+    image: api_webapp:latest
     ports:
       - "5000:5000"
     build: .
     volumes:
       - ./api.py:/app/api.py
     restart: on-failure
+
