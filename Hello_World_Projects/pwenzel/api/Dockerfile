@@ -1,4 +1,4 @@
-FROM python:3.8
+FROM api_webapp:latest
 
 
 RUN apt-get update -y && \
