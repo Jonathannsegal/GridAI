@@ -19,6 +19,8 @@ services:
     image: api_webapp:latest
     ports:
       - "5000:5000"
+    depends_on: 
+      - "neo4j"
     build: .
     volumes:
       - ./api.py:/app/api.py
