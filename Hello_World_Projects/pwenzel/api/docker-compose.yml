@@ -16,16 +16,20 @@ services:
       - NEO4J_AUTH=neo4j/test
 
   mysql:
-    image: mysql:8.0
+    image: mysql:5.7
     ports:
       - "3306:3306"
     environment:
       MYSQL_DATABASE: 'db'
-      MYSQL_ROOT_PASSWORD: 'password'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'user'
+      MYSQL_ROOT_PASSWORD: 'pass'
     volumes:
-      - ./mysql:/var/lib/mysql    
+      - ./mysql:/var/lib/mysql   
+      
+      
   webapp:
-    image: api_webapp:latest
+    
     ports:
       - "5000:5000"
     depends_on: 
