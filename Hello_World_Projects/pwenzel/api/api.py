@@ -1,43 +1,62 @@
 import time
+from datetime import datetime, timezone, timedelta
+import pandas as pd
 import flask
 import neo4j
+import sqlalchemy as db
 from neo4j import GraphDatabase, basic_auth
 from flask import Flask,request,jsonify,render_template,redirect
 from tensorflow import keras
 
+app = flask.Flask(__name__)
 
-driver=GraphDatabase.driver(uri="neo4j://neo4j:7687",auth=("neo4j","test"))
-session=driver.session()
+mysql_engine = db.create_engine('mysql+mysqldb://user:user@mysql:3306/db')
+mysql_conn = mysql_engine.connect()
+neo4j_driver=GraphDatabase.driver(uri="neo4j://neo4j:7687",auth=("neo4j","test"))
+neo4j_session=neo4j_driver.session()
 three_phase_model = keras.models.load_model('ThreePhaseModel/FuturePredictionsModelNoIndex/')
 single_phase_model = keras.models.load_model('SinglePhaseModel/')
 single_phase_CT_model = keras.models.load_model('SinglePhaseCTModel/')
 single_phase_anomaly = keras.models.load_model('SPAnomaly/')
 single_phase_CT_anomaly = keras.models.load_model('SPCTAnomaly/')
 three_phase_anomaly = keras.models.load_model('ThreePhaseAnomaly/')
-
-app = flask.Flask(__name__)
+meter_data = pd.read_csv('meter.csv')
+meter_data.set_index('Date', inplace=True)
+types = {'Date': db.types.DateTime()}
+for col in meter_data.columns:
+    types[col] = db.types.Float()
+meter_data.to_sql('smart_meter', con=mysql_conn, if_exists='replace', dtype=types)
 
 @app.route('/time')
 def get_current_time():
     return {'time': time.time()}
 
+@app.route('/history/<bus>')
+def get_table(bus):
+    b = datetime.now(timezone(timedelta(hours=-5)))
+    query=f"select date,`Bus {bus}` from smart_meter where date between date_sub('2017-{b:%m}-{b:%d} {b:%H}:00:00', interval 1 day) and '2017-{b:%m}-{b:%d} {b:%H}:59:59'"
+    result = mysql_conn.execute(query)
+    output = []
+    for row in result:
+        output.append(str(row[0]) + ': ' + str(row[1]))   
+    return {'result': output}
 
 @app.route("/coordinates",methods=["GET","POST"])
 def return_coords():
     q1="match (n) return n.BusID as BusID, n.X as X, n.Y as Y"
-    output=session.run(q1)
+    output=neo4j_session.run(q1)
     return(jsonify(output.data()))
 
 @app.route("/allCurrentValues",methods=["GET","POST"])
 def return_currValues():
     q1="match (n) return n.BusID as BusID, n.CurrVal as currentValue"
-    output=session.run(q1)
+    output=neo4j_session.run(q1)
     return(jsonify(output.data()))
 
 @app.route("/threePhase",methods=["GET","POST"])
 def return_threePhasePred():
     q1="match (n:`Three Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
-    output=session.run(q1).data()
+    output=neo4j_session.run(q1).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -66,7 +85,7 @@ def return_threePhasePred():
 @app.route("/singlePhase",methods=["GET","POST"])
 def return_singlePhasePred():
     q1="match (n:`Single Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
-    output=session.run(q1).data()
+    output=neo4j_session.run(q1).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -95,7 +114,7 @@ def return_singlePhasePred():
 @app.route("/singlePhaseCT",methods=["GET","POST"])
 def return_singlePhaseCTPred():
     q1="match (n:`Single Phase CT`) return n.BusID, n.`Voltage rating of Winding 1 (kV)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
-    output=session.run(q1).data()
+    output=neo4j_session.run(q1).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -126,7 +145,7 @@ def return_singlePhaseCTPred():
 @app.route("/singlePhaseAnom",methods=["GET","POST"])
 def return_singlePhaseAnom():
     q1="match (n:`Single Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
-    output=session.run(q1).data()
+    output=neo4j_session.run(q1).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -166,7 +185,7 @@ def return_singlePhaseAnom():
 @app.route("/singlePhaseCTAnom",methods=["GET","POST"])
 def return_singlePhaseCTAnom():
     q1="match (n:`Single Phase CT`) return n.BusID, n.`Voltage rating of Winding 1 (kV)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
-    output=session.run(q1).data()
+    output=neo4j_session.run(q1).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -206,7 +225,7 @@ def return_singlePhaseCTAnom():
 @app.route("/threePhaseAnom",methods=["GET","POST"])
 def return_threePhaseAnom():
     q1="match (n:`Three Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
-    output=session.run(q1).data()
+    output=neo4j_session.run(q1).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -247,7 +266,7 @@ def return_allPred():
     q2="match (n:`Three Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
     q3="match (n:`Single Phase CT`) return n.BusID, n.`Voltage rating of Winding 1 (kV)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
     #Single Phase Predictions
-    output=session.run(q1).data()
+    output=neo4j_session.run(q1).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -272,7 +291,7 @@ def return_allPred():
         busPreds.append(i['n.BusID'] + ': ' + str(predictions[j][0]))
         j+=1
     #Three Phase Prediction
-    output=session.run(q2).data()
+    output=neo4j_session.run(q2).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -296,7 +315,7 @@ def return_allPred():
         busPreds.append(i['n.BusID'] + ': ' + str(predictions[j][0]))
         j+=1
     #Single Phase CT Prediction
-    output=session.run(q3).data()
+    output=neo4j_session.run(q3).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -329,7 +348,7 @@ def return_allAnom():
     q2="match (n:`Three Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
     q3="match (n:`Single Phase CT`) return n.BusID, n.`Voltage rating of Winding 1 (kV)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
     #Single Phase Anomalies
-    output=session.run(q1).data()
+    output=neo4j_session.run(q1).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -363,7 +382,7 @@ def return_allAnom():
         busPreds.append(i['n.BusID'] + ': ' + anomType)
         j+=1
     #Three Phase Anomalies
-    output=session.run(q2).data()
+    output=neo4j_session.run(q2).data()
     nodes = []
     temp_node = []
     for i in output:
@@ -397,7 +416,7 @@ def return_allAnom():
         j+=1
 
     #Single Phase CT Anomalies
-    output=session.run(q3).data()
+    output=neo4j_session.run(q3).data()
     nodes = []
     temp_node = []
     for i in output:

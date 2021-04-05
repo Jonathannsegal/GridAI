@@ -1,10 +1,10 @@
 Flask==1.1.2
+sqlalchemy==1.4
+mysqlclient
 pandas==1.1.4
-matplotlib==3.3.2
 tensorflow-cpu==2.3.0
 pandas_datareader
 neo4j
 neo4j-driver
 keras
-seaborn
-sklearn
+
