@@ -1,6 +1,5 @@
-import React, { Component, useState } from 'react';
+import React, { Component } from 'react';
 import { Graph } from "react-d3-graph"
-import StickyHeadTable from "../Table/StickyHeadTable.js"
 import LineChart from "../Charts/linechart.js"
 
   // the graph configuration, just override the ones you need
@@ -45,7 +44,7 @@ class GraphDisplay extends Component{
     super(props);
     this.state = {
       lineData:[['x','kWh']],
-      nodeData:[],
+      nodeCoords:[],
       isLoaded: false,
     }
 
@@ -53,47 +52,74 @@ class GraphDisplay extends Component{
   }
 
   componentDidMount() {
-    this.fetchNodeData();
+    this.fetchNodeCoords();
   }
 
-  fetchNodeData = () =>{
-    fetch('/alldata').then(res1 => res1.json()).then((data1) => this.setState({
-      nodeData:data1,
+  fetchNodeCoords = () =>{
+    fetch('/coordinates').then(res1 => res1.json()).then((data1) => this.setState({
+      nodeCoords:data1,
       isLoaded:true
       }));
   }
 
   fetchValue = async(node) => {
-    const resp = await fetch(`/CurrentValues/${node}`);
+    const resp = await fetch(`/allCurrentValues/${node}`);
     const data = await resp.json();
     return data;
   }
 
+  fetchHistory = async(node) => {
+    let str = node.split("_")
+    const resp = await fetch(`/history/${str[1]}`);
+    const data = await resp.json();
+    return data;
+  }
+
+  fetchPredictions = async(node) => {
+    const resp = await fetch(`/allPred`);
+    const data = await resp.json();
+    for(let i=0;i<data["predictions"].length;i++){
+      let temp = data["predictions"][i].split(":");
+      if(node===temp[0]){
+        return data["predictions"][i]
+      }
+    }
+  }
+
   onClickNode = async(nodeID)=>{
     const val = await this.fetchValue(nodeID);
-    console.log(val[0]);
-    window.alert(`Current Value: ${val[0].currentval}`);
-    let tempdata = [nodeID,val[0].currentval]
-    let temparr = this.state.lineData;
-    temparr.push((tempdata))
-    console.log("this is tempArr in function")
-    console.log(temparr)
+    window.alert(`Current Value: ${val[0].currentValue}`);
+
+    const hist = await this.fetchHistory(nodeID);
+    let temparr = [['x',nodeID]];
+    let tempdata = [];
+    for(let i=0;i<hist["result"].length;i++){
+      let temp = hist["result"][i].split(" ")
+      tempdata = [String(temp[1]), Number(temp[2])]
+      temparr.push((tempdata))
+    }
+
+    const pred = await this.fetchPredictions(nodeID);
+    console.log(pred)
+    let predVal = pred.split(":");
+    let temp = ["predicted",Number(predVal[1])]
+    temparr.push(temp);
+    console.log(temparr);
     this.setState({lineData:temparr})
   };
 
   render(){
     
-    console.log(this.state.nodeData)
     if(!this.state.isLoaded){
       return <div>Loading...</div>;
     }
 
     else{
 
-      var {nodeData,lineData} = this.state;
-      let data = [];
-      for(let i=0;i<nodeData[0].length;i++){
-        data.push({id: nodeData[0][i].BusID, x:nodeData[0][i].X*50+100, y:nodeData[0][i].Y*-50+750})
+      var {nodeCoords,lineData} = this.state;
+      let coords = [];
+      for(let i=0;i<nodeCoords.length;i++){
+        coords.push({id: nodeCoords[i].BusID, x:nodeCoords[i].X*50+100, y:nodeCoords[i].Y*-50+750})
       }
 
       // let link = [];
@@ -111,16 +137,16 @@ class GraphDisplay extends Component{
       <div>
         <div style={chartstyle}>
           {
-          console.log("this is lineData in render"),
-          console.log(lineData),
+            console.log("this is linedata"),
+            console.log(lineData),
           <LineChart data={lineData}/>
-        }
+          }
         </div>
         <div style={graphstyle}>
         {
           <Graph
           id="graph-id" // id is mandatory
-          data={{nodes:data,links:[]}}
+          data={{nodes:coords,links:[]}}
           config={myConfig}
           onClickNode={this.onClickNode}
           onClickLink={onClickLink}

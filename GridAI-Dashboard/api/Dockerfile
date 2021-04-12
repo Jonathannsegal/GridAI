@@ -1,15 +1,13 @@
-FROM node:15.9.0
+FROM python:3.8
+
 
 RUN apt-get update -y && \
     apt-get install -y python-pip python-dev
-
-
-ADD . /app
-
+COPY . /app
 WORKDIR /app
+RUN python3 -m pip install  -r requirements.txt
 
-RUN ls
+EXPOSE 5000
 
-RUN cat app.py
-
-RUN pip install -r requirements.txt
+ENTRYPOINT [ "python3" ]
+CMD ["api.py"]
