@@ -2,10 +2,6 @@ import React, { Component } from 'react';
 import { Graph } from "react-d3-graph"
 import LineChart from "../Charts/linechart.js"
 
-  // the graph configuration, just override the ones you need
-
-  //var lineData = [['x','kWh'],['T_2040',4.56]];
-
   const graphstyle = {
     height: "600px",
     width: "1000px"
@@ -43,8 +39,9 @@ class GraphDisplay extends Component{
   constructor(props) {
     super(props);
     this.state = {
-      lineData:[['x','kWh']],
+      lineData:[],
       nodeCoords:[],
+      multiCheckbox:false,
       isLoaded: false,
     }
 
@@ -88,10 +85,25 @@ class GraphDisplay extends Component{
 
   onClickNode = async(nodeID)=>{
     const val = await this.fetchValue(nodeID);
+    if(val[0]==null){
+      window.alert("No value for this node!");
+      return;
+    }
     window.alert(`Current Value: ${val[0].currentValue}`);
 
     const hist = await this.fetchHistory(nodeID);
-    let temparr = [['x',nodeID]];
+    const pred = await this.fetchPredictions(nodeID);
+    if(this.state.multiCheckbox){
+      this.getCompareData(nodeID,hist,pred)
+    }
+    else{
+      this.getLineData(nodeID,hist,pred);
+    }
+    
+  };
+
+  getLineData = async(nodeID,hist,pred) =>{
+    let temparr = [['time',nodeID]];
     let tempdata = [];
     for(let i=0;i<hist["result"].length;i++){
       let temp = hist["result"][i].split(" ")
@@ -99,14 +111,32 @@ class GraphDisplay extends Component{
       temparr.push((tempdata))
     }
 
-    const pred = await this.fetchPredictions(nodeID);
-    console.log(pred)
     let predVal = pred.split(":");
     let temp = ["predicted",Number(predVal[1])]
     temparr.push(temp);
-    console.log(temparr);
+    console.log(temparr[0][1])
     this.setState({lineData:temparr})
-  };
+  }
+
+  getCompareData = async(nodeID,hist,pred) =>{
+    var {lineData} = this.state;
+    let temparr = [['time',lineData[0][1],nodeID]];
+    let tempdata = [];
+    for(let i=0;i<hist["result"].length;i++){
+      let temp = hist["result"][i].split(" ")
+      tempdata = [String(temp[1]),lineData[i+1][1], Number(temp[2])]
+      temparr.push((tempdata))
+    }
+
+    let predVal = pred.split(":");
+    let temp = ["predicted",lineData[lineData.length-1][1],Number(predVal[1])]
+    temparr.push(temp);
+    this.setState({lineData:temparr})
+  }
+
+  onChange = e =>{
+    this.setState({multiCheckbox:e.target.checked});
+  }
 
   render(){
     
@@ -116,7 +146,7 @@ class GraphDisplay extends Component{
 
     else{
 
-      var {nodeCoords,lineData} = this.state;
+      var {nodeCoords,lineData, multiCheckbox} = this.state;
       let coords = [];
       for(let i=0;i<nodeCoords.length;i++){
         coords.push({id: nodeCoords[i].BusID, x:nodeCoords[i].X*50+100, y:nodeCoords[i].Y*-50+750})
@@ -153,6 +183,13 @@ class GraphDisplay extends Component{
           /> 
         }
         </div>
+        <form>
+          <h3>Graph Settings</h3>
+          <label>
+            Compare nodes? 
+              <input type="checkbox" checked={multiCheckbox} onChange={this.onChange} />
+          </label>
+        </form>
 
     </div>
       );
