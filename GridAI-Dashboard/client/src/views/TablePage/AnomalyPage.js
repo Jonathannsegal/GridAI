@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import StickyHeadTable from "../../components/Table/StickyHeadTable.js";
+import StickyHeadTable from "../../components/CustomTables/StickyHeadTable.js";
 
 class AnomalyPage extends Component {
   constructor(props) {
