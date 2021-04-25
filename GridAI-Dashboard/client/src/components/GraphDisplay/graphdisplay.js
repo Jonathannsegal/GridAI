@@ -1,3 +1,4 @@
+import { Grid } from "@material-ui/core";
 import React, { Component } from "react";
 import { Graph } from "react-d3-graph";
 import LineChart from "../Charts/linechart.js";
@@ -184,17 +185,21 @@ class GraphDisplay extends Component {
               (<LineChart data={lineData} />))
             }
           </div>
-          <div style={graphstyle}>
-            {
-              <Graph
-                id="graph-id" // id is mandatory
-                data={{ nodes: coords, links: [] }}
-                config={myConfig}
-                onClickNode={this.onClickNode}
-                onClickLink={onClickLink}
-              />
-            }
-          </div>
+          <Grid container spacing={3}>
+            <Grid item xs={6} sm={3}>
+              <div style={graphstyle}>
+                {
+                  <Graph
+                    id="graph-id" // id is mandatory
+                    data={{ nodes: coords, links: [] }}
+                    config={myConfig}
+                    onClickNode={this.onClickNode}
+                    onClickLink={onClickLink}
+                  />
+                }
+              </div>
+            </Grid>
+          </Grid>
           <form>
             <h3>Graph Settings</h3>
             <label>
