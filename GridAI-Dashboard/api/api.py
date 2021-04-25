@@ -53,6 +53,13 @@ def return_currValues():
     output=neo4j_session.run(q1)
     return(jsonify(output.data()))
 
+@app.route("/allCurrentValues/<bus>",methods=["GET","POST"])
+def return_nodeValue(bus):
+    q1="match (n {BusID:'"+bus+"'}) return n.BusID as BusID, n.CurrVal as currentValue"
+    print("....."+str(q1))
+    output=neo4j_session.run(q1)
+    return(jsonify(output.data()))
+
 @app.route("/threePhase",methods=["GET","POST"])
 def return_threePhasePred():
     q1="match (n:`Three Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
