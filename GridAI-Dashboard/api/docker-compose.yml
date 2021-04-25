@@ -40,3 +40,19 @@ services:
       - ./api.py:/app/api.py
     restart: on-failure
 
+  client:
+    build: ../client
+    command: ["npm", "start"]
+    volumes:
+      - ../client:/frontend
+      - node-modules:/frontend/node_modules
+    environment:
+      - NODE_ENV=development
+    ports:
+      - "3000:3000"
+    depends_on:
+      - webapp
+    stdin_open: true
+
+volumes:
+  node-modules:
