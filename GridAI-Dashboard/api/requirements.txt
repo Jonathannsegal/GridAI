@@ -4,6 +4,7 @@ mysqlclient
 pandas==1.1.4
 tensorflow-cpu==2.3.0
 pandas_datareader
+apscheduler
 neo4j
 neo4j-driver
 keras

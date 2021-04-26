@@ -3,7 +3,9 @@ import time
 import datetime
 
 #df = pandas.read_csv("./neo4j/import/Smart Meter Data.xlsx - FeederA_Smart Meter Data.csv")
-df = pandas.read_csv("./neo4j/import/data.csv")
+df1= pandas.read_csv("./neo4j/import/transformers_1p.csv")
+df2 = pandas.read_csv("./neo4j/import/transformers_1pct.csv")
+df3 = pandas.read_csv("./neo4j/import/transformers_3p.csv")
 # for str in df["Time:datetime"]:
 #     d = time.strptime(str,"%m/%d/%y %I:%M %p")
 #     df.at[i,"Time:datetime"] = time.strftime("%Y-%m-%dT%H:%M", d)
@@ -19,4 +21,6 @@ df = pandas.read_csv("./neo4j/import/data.csv")
 
 #for i, val in enumerate(df['bus']):
 #    df['bus'][i] = val.replace(':double', '')
-print(df)
+print(df1['BusID:ID'])
+print(df2['BusID:ID'])
+print(df3['BusID:ID'])

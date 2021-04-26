@@ -4,6 +4,7 @@ import pandas as pd
 import flask
 import neo4j
 import sqlalchemy as db
+from apscheduler.schedulers.background import BackgroundScheduler
 from neo4j import GraphDatabase, basic_auth
 from flask import Flask,request,jsonify,render_template,redirect
 from tensorflow import keras
@@ -20,12 +21,34 @@ single_phase_CT_model = keras.models.load_model('SinglePhaseCTModel/')
 single_phase_anomaly = keras.models.load_model('SPAnomaly/')
 single_phase_CT_anomaly = keras.models.load_model('SPCTAnomaly/')
 three_phase_anomaly = keras.models.load_model('ThreePhaseAnomaly/')
-meter_data = pd.read_csv('meter.csv')
-meter_data.set_index('Date', inplace=True)
-types = {'Date': db.types.DateTime()}
-for col in meter_data.columns:
-    types[col] = db.types.Float()
-meter_data.to_sql('smart_meter', con=mysql_conn, if_exists='replace', dtype=types)
+
+# meter_data = pd.read_csv('meter.csv')
+# meter_data.set_index('Date', inplace=True)
+# types = {'Date': db.types.DateTime()}
+# for col in meter_data.columns:
+#     types[col] = db.types.Float()
+# meter_data.to_sql('smart_meter', con=mysql_conn, if_exists='replace', dtype=types)
+
+
+def update_data():
+    b = datetime.now(timezone(timedelta(hours=-5)))
+    print(b, flush=True)
+    sql_query=f"select * from smart_meter where date between '2017-{b:%m}-{b:%d} {b:%H}:00:00' and '2017-{b:%m}-{b:%d} {b:%H}:59:59'"
+    result = mysql_conn.execute(sql_query)
+
+    for row in result:
+        for col in row._fields:
+            if (str(col) != 'Date'):
+                cypher_query = f"match (n {{BusID:\"T_{str(col)[-4:]}\"}}) return n.`Previous Bus` as PrevBus"
+                test = neo4j_session.run(cypher_query)
+                output = test.data()
+                if output and output[0]['PrevBus'] != 0:
+                    cypher_query = f"match (n {{BusID:\"T_{str(col)[-4:]}\"}}) \
+                                set n.PrevVal = n.CurrVal, n.CurrVal = {row[col]}, n.`PrevNode Val` = {row['Bus ' + str(output[0]['PrevBus'])]}, \
+                                n.Month = {b.month}, n.Day = {b.day}, n.Hour = {b.hour}"
+                    neo4j_session.run(cypher_query)
+
+    return
 
 @app.route('/time')
 def get_current_time():
@@ -459,6 +482,11 @@ def return_allAnom():
         j+=1
     return {'predictions': busPreds}
 
+
+start_time = datetime.now().replace(minute=0, second=0, microsecond=0)
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=update_data, next_run_time=datetime.now(), trigger="cron", minute=0)
+scheduler.start()
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0')
