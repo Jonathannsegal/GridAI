@@ -10,8 +10,9 @@ from tensorflow.keras.layers.experimental import preprocessing
 
 print(tf.config.list_physical_devices('GPU'))
 # Hide GPU from visible devices
-# tf.config.set_visible_devices([], 'GPU')
-# print("asserted")
+tf.config.set_visible_devices([], 'GPU')
+
+#If you want to plot the loss per epoch
 def plot_loss(history):
   plt.plot(history.history['loss'], label='binary_crossentropy')
   plt.plot(history.history['val_loss'], label='val_loss')
@@ -22,36 +23,31 @@ def plot_loss(history):
   plt.grid(True)
   plt.savefig('Loss_SPCTLogistic.png')
 
-# checkpoint_path = "C:/Users/Justr/Documents/491/Cp/Anomaly_SPCT.ckpt"
-# checkpoint_dir = os.path.dirname(checkpoint_path)
 
-# # Create a callback that saves the model's weights
-# cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
-#                                                  save_weights_only=True,
-#                                                  verbose=1)
-
-
-
+#Filepath of anomaly data
 fp = ('C:/Users/Justr/Documents/491/Anomaly_SPCT.csv')
 dataset = pd.read_csv(fp)
 
+#80% of data should be in the training set the rest should be testing dat
 train_dataset = dataset.sample(frac=0.8, random_state=0)
 test_dataset = dataset.drop(train_dataset.index)
-# train_dataset = dataset.drop(train_dataset.index)
-print(test_dataset)
+
+# Get a copy to be modified
 train_features = train_dataset.copy()
 test_features = test_dataset.copy()
-print(train_features)
-# #remove value label since that is what you are predicting
+
+# remove value label since that is what you are predicting
 train_labels = train_features.pop('Anomaly')
 test_labels = test_features.pop('Anomaly')
+#Remove index
 garbage = train_features.pop('Unnamed: 0')
 garbage_test = test_features.pop('Unnamed: 0')
 
+#Normalization layer to improve performance and initial weights
 normalizer = preprocessing.Normalization()
 normalizer.adapt(np.array(train_features))
 
-print("running")
+# Create the model itself as a sequential with 3 dense (FC) relu layers and a softmax final layer
 Logistic_Model = keras.Sequential([
     normalizer,
     layers.Dense(256, activation='relu'),
@@ -60,25 +56,26 @@ Logistic_Model = keras.Sequential([
     keras.layers.Dense(3, activation = 'softmax')
 ])
 
+# Compile the model with the cross entropy loss and rmsprop decaying learning rate optimizer
 Logistic_Model.compile(optimizer='rmsprop', loss='sparse_categorical_crossentropy', metrics=['accuracy'])
 
+#Train the model
 history = Logistic_Model.fit(
     train_features, train_labels, 
     epochs=100,
-    # suppress logging
     verbose=1,
     batch_size=1000,
     # Calculate validation results on 20% of the training data
     validation_split = 0.2)
 
-
-
+#Save the model to be used later
 Logistic_Model.save('Test_Logistic_SPCT_no_Index')
-plot_loss(history)
 
 
+#If you train multiple models you can print multiple results to compare
 test_results = {}
 test_results['Logistic_Model'] = Logistic_Model.evaluate(
     test_features, test_labels, verbose=1)
 print(test_results)
+plot_loss(history)
 test_predictions = Logistic_Model.predict(test_features).flatten()

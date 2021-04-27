@@ -1,11 +1,11 @@
 import os
-
 import tensorflow as tf
 from tensorflow import keras
 import pandas as pd
-fp = ('./Three_Phase_Future_Full.csv')
+#SCRIPT USED FOR COMPARING MODELS POST TRAINING
+fp = ('./FuturePrediction.csv')
 dataset = pd.read_csv(fp)
-
+#Same dataset as since random_state is seeded
 train_dataset = dataset.sample(frac=0.8, random_state=0)
 test_dataset = dataset.drop(train_dataset.index)
 
