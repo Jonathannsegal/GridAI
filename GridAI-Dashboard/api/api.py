@@ -151,12 +151,11 @@ def return_nodeValue(bus):
     output=neo4j_session_query.run(q1)
     return(jsonify(output.data()))
 
-#return static info of specified bus number (/busInfo/2087)
+#return static info of specified bus number (/busInfo/T_2087)
 @app.route("/busInfo/<bus>",methods=["GET","POST"])
 def return_busInfo(bus):
     q1="match (n {BusID:'"+bus+"'}) return n"
-    print("....."+str(q1))
-    output=neo4j_session.run(q1)
+    output=neo4j_session_query.run(q1)
     return(jsonify(output.data()))
 
 # Return prediction of only three-phase transformers

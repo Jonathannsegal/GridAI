@@ -25,7 +25,9 @@ class NodeInfo extends Component {
     let name = this.state.busname;
     let nodeinfo = await this.fetchNodeinfo(name);
     //Parse nodeinfo for display into table:
+    if(nodeinfo!=null){
     this.parseNodeInfo(nodeinfo);
+    }
 
 
     let hist = await this.fetchHistory(name);
@@ -59,7 +61,7 @@ class NodeInfo extends Component {
 
   parseNodeInfo = async (data) =>{
     let temp = [];
-    if (data != null) {
+    if (data[0]!= null) {
       temp.push({
         "Bus Name": data[0]["n"]["BusID"],
         "Current Value": data[0]["n"]["CurrVal"],
@@ -120,7 +122,8 @@ class NodeInfo extends Component {
             </form>
           </div>
           <div>
-            <StickyHeadTable data={info} />,
+            <StickyHeadTable data={info} />
+            <br></br>
             <LineChart data={lineData} />
           </div>
         </div>

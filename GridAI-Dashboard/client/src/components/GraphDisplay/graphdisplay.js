@@ -42,6 +42,7 @@ class GraphDisplay extends Component {
       lineData: [],
       nodeCoords: [],
       multiCheckbox: false,
+      simCheck:false,
       isLoaded: false,
     };
 
@@ -113,10 +114,12 @@ class GraphDisplay extends Component {
       temparr.push(tempdata);
     }
 
+    if(pred!=null){
     let predVal = pred.split(":");
     let temp = ["predicted", Number(predVal[1])];
     temparr.push(temp);
     console.log(temparr[0][1]);
+    }
     this.setState({ lineData: temparr });
   };
 
@@ -137,6 +140,7 @@ class GraphDisplay extends Component {
       temparr.push(tempdata);
     }
 
+    if(pred!=null){
     let predVal = pred.split(":");
     let temp = [
       "predicted",
@@ -144,18 +148,29 @@ class GraphDisplay extends Component {
       Number(predVal[1]),
     ];
     temparr.push(temp);
+    }
     this.setState({ lineData: temparr });
   };
 
-  onChange = (e) => {
+  onChangeMulti = (e) => {
     this.setState({ multiCheckbox: e.target.checked });
+  };
+
+  onChangeSim = (e) =>{
+    this.setState({simCheck: e.target.checked})
+    this.updateSim();
+  };
+
+  updateSim = async() =>{
+    const resp = await fetch(`/sim`);
+    return;
   };
 
   render() {
     if (!this.state.isLoaded) {
       return <div>Loading...</div>;
     } else {
-      var { nodeCoords, lineData, multiCheckbox } = this.state;
+      var { nodeCoords, lineData, multiCheckbox, simCheck } = this.state;
       let coords = [];
       for (let i = 0; i < nodeCoords.length; i++) {
         coords.push({
@@ -207,7 +222,16 @@ class GraphDisplay extends Component {
               <input
                 type="checkbox"
                 checked={multiCheckbox}
-                onChange={this.onChange}
+                onChange={this.onChangeMulti}
+              />
+            </label>
+            <br></br>
+            <label>
+              Switch Simulation Speed(10sec/1hr):
+              <input 
+                type="checkbox"
+                checked = {simCheck}
+                onChange = {this.onChangeSim}
               />
             </label>
           </form>
