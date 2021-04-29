@@ -7,6 +7,7 @@ from tensorflow import keras
 from tensorflow.keras import layers
 from tensorflow.keras.layers.experimental import preprocessing
 
+#If you want to plot the loss per epoch
 def plot_loss(history):
   plt.plot(history.history['loss'], label='loss (MAE)')
   plt.plot(history.history['val_loss'], label='val_loss')
@@ -17,21 +18,15 @@ def plot_loss(history):
   plt.grid(True)
   plt.savefig('Loss_SinglePhase_SecondaryNoIndex.png')
 
-# checkpoint_path = "/home/ubuntu/Documents/sdmay21-23/Hello_World_Projects/pwenzel/api/future_cp.ckpt"
-# checkpoint_dir = os.path.dirname(checkpoint_path)
-
-# # Create a callback that saves the model's weights
-# cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_path,
-#                                                  save_weights_only=True,
-#                                                  verbose=1)
-
 
 fp = ('../Data/SinglePhase_Secondary.csv')
 dataset = pd.read_csv(fp)
 
+#80% of data should be in the training set the rest should be testing data
 train_dataset = dataset.sample(frac=0.8, random_state=0)
 test_dataset = dataset.drop(train_dataset.index)
 
+# Get a copy to be modified
 train_features = train_dataset.copy()
 test_features = test_dataset.copy()
 
@@ -42,9 +37,11 @@ test_labels = test_features.pop('Future Value')
 garbage = train_features.pop('Unnamed: 0')
 garbage_test = test_features.pop('Unnamed: 0')
 
+# Normalization layer to improve performance and initial weights
 normalizer = preprocessing.Normalization()
 normalizer.adapt(np.array(train_features))
 
+# Create the model itself as a sequential with 3 dense (FC) relu layers and 1 final output
 linear_model = tf.keras.Sequential([
     normalizer,
     layers.Dense(256, activation='relu'),
@@ -53,25 +50,25 @@ linear_model = tf.keras.Sequential([
     layers.Dense(1)
 ])
 
+#Compile model using MAE to limit outliers and a learning rate of 0.001
 linear_model.compile(
     optimizer=tf.optimizers.Adam(learning_rate=0.001),
     loss='mean_absolute_error')
 
-#linear_model.load_weights(checkpoint_path)
-
+#Train the model
 history = linear_model.fit(
     train_features, train_labels, 
     epochs=200,
-    # suppress logging
     verbose=1,
     # Calculate validation results on 20% of the training data
-    validation_split = 0.2,
-    callbacks = [cp_callback])
+    validation_split = 0.2)
 
+#Save it
 linear_model.save('SinglePhaseSecondaryModelNoIndex')
 plot_loss(history)
 
 
+#If you train multiple models you can print multiple results to compare
 test_results = {}
 test_results['linear_model'] = linear_model.evaluate(
     test_features, test_labels, verbose=0)

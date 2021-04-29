@@ -3,21 +3,13 @@ import pandas as pd
 #importing the element system data Just the 3 phase secondary distribution transformer for now
 trans_fp = ("./240 Node Test System Element Data.xlsx")
 meter_fp = ("./Smart Meter Data.xlsx")
-# wb = xlrd.open_workbook(filepath)
-# dist_tran_sheet = wb.sheet_by_index(5)
 
-# dist_tran_sheet.cell_value(0,0)
-# rows = dist_tran_sheet.nrows
-# cols = dist_tran_sheet.ncols
-
-# print(dist_tran_sheet.row_values(2))
+#Read in three phase data
 ThreePhtransformers = pd.read_excel(trans_fp, sheet_name = 'Distribution Transformer', header = 1, index_col = 0, usecols = [0,1,2,3,4,5,6,7,8], nrows = 54)
-# singleCenterTapped= pd.read_excel(trans_fp, sheet_name = 'Distribution Transformer', header = 65, index_col = 0, usecols = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18], nrows = 140)
-# singleCenterTapped.to_csv('tapTest.csv')
-#print(x.loc['T_1003'])
+
 #Reads in the line segments
 feeder_A_line_Segments = pd.read_excel(trans_fp, sheet_name = 'Line Data', header = 1, index_col = 0,usecols = [0,1,2,3,4,5], nrows = 16)
-# feeder_A_line_Segments.to_csv('FeederA')
+
 newList = []
 indexList = []
 smart_meter_a = pd.read_excel(meter_fp, sheet_name = 'FeederA_Smart Meter Data', header = 0, index_col = 0)
@@ -47,20 +39,16 @@ for index, value in smart_meter_a.items():
         current_val = 0
         for busIndex, busValue in value.items():
   
-            #Primary voltage rating (kV)
+
             newListItem = []
-            #print(bus_attr.loc['Primary voltage rating (kV)'])
+            #static node data
             newListItem.append(bus_attr.loc['Primary voltage rating (kV)'])
-          #  print(newListItem)
             #Secondary voltage rating (kV)
             newListItem.append(bus_attr.loc['Secondary voltage rating (kV)'])
-           # print(newListItem)
             #kVA rating (kVA)
             newListItem.append(bus_attr.loc['kVA rating (kVA)'])
-            #print(newListItem)
             #   %R
             newListItem.append(bus_attr.loc[' %R'])
-            #print(newListItem)
             # %x
             newListItem.append(bus_attr.loc[' %X'])
             #timestamp year
@@ -76,12 +64,13 @@ for index, value in smart_meter_a.items():
             newListItem.append(smart_meter_a.loc[busIndex].loc['Bus ' + str(prev_bus.array[0])])
             newListItem.append(prev_val)
             newListItem.append(busValue)
+            #Keep track of old value
             prev_val = current_val
             current_val = busValue
             newList.append(newListItem)
 
 feeder_B_line_Segments = pd.read_excel(trans_fp, sheet_name = 'Line Data', header = 1, usecols = [7,8,9,10,11,12], nrows = 57)
-feeder_B_line_Segments.to_csv('FeederBTest.csv')
+#Feeder B
 smart_meter_b = pd.read_excel(meter_fp, sheet_name = 'FeederB_Smart Meter Data', header = 0, index_col = 0)
 for index, value in smart_meter_b.items():
     # Get last 4 characters which are the bus number
@@ -111,20 +100,16 @@ for index, value in smart_meter_b.items():
         current_val = 0
         for busIndex, busValue in value.items():
   
-            #Primary voltage rating (kV)
+        
             newListItem = []
-            #print(bus_attr.loc['Primary voltage rating (kV)'])
+            #static node data
             newListItem.append(bus_attr.loc['Primary voltage rating (kV)'])
-          #  print(newListItem)
             #Secondary voltage rating (kV)
             newListItem.append(bus_attr.loc['Secondary voltage rating (kV)'])
-           # print(newListItem)
             #kVA rating (kVA)
             newListItem.append(bus_attr.loc['kVA rating (kVA)'])
-            #print(newListItem)
             #   %R
             newListItem.append(bus_attr.loc[' %R'])
-            #print(newListItem)
             # %x
             newListItem.append(bus_attr.loc[' %X'])
             #timestamp year
@@ -140,17 +125,13 @@ for index, value in smart_meter_b.items():
             newListItem.append(smart_meter_b.loc[busIndex].loc['Bus ' + str(prev_bus.array[0])])
             newListItem.append(prev_val)
             newListItem.append(busValue)
+            #Keep track of old data
             prev_val = current_val
             current_val = busValue
             newList.append(newListItem)
-   
-    #Primary voltage rating (kV)
-    #Secondary voltage rating (kV)
-    #kVA rating (kVA)
-    # %R
-    # %x
+
 feeder_C_line_Segments = pd.read_excel(trans_fp, sheet_name = 'Line Data', header = 1, usecols = [14,15,16,17,18,19], nrows = 160)
-feeder_C_line_Segments.to_csv('FeederCTest.csv')
+#Feeder C
 smart_meter_c = pd.read_excel(meter_fp, sheet_name = 'FeederC_Smart Meter Data', header = 0, index_col = 0)
 for index, value in smart_meter_c.items():
     # Get last 4 characters which are the bus number
@@ -180,18 +161,14 @@ for index, value in smart_meter_c.items():
   
             #Primary voltage rating (kV)
             newListItem = []
-            #print(bus_attr.loc['Primary voltage rating (kV)'])
+            #static node data
             newListItem.append(bus_attr.loc['Primary voltage rating (kV)'])
-          #  print(newListItem)
             #Secondary voltage rating (kV)
             newListItem.append(bus_attr.loc['Secondary voltage rating (kV)'])
-           # print(newListItem)
             #kVA rating (kVA)
-            newListItem.append(bus_attr.loc['kVA rating (kVA)'])
-            #print(newListItem)
+            newListItem.append(bus_attr.loc['kVA rating (kVA)'])   
             #   %R
             newListItem.append(bus_attr.loc[' %R'])
-            #print(newListItem)
             # %x
             newListItem.append(bus_attr.loc[' %X'])
             #timestamp year
@@ -207,15 +184,11 @@ for index, value in smart_meter_c.items():
             newListItem.append(smart_meter_c.loc[busIndex].loc['Bus ' + str(prev_bus.array[0])])
             newListItem.append(prev_val)
             newListItem.append(busValue)
+            #keep track of old data
             prev_val = current_val
             current_val = busValue
             newList.append(newListItem)
-   
-    #Primary voltage rating (kV)
-    #Secondary voltage rating (kV)
-    #kVA rating (kVA)
-    # %R
-    # %x
-#should have a new spreadsheet
+
+#TP Dataset export
 df = pd.DataFrame(newList, columns = ['Primary voltage rating (kV)', 'Secondary voltage rating (kV)', 'kVA rating (kVA)', '%R', '%X','Year', 'Month', 'Day', 'Hour', 'Current Value','Prev Node', 'Prev Time', 'Future Value'])
 df.to_csv('Three_Phase_Future_Full.csv')
