@@ -66,5 +66,5 @@
     ],
     "development": []
   },
-  "proxy": "http://api_webapp_1:5000"
+  "proxy": "http://gridai-dashboard_webapp_1:5000"
 }

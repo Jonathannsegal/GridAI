@@ -1,29 +1,58 @@
-version: "3.0"
-
+version: "3.8"
 services:
-  api:
-    build: api
-    command: ["flask", "run", "--host=0.0.0.0"]
+
+  neo4j:
+    image: neo4j:4.0
+    ports:
+      - "7474:7474"
+      - "7687:7687"
     volumes:
-      - ./api:/backend
+      - ./api/neo4j/plugins:/plugins
+      - ./api/neo4j/data:/data
+      - ./api/neo4j/import:/import
+      - ./api/neo4j/conf:/conf
+    environment: 
+      - NEO4J_dbms_default__database=test
+      - NEO4J_AUTH=neo4j/test
+
+  mysql:
+    image: mysql:5.7
+    ports:
+      - "3306:3306"
     environment:
-      - FLASK_ENV=development
-      - FLASK_APP=app.py
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'user'
+      MYSQL_ROOT_PASSWORD: 'pass'
+    volumes:
+      - ./api/mysql:/var/lib/mysql   
+      
+      
+  webapp:
+    
     ports:
       - "5000:5000"
+    depends_on: 
+      - "neo4j"
+      - "mysql"
+    build: ./api
+    volumes:
+      - ./api/api.py:/app/api.py
+    restart: on-failure
 
   client:
-    build: client
+    build: ./client
     command: ["npm", "start"]
     volumes:
       - ./client:/frontend
-      - node-modules:/frontend/node_modules
+      - ./client/node-modules:/frontend/node_modules
     environment:
       - NODE_ENV=development
     ports:
       - "3000:3000"
     depends_on:
-      - api
+      - webapp
+    stdin_open: true
 
 volumes:
   node-modules:
