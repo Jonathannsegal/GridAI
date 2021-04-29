@@ -1,3 +1,0 @@
-,BusID:ID,Primary voltage rating (kV):double,Secondary voltage rating (kV):double,kVA rating (kVA):double, %R:double, %X:double,Previous Bus:int,X:double,Y:double,Year:int,Month:int,Day:int,Hour:int,CurrVal:double,"PrevNode Val:double",PrevVal:double
-0,T_1006,13.8,0.208,75,1.0,2.1,1005,5.15,14.11,2017,1,5,5,5.68,5.178,4.92
-1,T_1007,13.8,0.208,25,1.33,1.88,1006,5.15,12.98,2017,1,5,5,4.362,5.68,4.313
