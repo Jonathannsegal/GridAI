@@ -25,7 +25,7 @@ def plot_loss(history):
 
 
 #Filepath of anomaly data
-fp = ('C:/Users/Justr/Documents/491/Anomaly_SPCT.csv')
+fp = ('./Single_Phase_Center_Tapped/Anomaly/Data/Anomaly_SPCT.csv')
 dataset = pd.read_csv(fp)
 
 #80% of data should be in the training set the rest should be testing dat

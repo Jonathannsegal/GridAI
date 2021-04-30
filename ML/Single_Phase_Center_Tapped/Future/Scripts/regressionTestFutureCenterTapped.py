@@ -22,7 +22,7 @@ def plot_loss(history):
 tf.config.set_visible_devices([], 'GPU')
 
 #Datapath
-fp = ('Data/Single_Phase_Center_Tap_Future.csv')
+fp = ('./Single_Phase_Center_Tapped/Future/Data/Single_Phase_Center_Tap_Future.csv')
 dataset = pd.read_csv(fp)
 
 #80% of data should be in the training set the rest should be testing data
