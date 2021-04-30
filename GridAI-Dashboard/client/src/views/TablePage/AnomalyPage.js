@@ -16,6 +16,7 @@ import StickyHeadTable from "../../components/CustomTables/StickyHeadTable.js";
 //   },
 // }
 
+
 class AnomalyPage extends Component {
   constructor(props) {
     super(props);
@@ -38,8 +39,7 @@ class AnomalyPage extends Component {
     this.setState({
       anomData: data1,
       isLoaded: true
-    })
-    );
+    }));
   };
   
   handleChange = (event) => {
@@ -81,13 +81,13 @@ class AnomalyPage extends Component {
                           minWidth:150
                         }}
                       >
-                        <MenuItem value={'ALL'}></MenuItem>
-                        <MenuItem value={'Failure'} style={{ color: 'red'}}>Failure</MenuItem>
-                        <MenuItem value={'Spike'} style={{ color: 'orange'}}>Spike</MenuItem>
-                        <MenuItem value={'Normal'} style={{ color: 'green'}}>Normal</MenuItem>
+                        <MenuItem value={' ALL'}>ALL</MenuItem>
+                        <MenuItem value={' failure'} style={{ color: 'red'}}>Failure</MenuItem>
+                        <MenuItem value={' spike'} style={{ color: 'orange'}}>Spike</MenuItem>
+                        <MenuItem value={' normal'} style={{ color: 'green'}}>Normal</MenuItem>
                       </Select>
                 </FormControl>
-                <StickyHeadTable data={anomVal} filterBy={this.state.filterBy} propToFilter={'Status'}/>
+                <StickyHeadTable data={anomVal} filterBy={this.state.filterBy} propToFilter={"Status"}/>
             </div>
         )
 
