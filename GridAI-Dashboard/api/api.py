@@ -21,9 +21,9 @@ neo4j_session_query=neo4j_driver.session()
 # ML models saved in dedicated folders 
 three_phase_model = keras.models.load_model('ThreePhaseModel/FuturePredictionsModelNoIndex/')
 single_phase_model = keras.models.load_model('SinglePhaseModel/')
-single_phase_CT_model = keras.models.load_model('SinglePhaseCTModel/')
+single_phase_CT_model = keras.models.load_model('SinglePhaseCTFuture/')
 single_phase_anomaly = keras.models.load_model('SPAnomaly/')
-single_phase_CT_anomaly = keras.models.load_model('SPCTAnomaly/')
+single_phase_CT_anomaly = keras.models.load_model('SinglePhaseCTAnomaly/')
 three_phase_anomaly = keras.models.load_model('ThreePhaseAnomaly/')
 
 # Start application in real-time mode
