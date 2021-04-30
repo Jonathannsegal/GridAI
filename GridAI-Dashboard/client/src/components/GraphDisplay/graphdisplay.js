@@ -21,6 +21,7 @@ const myConfig = {
   staticGraph: true,
   staticGraphWithDragAndDrop: false,
   nodeHighlightBehavior: true,
+  highlightDegree:0,
   node: {
     color: "lightgreen",
     size: 120,
