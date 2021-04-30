@@ -14,7 +14,7 @@ transformers_3p = pd.read_excel(trans_fp, sheet_name = 'Distribution Transformer
 # Single Phase
 transformers_1p = pd.read_excel(trans_fp, sheet_name = 'Distribution Transformer', header = 58, index_col = 0, usecols = [0,5,6,7,8,9], nrows = 2)
 # Single Phase Center Tapped
-transformers_1pct = pd.read_excel(trans_fp, sheet_name = 'Distribution Transformer', header = 65, index_col = 0, usecols = [0,3,13,14,15,16,17,18], nrows = 139)
+transformers_1pct = pd.read_excel(trans_fp, sheet_name = 'Distribution Transformer', header = 65, index_col = 0, usecols = [0,4,13,14,15,16,17,18], nrows = 139)
 # Others
 transformers_others= pd.read_excel(trans_fp, sheet_name = 'Bus Coordinates', header = 0, index_col = 0, usecols = [0,1,2], nrows = 240)
 

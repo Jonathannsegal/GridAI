@@ -151,7 +151,7 @@ def return_nodeValue(bus):
     output=neo4j_session_query.run(q1)
     return(jsonify(output.data()))
 
-# Return prediction of only three-phase transformers
+# Return future hour prediction of only three-phase transformers
 @app.route("/threePhase",methods=["GET","POST"])
 def return_threePhasePred():
     q1="match (n:`Three Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
@@ -181,7 +181,7 @@ def return_threePhasePred():
         j+=1
     return {'predictions': busPreds}
 
-# Return prediction of only Single Phase transformers
+# Return future hour prediction of only Single Phase transformers
 @app.route("/singlePhase",methods=["GET","POST"])
 def return_singlePhasePred():
     q1="match (n:`Single Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
@@ -211,15 +211,15 @@ def return_singlePhasePred():
         j+=1
     return {'predictions': busPreds}
 
-# Return prediction of only Single Phase Center Tapped transformers
+# Return future hour prediction of only Single Phase Center Tapped transformers
 @app.route("/singlePhaseCT",methods=["GET","POST"])
 def return_singlePhaseCTPred():
-    q1="match (n:`Single Phase CT`) return n.BusID, n.`Voltage rating of Winding 1 (kV)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
+    q1="match (n:`Single Phase CT`) return n.BusID, n.`kVA rating of Winding 1 (kVA)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
     output=neo4j_session_query.run(q1).data()
     nodes = []
     temp_node = []
     for i in output:
-        temp_node.append(i['n.`Voltage rating of Winding 1 (kV)`'])
+        temp_node.append(i['n.`kVA rating of Winding 1 (kVA)`'])
         temp_node.append(i['n.` %R1`'])
         temp_node.append(i['n.` %R2`'])
         temp_node.append(i['n.` %R3`'])
@@ -243,7 +243,7 @@ def return_singlePhaseCTPred():
         j+=1
     return {'predictions': busPreds}
 
-# Return anomaly classification of only Single Phase transformers. Returns string ('failure','normal','spike')
+# Return anomaly classification of only Single Phase transformers. Returns string ('failure','normal','spike') and confidence percentage.
 @app.route("/singlePhaseAnom",methods=["GET","POST"])
 def return_singlePhaseAnom():
     q1="match (n:`Single Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
@@ -278,20 +278,20 @@ def return_singlePhaseAnom():
             anomType = 'failure'
         else:
             anomType = 'spike'
-        busPreds.append(i['n.BusID'] + ': ' + anomType)
+        busPreds.append(i['n.BusID'] + ': ' + anomType  + ': ' + str(max_val))
         j+=1
     return {'predictions': busPreds}
 
 
-# Return anomaly classification of only Single Phase Center Tapped transformers. Returns string ('failure','normal','spike')
+# Return anomaly classification of only Single Phase Center Tapped transformers. Returns string ('failure','normal','spike') and confidence percentage.
 @app.route("/singlePhaseCTAnom",methods=["GET","POST"])
 def return_singlePhaseCTAnom():
-    q1="match (n:`Single Phase CT`) return n.BusID, n.`Voltage rating of Winding 1 (kV)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
+    q1="match (n:`Single Phase CT`) return n.BusID, n.`kVA rating of Winding 1 (kVA)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
     output=neo4j_session_query.run(q1).data()
     nodes = []
     temp_node = []
     for i in output:
-        temp_node.append(i['n.`Voltage rating of Winding 1 (kV)`'])
+        temp_node.append(i['n.`kVA rating of Winding 1 (kVA)`'])
         temp_node.append(i['n.` %R1`'])
         temp_node.append(i['n.` %R2`'])
         temp_node.append(i['n.` %R3`'])
@@ -320,11 +320,11 @@ def return_singlePhaseCTAnom():
             anomType = 'failure'
         else:
             anomType = 'spike'
-        busPreds.append(i['n.BusID'] + ': ' + anomType)
+        busPreds.append(i['n.BusID'] + ': ' + anomType  + ': ' + str(max_val))
         j+=1
     return {'predictions': busPreds}
 
-# Return anomaly classification of only Three Phase transformers. Returns string ('failure','normal','spike')
+# Return anomaly classification of only Three Phase transformers. Returns string ('failure','normal','spike')  and confidence percentage.
 @app.route("/threePhaseAnom",methods=["GET","POST"])
 def return_threePhaseAnom():
     q1="match (n:`Three Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
@@ -359,16 +359,16 @@ def return_threePhaseAnom():
             anomType = 'failure'
         else:
             anomType = 'spike'
-        busPreds.append(i['n.BusID'] + ': ' + anomType)
+        busPreds.append(i['n.BusID'] + ': ' + anomType  + ': ' + str(max_val))
         j+=1
     return {'predictions': busPreds}
 
-# Return prediction of all transformer types. Returns list of prediction values.
+# Return future hour prediction of all transformer types. Returns list of prediction values.
 @app.route("/allPred",methods=["GET","POST"])
 def return_allPred():
     q1="match (n:`Single Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
     q2="match (n:`Three Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
-    q3="match (n:`Single Phase CT`) return n.BusID, n.`Voltage rating of Winding 1 (kV)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
+    q3="match (n:`Single Phase CT`) return n.BusID, n.`kVA rating of Winding 1 (kVA)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
     #Single Phase Predictions
     output=neo4j_session_query.run(q1).data()
     nodes = []
@@ -423,7 +423,7 @@ def return_allPred():
     nodes = []
     temp_node = []
     for i in output:
-        temp_node.append(i['n.`Voltage rating of Winding 1 (kV)`'])
+        temp_node.append(i['n.`kVA rating of Winding 1 (kVA)`'])
         temp_node.append(i['n.` %R1`'])
         temp_node.append(i['n.` %R2`'])
         temp_node.append(i['n.` %R3`'])
@@ -447,12 +447,12 @@ def return_allPred():
     return {'predictions': busPreds}
 
 
-# Return anomaly classification of all transformer types. Returns string ('failure','normal','spike')
+# Return anomaly classification of all transformer types. Returns string ('failure','normal','spike') and confidence percentage
 @app.route("/allAnom",methods=["GET","POST"])
 def return_allAnom():
     q1="match (n:`Single Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
     q2="match (n:`Three Phase`) return n.BusID, n.`Primary voltage rating (kV)`, n.`Secondary voltage rating (kV)`, n.`kVA rating (kVA)`, n.` %R`, n.` %X`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
-    q3="match (n:`Single Phase CT`) return n.BusID, n.`Voltage rating of Winding 1 (kV)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
+    q3="match (n:`Single Phase CT`) return n.BusID, n.`kVA rating of Winding 1 (kVA)`,  n.` %R1`, n.` %R2`, n.` %R3`, n.` %X12`, n.` %X13`, n.` %X23`, n.Year, n.Month, n.Day, n.Hour, n.CurrVal, n.`PrevNode Val`, n.PrevVal"
     #Single Phase Anomalies
     output=neo4j_session_query.run(q1).data()
     nodes = []
@@ -485,7 +485,7 @@ def return_allAnom():
             anomType = 'failure'
         else:
             anomType = 'spike'
-        busPreds.append(i['n.BusID'] + ': ' + anomType)
+        busPreds.append(i['n.BusID'] + ': ' + anomType  + ': ' + str(max_val))
         j+=1
     #Three Phase Anomalies
     output=neo4j_session_query.run(q2).data()
@@ -518,7 +518,7 @@ def return_allAnom():
             anomType = 'failure'
         else:
             anomType = 'spike'
-        busPreds.append(i['n.BusID'] + ': ' + anomType)
+        busPreds.append(i['n.BusID'] + ': ' + anomType  + ': ' + str(max_val))
         j+=1
 
     #Single Phase CT Anomalies
@@ -526,7 +526,7 @@ def return_allAnom():
     nodes = []
     temp_node = []
     for i in output:
-        temp_node.append(i['n.`Voltage rating of Winding 1 (kV)`'])
+        temp_node.append(i['n.`kVA rating of Winding 1 (kVA)`'])
         temp_node.append(i['n.` %R1`'])
         temp_node.append(i['n.` %R2`'])
         temp_node.append(i['n.` %R3`'])
@@ -554,7 +554,7 @@ def return_allAnom():
             anomType = 'failure'
         else:
             anomType = 'spike'
-        busPreds.append(i['n.BusID'] + ': ' + anomType)
+        busPreds.append(i['n.BusID'] + ': ' + anomType + ': ' + str(max_val))
         j+=1
     return {'predictions': busPreds}
 
