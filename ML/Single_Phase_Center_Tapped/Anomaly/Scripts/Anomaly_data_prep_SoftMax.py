@@ -2,8 +2,8 @@ import xlrd
 import pandas as pd
 import random
 #File Path
-trans_fp = ("/home/jrmerkel/Documents/Python/491/240 Node Test System Element Data.xlsx")
-meter_fp = ("/home/jrmerkel/Documents/Python/491/Smart Meter Data.xlsx")
+trans_fp = ("./Raw_Data/240 Node Test System Element Data.xlsx")
+meter_fp = ("./Raw_Data/Smart Meter Data.xlsx")
 random.seed(0)
 #Read in the SPCT data
 singleCenterTapped= pd.read_excel(trans_fp, sheet_name = 'Distribution Transformer', header = 65, index_col = 0, usecols = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18], nrows = 140)
@@ -43,7 +43,7 @@ for index, value in smart_meter_a.items():
             
             newListItem = []
             #Static node data
-            newListItem.append(bus_attr.loc['Voltage rating of\nWinding 1 (kV)'])
+            newListItem.append(bus_attr.loc['kVA rating of\nWinding 1 (kVA)'])
             #   %R
             newListItem.append(bus_attr.loc[' %R1'])
             newListItem.append(bus_attr.loc[' %R2'])
@@ -119,7 +119,7 @@ for index, value in smart_meter_b.items():
 
             newListItem = []
             #Static Node Data
-            newListItem.append(bus_attr.loc['Voltage rating of\nWinding 1 (kV)'])
+            newListItem.append(bus_attr.loc['kVA rating of\nWinding 1 (kVA)'])
             #   %R
             newListItem.append(bus_attr.loc[' %R1'])
             newListItem.append(bus_attr.loc[' %R2'])
@@ -193,7 +193,7 @@ for index, value in smart_meter_c.items():
   
             newListItem = []
             #static transformer data
-            newListItem.append(bus_attr.loc['Voltage rating of\nWinding 1 (kV)'])
+            newListItem.append(bus_attr.loc['kVA rating of\nWinding 1 (kVA)'])
             #   %R
             newListItem.append(bus_attr.loc[' %R1'])
             newListItem.append(bus_attr.loc[' %R2'])

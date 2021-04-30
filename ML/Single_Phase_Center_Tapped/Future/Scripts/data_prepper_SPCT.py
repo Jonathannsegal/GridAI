@@ -1,12 +1,11 @@
 import xlrd
 import pandas as pd
 #Specify Datapaths
-trans_fp = ("/home/ubuntu/Documents/sdmay21-23/Hello_World_Projects/Tensorflow_test/240 Node Test System Element Data.xlsx")
-meter_fp = ("/home/ubuntu/Documents/sdmay21-23/Hello_World_Projects/Tensorflow_test/Smart Meter Data.xlsx")
+trans_fp = ("./Raw_Data/240 Node Test System Element Data.xlsx")
+meter_fp = ("./Raw_Data/Smart Meter Data.xlsx")
 
 #Read in single phase CT data
 singleCenterTapped= pd.read_excel(trans_fp, sheet_name = 'Distribution Transformer', header = 65, index_col = 0, usecols = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18], nrows = 140)
-singleCenterTapped.to_csv('tapTest.csv')
 
 #Reads in the line segments
 feeder_A_line_Segments = pd.read_excel(trans_fp, sheet_name = 'Line Data', header = 1, index_col = 0,usecols = [0,1,2,3,4,5], nrows = 16)
@@ -43,7 +42,7 @@ for index, value in smart_meter_a.items():
   
             newListItem = []
             #Static Data
-            newListItem.append(bus_attr.loc['Voltage rating of\nWinding 1 (kV)'])
+            newListItem.append(bus_attr.loc['kVA rating of\nWinding 1 (kVA)'])
             #   %R
             newListItem.append(bus_attr.loc[' %R1'])
             newListItem.append(bus_attr.loc[' %R2'])
@@ -78,9 +77,6 @@ for index, value in smart_meter_b.items():
     bus_num = index[-4:]
     cont = 0
     try:
-        if(int(bus_num) == 2008):
-            print('here')
-
         #locate if this station is a transformer
         bus_attr = singleCenterTapped.loc['T_' + bus_num]
         if(bus_attr is None):
@@ -104,7 +100,7 @@ for index, value in smart_meter_b.items():
 
             newListItem = []
             #Static data
-            newListItem.append(bus_attr.loc['Voltage rating of\nWinding 1 (kV)'])
+            newListItem.append(bus_attr.loc['kVA rating of\nWinding 1 (kVA)'])
             #   %R
             newListItem.append(bus_attr.loc[' %R1'])
             newListItem.append(bus_attr.loc[' %R2'])
@@ -164,7 +160,7 @@ for index, value in smart_meter_c.items():
 
             newListItem = []
             #static data
-            newListItem.append(bus_attr.loc['Voltage rating of\nWinding 1 (kV)'])
+            newListItem.append(bus_attr.loc['kVA rating of\nWinding 1 (kVA)'])
             #   %R
             newListItem.append(bus_attr.loc[' %R1'])
             newListItem.append(bus_attr.loc[' %R2'])
