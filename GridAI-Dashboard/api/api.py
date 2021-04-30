@@ -157,6 +157,13 @@ def return_busInfo(bus):
     q1="match (n {BusID:'"+bus+"'}) return n"
     output=neo4j_session_query.run(q1)
     return(jsonify(output.data()))
+    
+#return link info of every bus
+@app.route("/buslinks",methods=["GET","POST"])
+def return_allBusLinks():
+    q1="match (n) return n.BusID, n.`Previous Bus`"
+    output=neo4j_session_query.run(q1)
+    return(jsonify(output.data()))
 
 # Return prediction of only three-phase transformers
 @app.route("/threePhase",methods=["GET","POST"])
