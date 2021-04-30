@@ -60,16 +60,20 @@ const StickyHeadTable = (props) => {
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-    const tableData = props.data;
+    let tableData = props.data;
+    const {filterBy, propToFilter} = props;
 
+    if(filterBy && filterBy!=' ALL') {
+      tableData = tableData.filter(item => item[propToFilter] == filterBy);
+    }
 
     const handleChangePage = (event, newPage) => {
-    setPage(newPage);
+      setPage(newPage);
     };
 
     const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(+event.target.value);
-    setPage(0);
+      setRowsPerPage(+event.target.value);
+      setPage(0);
     };
 
     return (
