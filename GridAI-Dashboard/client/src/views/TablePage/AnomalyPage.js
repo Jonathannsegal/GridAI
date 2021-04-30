@@ -63,7 +63,8 @@ class AnomalyPage extends Component {
             let val = anomData["predictions"][i].split(":");
             anomVal.push({
                 "Bus Name": val[0],
-                "Status": val[1]
+                "Status": val[1],
+                "Confidence": val[2]
             });
         }
 
