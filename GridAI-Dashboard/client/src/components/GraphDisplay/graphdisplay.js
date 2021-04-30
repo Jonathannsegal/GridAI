@@ -52,6 +52,7 @@ class GraphDisplay extends Component {
     this.state = {
       lineData: [],
       nodeCoords: [],
+      nodeLinks: [],
       multiCheckbox: false,
       simCheck:false,
       isLoaded: false,
@@ -60,21 +61,31 @@ class GraphDisplay extends Component {
     this.onClickNode = this.onClickNode.bind(this);
   }
 
-  //Initially populate the graph with nodes using the fetched coordinates
-  componentDidMount() {
-    this.fetchNodeCoords();
+  //Initially populate the graph with nodes using the fetched coordinates/links, set isLoaded to true
+  //to allow rendering
+  async componentDidMount() {
+    let coords = await this.fetchNodeCoords();
+    let links = await this.fetchNodeLinks();
+
+    this.setState({
+      nodeCoords:coords,
+      nodeLinks:links,
+      isLoaded:true
+    })
   }
 
-  //Fetches node coordinates from api and sets isLoaded to True to start rendering. 
-  fetchNodeCoords = () => {
-    fetch("/coordinates")
-      .then((res1) => res1.json())
-      .then((data1) =>
-        this.setState({
-          nodeCoords: data1,
-          isLoaded: true,
-        })
-      );
+  //Fetches node coordinates from api
+  fetchNodeCoords = async () => {
+    const resp = await fetch(`/coordinates`);
+    const data = await resp.json();
+    return data;
+  };
+
+  //Fetches node links from api
+  fetchNodeLinks = async () => {
+    const resp = await fetch(`/buslinks`);
+    const data = await resp.json();
+    return data;
   };
 
   //Get current value of selected node
@@ -202,7 +213,7 @@ class GraphDisplay extends Component {
     
     else {
       //initiate state variables now that they are loaded.
-      var { nodeCoords, lineData, multiCheckbox, simCheck } = this.state;
+      var { nodeCoords, nodeLinks, lineData, multiCheckbox, simCheck } = this.state;
 
       //Coordinates formatted for graph. Adjust the X/Y coords for easier visibility(Otherwise too close together)
       let coords = [];
@@ -214,16 +225,12 @@ class GraphDisplay extends Component {
         });
       }
 
-      // let link = [];
-      // for(let i=0;i<alldata[1].length;i++){
-      //   link.push({source: "bus"+String(alldata[1][i].n.BusA), target:"bus"+String(alldata[1][i].n.BusB)})
-      // }
-      // for(let i=0;i<alldata[2].length;i++){
-      //   link.push({source: "bus"+String(alldata[2][i].n.BusA), target:"bus"+String(alldata[2][i].n.BusB)})
-      // }
-      // for(let i=0;i<alldata[3].length;i++){
-      //   link.push({source: "bus"+String(alldata[3][i].n.BusA), target:"bus"+String(alldata[3][i].n.BusB)})
-      // }
+      let link = [];
+      for(let i=0;i<nodeLinks.length;i++){
+        if(nodeLinks[i]["PrevBus"]!=0){
+          link.push({source:String(nodeLinks[i]["BusID"]), target:"T_"+String(nodeLinks[i]["PrevBus"])});
+        }
+      }
 
       return (
         <div>
@@ -242,7 +249,7 @@ class GraphDisplay extends Component {
                   //Graph component:
                   <Graph
                     id="graph-id" // id is mandatory
-                    data={{ nodes: coords, links: [] }}
+                    data={{ nodes: coords, links: link }}
                     config={myConfig}
                     onClickNode={this.onClickNode}
                     onClickLink={onClickLink}
@@ -278,3 +285,4 @@ class GraphDisplay extends Component {
 }
 
 export default GraphDisplay;
+

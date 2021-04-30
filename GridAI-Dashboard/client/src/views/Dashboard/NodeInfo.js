@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import StickyHeadTable from "../../components/CustomTables/StickyHeadTable.js";
+import DenseTable from "components/CustomTables/DenseTable.js"
 import LineChart from "components/Charts/linechart.js";
 
 class NodeInfo extends Component {
@@ -62,15 +62,61 @@ class NodeInfo extends Component {
   parseNodeInfo = async (data) =>{
     let temp = [];
     if (data[0]!= null) {
-      temp.push({
-        "Bus Name": data[0]["n"]["BusID"],
-        "Current Value": data[0]["n"]["CurrVal"],
-        "Previous Value": data[0]["n"]["PrevVal"],
-        "Primary voltage rating (kV)": data[0]["n"][`Primary voltage rating (kV)`],
-        "Secondary voltage rating (kV)": data[0]["n"]["Secondary voltage rating (kV)"],
-        "kVA rating (kVA)": data[0]["n"]["kVA rating (kVA)"],
-        "Time": data[0]["n"]["Month"]+" months, " + data[0]["n"]["Day"] + " days, " + data[0]["n"]["Hour"]+ " hours",
-      });
+
+      if(data[0]["busType"][0]==String("Single Phase CT")){
+          temp.push({
+          "Bus Name": data[0]["n"]["BusID"],
+          "Type":"Single Phase CT",
+          "Current Value": data[0]["n"]["CurrVal"],
+          "Previous Value": data[0]["n"]["PrevVal"],
+          "kVA rating of Winding 1 (kVA)": data[0]["n"][`kVA rating of Winding 1 (kVA)`],
+          "Secondary Voltage (kVA)": 0.12,
+          "%R1": data[0]["n"][" %R1"],
+          "%R2": data[0]["n"][" %R2"],
+          "%R3": data[0]["n"][" %R3"],
+          "%X12": data[0]["n"][" %X12"],
+          "%X13": data[0]["n"][" %X13"],
+          "%X23": data[0]["n"][" %X23"],
+          "Time": data[0]["n"]["Month"]+" months, " + data[0]["n"]["Day"] + " days, " + data[0]["n"]["Hour"]+ " hours",
+        });
+      }
+      else if(data[0]["busType"][0]==String("Other")){
+        temp.push({
+          "Bus Name": data[0]["n"]["BusID"],
+          "Current Value": data[0]["n"]["CurrVal"],
+          "Previous Value": data[0]["n"]["PrevVal"],
+          "Time": data[0]["n"]["Month"]+" months, " + data[0]["n"]["Day"] + " days, " + data[0]["n"]["Hour"]+ " hours",
+        });
+      }
+      else if(data[0]["busType"][0]==String("Single Phase")){
+        temp.push({
+          "Bus Name": data[0]["n"]["BusID"],
+          "Type": "Single Phase",
+          "Current Value": data[0]["n"]["CurrVal"],
+          "Previous Value": data[0]["n"]["PrevVal"],
+          "Primary voltage rating (kV)": data[0]["n"][`Primary voltage rating (kV)`],
+          "Secondary voltage rating (kV)": data[0]["n"]["Secondary voltage rating (kV)"],
+          "kVA rating (kVA)": data[0]["n"]["kVA rating (kVA)"],
+          "%R": data[0]["n"][" %R"],
+          "%X": data[0]["n"][" %X"],
+          "Time": data[0]["n"]["Month"]+" months, " + data[0]["n"]["Day"] + " days, " + data[0]["n"]["Hour"]+ " hours",
+        });
+      }
+      else{
+        temp.push({
+          "Bus Name": data[0]["n"]["BusID"],
+          "Type":"Three Phase",
+          "Current Value": data[0]["n"]["CurrVal"],
+          "Previous Value": data[0]["n"]["PrevVal"],
+          "Primary voltage rating (kV)": data[0]["n"][`Primary voltage rating (kV)`],
+          "Secondary voltage rating (kV)": data[0]["n"]["Secondary voltage rating (kV)"],
+          "kVA rating (kVA)": data[0]["n"]["kVA rating (kVA)"],
+          "%R": data[0]["n"][" %R"],
+          "%X": data[0]["n"][" %X"],
+          "Time": data[0]["n"]["Month"]+" months, " + data[0]["n"]["Day"] + " days, " + data[0]["n"]["Hour"]+ " hours",
+        });
+      }
+
     }
     this.setState({ info: temp, input: true });
   }
@@ -122,7 +168,7 @@ class NodeInfo extends Component {
             </form>
           </div>
           <div>
-            <StickyHeadTable data={info} />
+            <DenseTable data={info} />
             <br></br>
             <LineChart data={lineData} />
           </div>
