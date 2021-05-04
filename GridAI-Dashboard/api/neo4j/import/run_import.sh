@@ -1,0 +1,2 @@
+/var/lib/neo4j/bin/neo4j-admin import --database test --nodes="Single Phase"=/import/transformers_1p.csv --nodes="Single Phase CT"=/import/transformers_1pct.csv \
+--nodes="Three Phase"=/import/transformers_3p.csv --nodes="Other"=/import/transformers_others.csv 

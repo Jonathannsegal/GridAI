@@ -19,7 +19,7 @@ def plot_loss(history):
   plt.savefig('Loss_future.png')
 
 #Datapath
-fp = ('C:/Users/Justr/Documents/491/FuturePrediction.csv')
+fp = ('../Data/FuturePrediction.csv')
 dataset = pd.read_csv(fp)
 
 #80% of data should be in the training set the rest should be testing data

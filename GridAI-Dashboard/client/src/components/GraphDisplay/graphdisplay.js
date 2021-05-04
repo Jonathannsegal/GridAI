@@ -1,3 +1,8 @@
+// Authors: Abir Mojumder
+// Created: 1/25/2021
+// Updated: 5/3/2021
+// Copyrighted 2021 sdmay21-23@iastate.edu
+
 import { Grid } from "@material-ui/core";
 import React, { Component } from "react";
 import { Graph } from "react-d3-graph";
@@ -15,6 +20,7 @@ const chartstyle = {
   right: "0",
 };
 
+//configuration for D3 Graph.
 const myConfig = {
   height: 600,
   width: 1000,
@@ -33,7 +39,8 @@ const myConfig = {
   },
 };
 
-//Displays the source/target nodes between a link. Doesn't do anything
+//Displays the source/target nodes between a link. Doesn't do anything.
+//TODO: Add line data information (fetch from backend).
 const onClickLink = function (source, target) {
   window.alert(`Clicked link between ${source} and ${target}`);
 };
@@ -118,12 +125,13 @@ class GraphDisplay extends Component {
 
   //When a node is clicked on the graph, shows current value and linechart with data history
   onClickNode = async (nodeID) => {
+    //get current value of the bus.
     const val = await this.fetchValue(nodeID);
     if (val[0] == null) {
       window.alert("No value for this node!");
       return;
     }
-    window.alert(`Current Value: ${val[0].currentValue}`);
+    window.alert(`Current kWh Value: ${val[0].currentValue}`);
 
     const hist = await this.fetchHistory(nodeID);
     const pred = await this.fetchPredictions(nodeID);
@@ -213,7 +221,7 @@ class GraphDisplay extends Component {
     } 
     
     else {
-      //initiate state variables now that they are loaded.
+      //initiate state variables now that some of them are loaded.
       var { nodeCoords, nodeLinks, lineData, multiCheckbox, simCheck } = this.state;
 
       //Coordinates formatted for graph. Adjust the X/Y coords for easier visibility(Otherwise too close together)
@@ -253,6 +261,7 @@ class GraphDisplay extends Component {
                     data={{ nodes: coords, links: link }}
                     config={myConfig}
                     onClickNode={this.onClickNode}
+                    //TODO: Move OnClickLink inside the Class to implement line data, use this.OnClickLink
                     onClickLink={onClickLink}
                   />
                 }

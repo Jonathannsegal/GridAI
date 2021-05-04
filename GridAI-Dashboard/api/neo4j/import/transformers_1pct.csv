@@ -1,4 +1,5 @@
-,BusID:ID,"kVA rating of Winding 1 (kVA):double", %R1:double, %R2:double, %R3:double, %X12:double, %X13:double, %X23:double,Previous Bus:int,X:double,Y:double,Year:int,Month:int,Day:int,Hour:int,CurrVal:double,PrevNode Val:double,PrevVal:double
+,BusID:ID,"kVA rating of
+Winding 1 (kVA):double", %R1:double, %R2:double, %R3:double, %X12:double, %X13:double, %X23:double,Previous Bus:int,X:double,Y:double,Year:int,Month:int,Day:int,Hour:int,CurrVal:double,PrevNode Val:double,PrevVal:double
 0,T_1011,25.0,0.665,1.33,1.33,2.256,2.256,1.504,1009,2.4,12.98,0,0,0,0,0,0,0
 1,T_1012,37.5,0.595,1.19,1.19,2.076,2.076,1.384,1011,2.4,12.11,0,0,0,0,0,0,0
 2,T_1014,25.0,0.665,1.33,1.33,2.256,2.256,1.504,1013,3.85,11.23,0,0,0,0,0,0,0

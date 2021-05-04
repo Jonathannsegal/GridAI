@@ -1,3 +1,7 @@
+# Authors: Karthik Prakash
+# Created: 1/25/2021
+# Updated: 5/3/2021
+# Copyrighted 2021 sdmay21-23@iastate.edu
 import time
 from datetime import datetime, timezone, timedelta
 import pandas as pd
@@ -53,6 +57,7 @@ def update_data():
         sql_query=f"select * from smart_meter where date between '2017-{currTime:%m}-{currTime:%d} {currTime:%H}:00:00' and '2017-{currTime:%m}-{currTime:%d} {currTime:%H}:59:59'"
         result = mysql_conn.execute(sql_query)
 
+        # Update Neo4j node properties 
         for row in result:
             # For each Bus in Smart Meter
             for col in row._fields:
@@ -77,6 +82,7 @@ def update_data():
         sql_query=f"select * from smart_meter where date between '2017-{currTime:%m}-{currTime:%d} {currTime:%H}:00:00' and '2017-{currTime:%m}-{currTime:%d} {currTime:%H}:59:59'"
         result = mysql_conn.execute(sql_query)
 
+        # Update Neo4j nodes
         for row in result:
             for col in row._fields:
                 if (str(col) != 'Date'):
@@ -187,6 +193,7 @@ def return_threePhasePred():
         temp_node.append(i['n.PrevVal'])
         nodes.append(temp_node)
         temp_node = []
+    # Runs model prediction function
     predictions = three_phase_model.predict(nodes).tolist()
     busPreds = []
     j = 0
@@ -217,6 +224,8 @@ def return_singlePhasePred():
         temp_node.append(i['n.PrevVal'])
         nodes.append(temp_node)
         temp_node = []
+
+    # Runs model prediction function
     predictions = single_phase_model.predict(nodes).tolist()
     busPreds = []
     j = 0
@@ -249,6 +258,8 @@ def return_singlePhaseCTPred():
         temp_node.append(i['n.PrevVal'])
         nodes.append(temp_node)
         temp_node = []
+
+    # Runs model prediction function
     predictions = single_phase_CT_model.predict(nodes).tolist()
     busPreds = []
     j = 0
@@ -279,6 +290,8 @@ def return_singlePhaseAnom():
         temp_node.append(i['n.PrevVal'])
         nodes.append(temp_node)
         temp_node = []
+
+    # Runs model prediction function
     predictions = single_phase_anomaly.predict(nodes).tolist()
     busPreds = []
     j = 0
@@ -321,6 +334,8 @@ def return_singlePhaseCTAnom():
         temp_node.append(i['n.PrevVal'])
         nodes.append(temp_node)
         temp_node = []
+
+    # Runs model prediction function
     predictions = single_phase_CT_anomaly.predict(nodes).tolist()
     busPreds = []
     j = 0
@@ -360,6 +375,8 @@ def return_threePhaseAnom():
         temp_node.append(i['n.PrevVal'])
         nodes.append(temp_node)
         temp_node = []
+
+    # Runs model prediction function
     predictions = three_phase_anomaly.predict(nodes).tolist()
     busPreds = []
     j = 0
@@ -458,7 +475,10 @@ def return_allPred():
     for i in output:
         busPreds.append(i['n.BusID'] + ': ' + str(predictions[j][0]))
         j+=1
+    #predictions = return_singlePhaseCTPred()
+
     return {'predictions': busPreds}
+
 
 
 # Return anomaly classification of all transformer types. Returns string ('failure','normal','spike') and confidence percentage

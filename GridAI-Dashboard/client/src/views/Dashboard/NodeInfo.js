@@ -1,3 +1,8 @@
+// Authors: Abir Mojumder
+// Created: 1/25/2021
+// Updated: 5/3/2021
+// Copyrighted 2021 sdmay21-23@iastate.edu
+
 import React, { Component } from "react";
 import DenseTable from "components/CustomTables/DenseTable.js"
 import LineChart from "components/Charts/linechart.js";

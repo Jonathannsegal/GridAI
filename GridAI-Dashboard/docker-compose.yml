@@ -28,7 +28,7 @@ services:
       - ./api/mysql:/var/lib/mysql   
       
       
-  webapp:
+  backend:
     
     ports:
       - "5000:5000"
@@ -51,7 +51,7 @@ services:
     ports:
       - "3000:3000"
     depends_on:
-      - webapp
+      - backend
     stdin_open: true
 
 volumes:

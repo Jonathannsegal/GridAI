@@ -5,7 +5,7 @@ import datetime as dt
 # This file formats data to be quickly manually imported to Neo4j database
 
 # Define file for necessary data (Transformer properties, Coordinates, Line Data)
-trans_fp = ("/home/ubuntu/Downloads/240 Node Test System Element Data.xlsx")
+trans_fp = ("./system_data/240 Node Test System Element Data.xlsx")
 
 # Read data into dataframes to be processed. Change parameters as necessary for specific dataset
 
@@ -187,9 +187,9 @@ transformers_others['PrevVal:double'] = 0
 
 
 
-transformers_3p.to_csv('transformers_3p.csv')
-transformers_1p.to_csv('transformers_1p.csv')
-transformers_1pct.to_csv('transformers_1pct.csv')
-transformers_others.to_csv('transformers_others.csv')
+transformers_3p.to_csv('./neo4j/import/transformers_3p.csv')
+transformers_1p.to_csv('./neo4j/import/transformers_1p.csv')
+transformers_1pct.to_csv('./neo4j/import/transformers_1pct.csv')
+transformers_others.to_csv('./neo4j/import/transformers_others.csv')
 
 

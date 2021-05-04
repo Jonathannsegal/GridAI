@@ -1,3 +1,7 @@
+# Authors: Justin Merkel
+# Created: TODO
+# Updated: 5/3/2021
+# Copyrighted 2021 sdmay21-23@iastate.edu
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -24,7 +28,7 @@ def plot_loss(history):
   plt.savefig('Loss_SPLogistic.png')
 
 #Filepath of the anomaly data
-fp = ('C:/Users/Justr/Documents/491/Anomaly_SP.csv')
+fp = ('../Data/Anomaly_SP.csv')
 dataset = pd.read_csv(fp)
 
 #80% of data should be in the training set the rest should be testing data
@@ -68,7 +72,7 @@ history = Logistic_Model.fit(
     validation_split = 0.2)
 
 
-#Save the model to be used later
+#Save the trained ml model to be used later
 Logistic_Model.save('Test_Logistic_SP_no_Index')
 
 

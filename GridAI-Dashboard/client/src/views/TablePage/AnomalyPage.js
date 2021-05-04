@@ -1,3 +1,7 @@
+// Authors: Abhilash Tripathy
+// Created: 1/25/2021
+// Updated: 5/3/2021
+// Copyrighted 2021 sdmay21-23@iastate.edu
 import React, { Component } from "react";
 import { makeStyles } from '@material-ui/core/styles';
 import InputLabel from '@material-ui/core/InputLabel';

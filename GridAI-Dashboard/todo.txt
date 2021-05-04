@@ -1,0 +1,24 @@
+Backend
+1. Put queries in separate text file
+2. Use solely MySQL for time series data. Do not update Neo4j nodes.
+3. Use defined functions in api.py allPred endpoint and allAnom endpoint
+4. Store line-data and create api route for client.
+5. Store/parse grid component infor (circuit breakers, capacitor banks, etc)
+
+ML
+1. The number of layers and nodes can be optimized. Ex. sdmay21-23/ML/Single_Phase/Anomaly/Scripts/LogisticKerasSP.py lines 50-56
+2. Realtime integration of the tensorflow model training into the backend
+
+Client
+1. Add border/change background of Graph in dashboard.
+2. When clicking a link, display line-data.
+3. Add checkbox to compare multiple nodes.
+4. Missing grid components (circuit breakers).
+5. Visualize line between node using colors.
+6. Make custom icons for the different grid components (use it to replace default node)
+7. Add more line chart data types (voltage/current) using checkbox
+8. Update history data to fetch on interval (real-time update)
+9. Compare node time needs to be syncronized (only secondary node updates now).
+10. Node info page - Invalid text should show error message. views/Dashboard/NodeInfo.js
+11. Add right click functionality for the node and link.
+12. Change of node color based Anomaly status (update on interval).

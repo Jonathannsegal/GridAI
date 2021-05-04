@@ -24,7 +24,7 @@ def plot_loss(history):
   plt.savefig('Loss_SPCTLogistic.png')
 
 #Filepath of the anomaly data
-fp = ('C:/Users/Justr/Documents/491/Anomaly_TP.csv')
+fp = ('../Data/Anomaly_TP.csv')
 dataset = pd.read_csv(fp)
 
 #80% of data should be in the training set the rest should be testing data
