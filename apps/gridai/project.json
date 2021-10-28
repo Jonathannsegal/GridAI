@@ -1,0 +1,70 @@
+{
+  "root": "apps/gridai",
+  "sourceRoot": "apps/gridai/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nrwl/web:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/gridai",
+        "index": "apps/gridai/src/index.html",
+        "baseHref": "/",
+        "main": "apps/gridai/src/main.tsx",
+        "polyfills": "apps/gridai/src/polyfills.ts",
+        "tsConfig": "apps/gridai/tsconfig.app.json",
+        "assets": ["apps/gridai/src/favicon.ico", "apps/gridai/src/assets"],
+        "styles": [],
+        "scripts": [],
+        "webpackConfig": "@nrwl/react/plugins/webpack"
+      },
+      "configurations": {
+        "production": {
+          "fileReplacements": [
+            {
+              "replace": "apps/gridai/src/environments/environment.ts",
+              "with": "apps/gridai/src/environments/environment.prod.ts"
+            }
+          ],
+          "optimization": true,
+          "outputHashing": "all",
+          "sourceMap": false,
+          "namedChunks": false,
+          "extractLicenses": true,
+          "vendorChunk": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nrwl/web:dev-server",
+      "options": {
+        "buildTarget": "gridai:build",
+        "hmr": true,
+        "proxyConfig": "apps/gridai/proxy.conf.json"
+      },
+      "configurations": {
+        "production": {
+          "buildTarget": "gridai:build:production",
+          "hmr": false
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nrwl/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/gridai/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "test": {
+      "executor": "@nrwl/jest:jest",
+      "outputs": ["coverage/apps/gridai"],
+      "options": {
+        "jestConfig": "apps/gridai/jest.config.js",
+        "passWithNoTests": true
+      }
+    }
+  },
+  "tags": []
+}
