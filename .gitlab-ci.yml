@@ -1,8 +1,279 @@
-# You can override the included template(s) by including variable overrides
-# SAST customization: https://docs.gitlab.com/ee/user/application_security/sast/#customizing-the-sast-settings
-# Secret Detection customization: https://docs.gitlab.com/ee/user/application_security/secret_detection/#customizing-settings
-# Dependency Scanning customization: https://docs.gitlab.com/ee/user/application_security/dependency_scanning/#customizing-the-dependency-scanning-settings
-# Note that environment variables can be set in several places
-# See https://docs.gitlab.com/ee/ci/variables/#cicd-variable-precedence
-include:
-- template: Security/Secret-Detection.gitlab-ci.yml
+variables:
+  NEXT_SERVICE: "next"
+  API_SERVICE: "api"
+  INFLUX_SERVICE_NAME: "influx"
+  NEO4J_SERVICE_NAME: "neo4j"
+  CODE_COVERAGE: 70
+
+stages:
+  - build
+  - analysis
+  - lint
+  - security
+  - test
+  - deploy
+
+build:next:
+ stage: build
+ needs: []
+ image: node:latest
+ script:
+  - cd frontend/
+  - yarn
+ cache:
+  paths:
+   - frontend/node_modules/
+ artifacts:
+  expire_in: 1 days
+  when: on_success
+  paths:
+   - frontend/node_modules/
+
+mypy:api:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/influx/src/requirements.txt
+ script:
+  - python -m mypy api/src/app.py
+mypy:influx:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/influx/src/requirements.txt
+ script:
+  - python -m mypy ml/influx/src/app.py
+mypy:neo4j:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/influx/src/requirements.txt
+ script:
+  - python -m mypy ml/neo4j/src/app.py
+
+flake8:api:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r api/src/requirements.txt
+ script:
+  - flake8 --max-line-length=120 --max-complexity 8 api/src/*.py
+flake8:influx:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/influx/src/requirements.txt
+ script:
+  - flake8 --max-line-length=120 --max-complexity 8 ml/influx/src/*.py
+flake8:neo4j:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/neo4j/src/requirements.txt
+ script:
+  - flake8 --max-line-length=120 --max-complexity 8 ml/neo4j/src/*.py
+
+eslint:next:
+ stage: lint
+ needs: []
+ image: node:latest
+ script:
+  - |
+    npm install eslint \
+    eslint-config-airbnb \
+    eslint-config-prettier \
+    eslint-plugin-flowtype \
+    eslint-plugin-import \
+    eslint-plugin-jsx-a11y \
+    eslint-plugin-prettier \
+    eslint-plugin-react
+  - node_modules/eslint/bin/eslint.js frontend/
+pylint:api:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r api/src/requirements.txt
+ script:
+  - pylint -d C0301 -d R0902 api/src/*.py
+pylint:influx:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/influx/src/requirements.txt
+ script:
+  - pylint -d C0301 -d R0902 ml/influx/src/*.py
+pylint:neo4j:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/neo4j/src/requirements.txt
+ script:
+  - pylint -d C0301 -d R0902 ml/neo4j/src/*.py
+
+isort:api:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r api/src/requirements.txt
+ script:
+  - isort api/src/*.py
+isort:influx:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/influx/src/requirements.txt
+ script:
+  - isort ml/influx/src/*.py
+isort:neo4j:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/neo4j/src/requirements.txt
+ script:
+  - isort ml/neo4j/src/*.py
+
+safety:
+ stage: security
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r api/src/requirements.txt
+ script:
+  - safety check
+
+test:next:
+ stage: test
+ coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+ needs: ['build:next']
+ image: node:latest
+ script:
+   - cd frontend/
+   - yarn test:ci
+ cache:
+  paths:
+   - frontend/coverage/
+ artifacts:
+  paths:
+   - frontend/coverage/
+  when: always
+  reports:
+   junit:
+    - frontend/junit.xml
+   cobertura: frontend/coverage/cobertura-coverage.xml
+test:api:
+ stage: test
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/influx/src/requirements.txt
+ script:
+  - pytest --cov=api api/tests/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+ artifacts:
+  when: always
+  reports:
+   junit: report.xml
+test:influx:
+ stage: test
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/influx/src/requirements.txt
+ script:
+  - pytest --cov=influx ml/influx/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+ artifacts:
+  when: always
+  reports:
+   junit: report.xml
+test:neo4j:
+ stage: test
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/neo4j/src/requirements.txt
+ script:
+  - pytest --cov=neo4j ml/neo4j/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+ artifacts:
+  when: always
+  reports:
+   junit: report.xml
+
+deploy:next:
+ stage: deploy
+ needs: ['test:next']
+ image: google/cloud-sdk:latest
+ only:
+   - main
+ script:
+    - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
+    - gcloud auth configure-docker # Configure docker environment
+    - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
+    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$NEXT_SERVICE frontend/ #Run the gcloud build command to build our image
+    - gcloud run deploy $NEXT_SERVICE --image gcr.io/$GCP_PROJECT_ID/$NEXT_SERVICE --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+deploy:api:
+ stage: deploy
+ needs: ['test:api']
+ image: google/cloud-sdk:latest
+ only:
+  - main
+ script:
+    - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
+    - gcloud auth configure-docker # Configure docker environment
+    - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
+    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$API_SERVICE api/ #Run the gcloud build command to build our image
+    - gcloud run deploy $API_SERVICE --image gcr.io/$GCP_PROJECT_ID/$API_SERVICE --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+deploy:influx:
+ stage: deploy
+ needs: ['test:influx']
+ image: google/cloud-sdk:latest
+ only:
+  - main
+ script:
+    - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
+    - gcloud auth configure-docker # Configure docker environment
+    - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
+    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME ml/influx/ #Run the gcloud build command to build our image
+    - gcloud run deploy $INFLUX_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+deploy:neo4j:
+ stage: deploy
+ needs: ['test:neo4j']
+ image: google/cloud-sdk:latest
+ only:
+  - main
+ script:
+    - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
+    - gcloud auth configure-docker # Configure docker environment
+    - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
+    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME ml/neo4j/ #Run the gcloud build command to build our image
+    - gcloud run deploy $NEO4J_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
