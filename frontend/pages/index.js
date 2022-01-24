@@ -8,7 +8,7 @@ export default function Home(props) {
 
       <div className="card card-info">
         <h2>Grid AI</h2>
-        <p>GridAI Cloud-based Machine Deep Learning for Power Grid Data Analytic</p>
+        <p>GridAI Cloud-based Machine Deep Learning for Power Grid Data Analytic tes</p>
       </div>
 
     </main>
