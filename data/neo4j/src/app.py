@@ -15,7 +15,7 @@ def func(value):
 def hello_world():
     """Hello World Endpoint"""
     name = os.environ.get("NAME", "World")
-    return f"Grid AI: neo4j, Hello {name}!"
+    return f"Grid AI: NEO4J, Hello {name}!"
 
 
 if __name__ == "__main__":

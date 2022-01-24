@@ -15,7 +15,7 @@ def func(value):
 def hello_world():
     """Hello World Endpoint"""
     name = os.environ.get("NAME", "World")
-    return f"Grid AI: anomaly detection, Hello {name}!"
+    return f"Grid AI: ANOMOLY, Hello {name}!"
 
 
 if __name__ == "__main__":
