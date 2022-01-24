@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
-import { getUserWithUsername } from '@lib/firebase';
-import UserProfile from '@components/UserProfile';
-import Metatags from '@components/Metatags';
+import UserProfile from '../../components/UserProfile';
+import Metatags from '../../components/Metatags';
+import { getUserWithUsername } from '../../lib/firebase';
 
 export async function getServerSideProps({ query }) {
   const { username } = query;
