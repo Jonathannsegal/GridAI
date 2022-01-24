@@ -1,9 +1,20 @@
-/* eslint react/prop-types: 0 */
-
-import '../styles/globals.css';
+/* eslint-disable react/prop-types */
+import '@styles/globals.css';
+import Navbar from '@components/Navbar';
+import { UserContext } from '@lib/context';
+import { useUserData } from '@lib/hooks';
+import { Toaster } from 'react-hot-toast';
 
 function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+  const userData = useUserData();
+
+  return (
+    <UserContext.Provider value={userData}>
+      <Navbar />
+      <Component {...pageProps} />
+      <Toaster />
+    </UserContext.Provider>
+  );
 }
 
 export default MyApp;
