@@ -1,14 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import Home from '../pages/index';
 
-describe('Home', () => {
-  it('renders a heading', () => {
+describe('Index page', () => {
+  it('should render', () => {
     render(<Home />);
-
-    const heading = screen.getByRole('heading', {
-      name: 'Welcome to Next.js on GRIDAI!',
-    });
-
-    expect(heading).toBeInTheDocument();
+    const main = screen.getByRole('main');
+    expect(main).toBeInTheDocument();
   });
 });

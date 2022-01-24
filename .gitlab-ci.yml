@@ -490,6 +490,12 @@ deploy:next:
   changes:
    - frontend/**/*
  script:
+    - echo "NEXT_PUBLIC_FIREBASE_API_KEY"=$NEXT_PUBLIC_FIREBASE_API_KEY >> ".env"
+    - echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN"=$NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN >> ".env"
+    - echo "NEXT_PUBLIC_FIREBASE_PROJECT_ID"=$NEXT_PUBLIC_FIREBASE_PROJECT_ID >> ".env"
+    - echo "NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET"=$NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET >> ".env"
+    - echo "NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID"=$NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID >> ".env"
+    - echo "NEXT_PUBLIC_FIREBASE_APP_ID"=$NEXT_PUBLIC_FIREBASE_APP_ID >> ".env"
     - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
     - gcloud auth configure-docker # Configure docker environment
