@@ -1,5 +1,5 @@
 module.exports = {
-  swcMinify: true,
+  // swcMinify: true,
   experimental: {
     outputStandalone: true,
   },
