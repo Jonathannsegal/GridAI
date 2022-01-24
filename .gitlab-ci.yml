@@ -6,6 +6,7 @@ variables:
   ANOMALY_SERVICE_NAME: "anomaly"
   PREDICTION_SERVICE_NAME: "prediction"
   ASSISTANT_SERVICE_NAME: "assistant"
+  GCP_REGION: "us-central1"
   CODE_COVERAGE: 70
 
 stages:
@@ -494,7 +495,11 @@ deploy:next:
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
     - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$NEXT_SERVICE frontend/ #Run the gcloud build command to build our image
-    - gcloud run deploy $NEXT_SERVICE --image gcr.io/$GCP_PROJECT_ID/$NEXT_SERVICE --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - gcloud run deploy $NEXT_SERVICE --image gcr.io/$GCP_PROJECT_ID/$NEXT_SERVICE --region=$GCP_REGION --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - echo "ENVIRONMENT_URL=$(gcloud run services list --platform managed --region $GCP_REGION | grep $NEXT_SERVICE | awk '{print $4}')" >> deploy.env
+ environment:
+  name: $NEXT_SERVICE
+  url: $ENVIRONMENT_URL
 deploy:api:
  stage: deploy
  needs: ['test:api']
@@ -510,7 +515,11 @@ deploy:api:
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
     - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$API_SERVICE api/ #Run the gcloud build command to build our image
-    - gcloud run deploy $API_SERVICE --image gcr.io/$GCP_PROJECT_ID/$API_SERVICE --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - gcloud run deploy $API_SERVICE --image gcr.io/$GCP_PROJECT_ID/$API_SERVICE --region=$GCP_REGION --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - echo "ENVIRONMENT_URL=$(gcloud run services list --platform managed --region $GCP_REGION | grep $API_SERVICE | awk '{print $4}')" >> deploy.env
+ environment:
+  name: $API_SERVICE
+  url: $ENVIRONMENT_URL
 deploy:influx:
  stage: deploy
  needs: ['test:influx']
@@ -526,7 +535,11 @@ deploy:influx:
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
     - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME data/influx/ #Run the gcloud build command to build our image
-    - gcloud run deploy $INFLUX_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - gcloud run deploy $INFLUX_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME --region=$GCP_REGION --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - echo "ENVIRONMENT_URL=$(gcloud run services list --platform managed --region $GCP_REGION | grep $INFLUX_SERVICE_NAME | awk '{print $4}')" >> deploy.env
+ environment:
+  name: $INFLUX_SERVICE_NAME
+  url: $ENVIRONMENT_URL
 deploy:neo4j:
  stage: deploy
  needs: ['test:neo4j']
@@ -542,7 +555,11 @@ deploy:neo4j:
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
     - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME data/neo4j/ #Run the gcloud build command to build our image
-    - gcloud run deploy $NEO4J_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - gcloud run deploy $NEO4J_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME --region=$GCP_REGION --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - echo "ENVIRONMENT_URL=$(gcloud run services list --platform managed --region $GCP_REGION | grep $NEO4J_SERVICE_NAME | awk '{print $4}')" >> deploy.env
+ environment:
+  name: $NEO4J_SERVICE_NAME
+  url: $ENVIRONMENT_URL
 deploy:anomaly:
  stage: deploy
  needs: ['test:anomaly']
@@ -558,7 +575,11 @@ deploy:anomaly:
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
     - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$ANOMALY_SERVICE_NAME ml/anomaly/ #Run the gcloud build command to build our image
-    - gcloud run deploy $ANOMALY_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$ANOMALY_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - gcloud run deploy $ANOMALY_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$ANOMALY_SERVICE_NAME --region=$GCP_REGION --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - echo "ENVIRONMENT_URL=$(gcloud run services list --platform managed --region $GCP_REGION | grep $ANOMALY_SERVICE_NAME | awk '{print $4}')" >> deploy.env
+ environment:
+  name: $ANOMALY_SERVICE_NAME
+  url: $ENVIRONMENT_URL
 deploy:assistant:
  stage: deploy
  needs: ['test:assistant']
@@ -574,7 +595,11 @@ deploy:assistant:
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
     - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$ASSISTANT_SERVICE_NAME ml/assistant/ #Run the gcloud build command to build our image
-    - gcloud run deploy $ASSISTANT_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$ASSISTANT_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - gcloud run deploy $ASSISTANT_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$ASSISTANT_SERVICE_NAME --region=$GCP_REGION --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - echo "ENVIRONMENT_URL=$(gcloud run services list --platform managed --region $GCP_REGION | grep $ASSISTANT_SERVICE_NAME | awk '{print $4}')" >> deploy.env
+ environment:
+  name: $ASSISTANT_SERVICE_NAME
+  url: $ENVIRONMENT_URL
 deploy:prediction:
  stage: deploy
  needs: ['test:prediction']
@@ -590,4 +615,8 @@ deploy:prediction:
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
     - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$PREDICTION_SERVICE_NAME ml/prediction/ #Run the gcloud build command to build our image
-    - gcloud run deploy $PREDICTION_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$PREDICTION_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - gcloud run deploy $PREDICTION_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$PREDICTION_SERVICE_NAME --region=$GCP_REGION --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - echo "ENVIRONMENT_URL=$(gcloud run services list --platform managed --region $GCP_REGION | grep $PREDICTION_SERVICE_NAME | awk '{print $4}')" >> deploy.env
+ environment:
+  name: $PREDICTION_SERVICE_NAME
+  url: $ENVIRONMENT_URL
