@@ -3,6 +3,9 @@ variables:
   API_SERVICE: "api"
   INFLUX_SERVICE_NAME: "influx"
   NEO4J_SERVICE_NAME: "neo4j"
+  ANOMALY_SERVICE_NAME: "anomaly"
+  PREDICTION_SERVICE_NAME: "prediction"
+  ASSISTANT_SERVICE_NAME: "assistant"
   CODE_COVERAGE: 70
 
 stages:
@@ -20,6 +23,9 @@ build:next:
  script:
   - cd frontend/
   - yarn
+ only:
+  changes:
+   - frontend/**/*
  cache:
   paths:
    - frontend/node_modules/
@@ -35,27 +41,72 @@ mypy:api:
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/influx/src/requirements.txt
+  - pip install -r api/src/requirements.txt
  script:
   - python -m mypy api/src/app.py
+ only:
+  changes:
+   - api/**/*
 mypy:influx:
  stage: analysis
  needs: []
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/influx/src/requirements.txt
+  - pip install -r data/influx/src/requirements.txt
  script:
-  - python -m mypy ml/influx/src/app.py
+  - python -m mypy data/influx/src/app.py
+ only:
+  changes:
+   - data/influx/**/*
 mypy:neo4j:
  stage: analysis
  needs: []
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/influx/src/requirements.txt
+  - pip install -r data/neo4j/src/requirements.txt
  script:
-  - python -m mypy ml/neo4j/src/app.py
+  - python -m mypy data/neo4j/src/app.py
+ only:
+  changes:
+   - data/neo4j/**/*
+mypy:anomaly:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/anomaly/src/requirements.txt
+ script:
+  - python -m mypy ml/anomaly/src/app.py
+ only:
+  changes:
+   - ml/anomaly/**/*
+mypy:assistant:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/assistant/src/requirements.txt
+ script:
+  - python -m mypy ml/assistant/src/app.py
+ only:
+  changes:
+   - ml/assistant/**/*
+mypy:prediction:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/prediction/src/requirements.txt
+ script:
+  - python -m mypy ml/prediction/src/app.py
+ only:
+  changes:
+   - ml/prediction/**/*
 
 flake8:api:
  stage: analysis
@@ -66,24 +117,69 @@ flake8:api:
   - pip install -r api/src/requirements.txt
  script:
   - flake8 --max-line-length=120 --max-complexity 8 api/src/*.py
+ only:
+  changes:
+   - api/**/*
 flake8:influx:
  stage: analysis
  needs: []
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/influx/src/requirements.txt
+  - pip install -r data/influx/src/requirements.txt
  script:
-  - flake8 --max-line-length=120 --max-complexity 8 ml/influx/src/*.py
+  - flake8 --max-line-length=120 --max-complexity 8 data/influx/src/*.py
+ only:
+  changes:
+   - data/influx/**/*
 flake8:neo4j:
  stage: analysis
  needs: []
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/neo4j/src/requirements.txt
+  - pip install -r data/neo4j/src/requirements.txt
  script:
-  - flake8 --max-line-length=120 --max-complexity 8 ml/neo4j/src/*.py
+  - flake8 --max-line-length=120 --max-complexity 8 data/neo4j/src/*.py
+ only:
+  changes:
+   - data/neo4j/**/*
+flake8:anomaly:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/anomaly/src/requirements.txt
+ script:
+  - flake8 --max-line-length=120 --max-complexity 8 ml/anomaly/src/*.py
+ only:
+  changes:
+   - ml/anomaly/**/*
+flake8:assistant:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/assistant/src/requirements.txt
+ script:
+  - flake8 --max-line-length=120 --max-complexity 8 ml/assistant/src/*.py
+ only:
+  changes:
+   - ml/assistant/**/*
+flake8:prediction:
+ stage: analysis
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/prediction/src/requirements.txt
+ script:
+  - flake8 --max-line-length=120 --max-complexity 8 ml/prediction/src/*.py
+ only:
+  changes:
+   - ml/prediction/**/*
 
 eslint:next:
  stage: lint
@@ -100,6 +196,9 @@ eslint:next:
     eslint-plugin-prettier \
     eslint-plugin-react
   - node_modules/eslint/bin/eslint.js frontend/
+ only:
+  changes:
+   - frontend/**/*
 pylint:api:
  stage: lint
  needs: []
@@ -109,24 +208,69 @@ pylint:api:
   - pip install -r api/src/requirements.txt
  script:
   - pylint -d C0301 -d R0902 api/src/*.py
+ only:
+  changes:
+   - api/**/*
 pylint:influx:
  stage: lint
  needs: []
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/influx/src/requirements.txt
+  - pip install -r data/influx/src/requirements.txt
  script:
-  - pylint -d C0301 -d R0902 ml/influx/src/*.py
+  - pylint -d C0301 -d R0902 data/influx/src/*.py
+ only:
+  changes:
+   - data/influx/**/*
 pylint:neo4j:
  stage: lint
  needs: []
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/neo4j/src/requirements.txt
+  - pip install -r data/neo4j/src/requirements.txt
  script:
-  - pylint -d C0301 -d R0902 ml/neo4j/src/*.py
+  - pylint -d C0301 -d R0902 data/neo4j/src/*.py
+ only:
+  changes:
+   - data/neo4j/**/*
+pylint:anomaly:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/anomaly/src/requirements.txt
+ script:
+  - pylint -d C0301 -d R0902 ml/anomaly/src/*.py
+ only:
+  changes:
+   - ml/anomaly/**/*
+pylint:assistant:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/assistant/src/requirements.txt
+ script:
+  - pylint -d C0301 -d R0902 ml/assistant/src/*.py
+ only:
+  changes:
+   - ml/assistant/**/*
+pylint:prediction:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/prediction/src/requirements.txt
+ script:
+  - pylint -d C0301 -d R0902 ml/prediction/src/*.py
+ only:
+  changes:
+   - ml/prediction/**/*
 
 isort:api:
  stage: lint
@@ -137,24 +281,69 @@ isort:api:
   - pip install -r api/src/requirements.txt
  script:
   - isort api/src/*.py
+ only:
+  changes:
+   - api/**/*
 isort:influx:
  stage: lint
  needs: []
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/influx/src/requirements.txt
+  - pip install -r data/influx/src/requirements.txt
  script:
-  - isort ml/influx/src/*.py
+  - isort data/influx/src/*.py
+ only:
+  changes:
+   - data/influx/**/*
 isort:neo4j:
  stage: lint
  needs: []
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/neo4j/src/requirements.txt
+  - pip install -r data/neo4j/src/requirements.txt
  script:
-  - isort ml/neo4j/src/*.py
+  - isort data/neo4j/src/*.py
+ only:
+  changes:
+   - data/neo4j/**/*
+isort:anomaly:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/anomaly/src/requirements.txt
+ script:
+  - isort ml/anomaly/src/*.py
+ only:
+  changes:
+   - ml/anomaly/**/*
+isort:assistant:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/assistant/src/requirements.txt
+ script:
+  - isort ml/assistant/src/*.py
+ only:
+  changes:
+   - ml/assistant/**/*
+isort:prediction:
+ stage: lint
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/prediction/src/requirements.txt
+ script:
+  - isort ml/prediction/src/*.py
+ only:
+  changes:
+   - ml/prediction/**/*
 
 safety:
  stage: security
@@ -165,6 +354,11 @@ safety:
   - pip install -r api/src/requirements.txt
  script:
   - safety check
+ only:
+  changes:
+   - api/**/*
+   - data/**/*
+   - ml/**/*
 
 test:next:
  stage: test
@@ -174,6 +368,9 @@ test:next:
  script:
    - cd frontend/
    - yarn test:ci
+ only:
+  changes:
+   - frontend/**/*
  cache:
   paths:
    - frontend/coverage/
@@ -191,9 +388,12 @@ test:api:
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/influx/src/requirements.txt
+  - pip install -r api/src/requirements.txt
  script:
-  - pytest --cov=api api/tests/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+  - pytest --cov=api api/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+ only:
+  changes:
+   - api/**/*
  artifacts:
   when: always
   reports:
@@ -204,9 +404,12 @@ test:influx:
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/influx/src/requirements.txt
+  - pip install -r data/influx/src/requirements.txt
  script:
-  - pytest --cov=influx ml/influx/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+  - pytest --cov=influx data/influx/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+ only:
+  changes:
+   - data/influx/**/*
  artifacts:
   when: always
   reports:
@@ -217,9 +420,60 @@ test:neo4j:
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/neo4j/src/requirements.txt
+  - pip install -r data/neo4j/src/requirements.txt
  script:
-  - pytest --cov=neo4j ml/neo4j/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+  - pytest --cov=neo4j data/neo4j/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+ only:
+  changes:
+   - data/neo4j/**/*
+ artifacts:
+  when: always
+  reports:
+   junit: report.xml
+test:anomaly:
+ stage: test
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/anomaly/src/requirements.txt
+ script:
+  - pytest --cov=anomaly ml/anomaly/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+ only:
+  changes:
+   - ml/anomaly/**/*
+ artifacts:
+  when: always
+  reports:
+   junit: report.xml
+test:assistant:
+ stage: test
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/assistant/src/requirements.txt
+ script:
+  - pytest --cov=assistant ml/assistant/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+ only:
+  changes:
+   - ml/assistant/**/*
+ artifacts:
+  when: always
+  reports:
+   junit: report.xml
+test:prediction:
+ stage: test
+ needs: []
+ image: 'python:3.9'
+ before_script:
+  - python --version
+  - pip install -r ml/prediction/src/requirements.txt
+ script:
+  - pytest --cov=prediction ml/prediction/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+ only:
+  changes:
+   - ml/prediction/**/*
  artifacts:
   when: always
   reports:
@@ -230,7 +484,10 @@ deploy:next:
  needs: ['test:next']
  image: google/cloud-sdk:latest
  only:
+  refs:
    - main
+  changes:
+   - frontend/**/*
  script:
     - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
@@ -243,7 +500,10 @@ deploy:api:
  needs: ['test:api']
  image: google/cloud-sdk:latest
  only:
-  - main
+  refs:
+   - main
+  changes:
+   - api/**/*
  script:
     - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
@@ -256,24 +516,78 @@ deploy:influx:
  needs: ['test:influx']
  image: google/cloud-sdk:latest
  only:
-  - main
+  refs:
+   - main
+  changes:
+   - data/influx/**/*
  script:
     - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
-    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME ml/influx/ #Run the gcloud build command to build our image
+    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME data/influx/ #Run the gcloud build command to build our image
     - gcloud run deploy $INFLUX_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
 deploy:neo4j:
  stage: deploy
  needs: ['test:neo4j']
  image: google/cloud-sdk:latest
  only:
-  - main
+  refs:
+   - main
+  changes:
+   - data/neo4j/**/*
  script:
     - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
-    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME ml/neo4j/ #Run the gcloud build command to build our image
+    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME data/neo4j/ #Run the gcloud build command to build our image
     - gcloud run deploy $NEO4J_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+deploy:anomaly:
+ stage: deploy
+ needs: ['test:anomaly']
+ image: google/cloud-sdk:latest
+ only:
+  refs:
+   - main
+  changes:
+   - ml/anomaly/**/*
+ script:
+    - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
+    - gcloud auth configure-docker # Configure docker environment
+    - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
+    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$ANOMALY_SERVICE_NAME ml/anomaly/ #Run the gcloud build command to build our image
+    - gcloud run deploy $ANOMALY_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$ANOMALY_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+deploy:assistant:
+ stage: deploy
+ needs: ['test:assistant']
+ image: google/cloud-sdk:latest
+ only:
+  refs:
+   - main
+  changes:
+   - ml/assistant/**/*
+ script:
+    - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
+    - gcloud auth configure-docker # Configure docker environment
+    - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
+    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$ASSISTANT_SERVICE_NAME ml/assistant/ #Run the gcloud build command to build our image
+    - gcloud run deploy $ASSISTANT_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$ASSISTANT_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+deploy:prediction:
+ stage: deploy
+ needs: ['test:prediction']
+ image: google/cloud-sdk:latest
+ only:
+  refs:
+   - main
+  changes:
+   - ml/prediction/**/*
+ script:
+    - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
+    - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
+    - gcloud auth configure-docker # Configure docker environment
+    - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
+    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$PREDICTION_SERVICE_NAME ml/prediction/ #Run the gcloud build command to build our image
+    - gcloud run deploy $PREDICTION_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$PREDICTION_SERVICE_NAME --region=us-central1 --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service

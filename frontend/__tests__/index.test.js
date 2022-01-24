@@ -6,7 +6,7 @@ describe('Home', () => {
     render(<Home />);
 
     const heading = screen.getByRole('heading', {
-      name: 'Welcome to Next.js on Docker!',
+      name: 'Welcome to Next.js on GRIDAI!',
     });
 
     expect(heading).toBeInTheDocument();

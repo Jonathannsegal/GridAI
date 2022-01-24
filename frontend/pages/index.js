@@ -15,7 +15,7 @@ export default function Home() {
           {' '}
           <a href="https://nextjs.org">Next.js</a>
           {' '}
-          on Docker!
+          on GRIDAI!
         </h1>
 
         <p className={styles.description}>
