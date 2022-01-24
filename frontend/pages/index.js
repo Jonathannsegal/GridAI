@@ -19,7 +19,7 @@ export default function Home() {
         </h1>
 
         <p className={styles.description}>
-          Get started by editing test
+          Get started by editing test asd
           {' '}
           <code className={styles.code}>pages/index.js</code>
         </p>
@@ -27,7 +27,7 @@ export default function Home() {
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
             <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
+            <p>Find in-depth information about asdNext.js features and API.</p>
           </a>
 
           <a href="https://nextjs.org/learn" className={styles.card}>
