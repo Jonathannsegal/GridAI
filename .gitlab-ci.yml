@@ -500,6 +500,9 @@ deploy:next:
  environment:
   name: $NEXT_SERVICE
   url: $ENVIRONMENT_URL
+ artifacts:
+  reports:
+   dotenv: deploy.env
 deploy:api:
  stage: deploy
  needs: ['test:api']
@@ -520,6 +523,9 @@ deploy:api:
  environment:
   name: $API_SERVICE
   url: $ENVIRONMENT_URL
+ artifacts:
+  reports:
+   dotenv: deploy.env
 deploy:influx:
  stage: deploy
  needs: ['test:influx']
@@ -540,6 +546,9 @@ deploy:influx:
  environment:
   name: $INFLUX_SERVICE_NAME
   url: $ENVIRONMENT_URL
+ artifacts:
+  reports:
+   dotenv: deploy.env
 deploy:neo4j:
  stage: deploy
  needs: ['test:neo4j']
@@ -560,6 +569,9 @@ deploy:neo4j:
  environment:
   name: $NEO4J_SERVICE_NAME
   url: $ENVIRONMENT_URL
+ artifacts:
+  reports:
+   dotenv: deploy.env
 deploy:anomaly:
  stage: deploy
  needs: ['test:anomaly']
@@ -580,6 +592,9 @@ deploy:anomaly:
  environment:
   name: $ANOMALY_SERVICE_NAME
   url: $ENVIRONMENT_URL
+ artifacts:
+  reports:
+   dotenv: deploy.env
 deploy:assistant:
  stage: deploy
  needs: ['test:assistant']
@@ -600,6 +615,9 @@ deploy:assistant:
  environment:
   name: $ASSISTANT_SERVICE_NAME
   url: $ENVIRONMENT_URL
+ artifacts:
+  reports:
+   dotenv: deploy.env
 deploy:prediction:
  stage: deploy
  needs: ['test:prediction']
@@ -620,3 +638,6 @@ deploy:prediction:
  environment:
   name: $PREDICTION_SERVICE_NAME
   url: $ENVIRONMENT_URL
+ artifacts:
+  reports:
+   dotenv: deploy.env
