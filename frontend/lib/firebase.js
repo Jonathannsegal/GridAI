@@ -12,6 +12,17 @@ const firebaseConfig = {
   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
 };
 
+// this is required to fix same-site cors errors
+const setCookieSameSite = (res, value) => {
+  const cookies = res.getHeader('Set-Cookie');
+  res.setHeader('Set-Cookie', cookies?.map((cookie) => cookie.replace('SameSite=Lax', `SameSite=${value}`)));
+};
+
+export const preview = async (_req, res) => {
+  res.setPreviewData({});
+  setCookieSameSite(res, 'None');
+};
+
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
