@@ -1,6 +1,5 @@
 """Imports"""
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
 import io
@@ -11,8 +10,11 @@ from PIL import Image
 
 from flask import Flask, request, jsonify
 
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+
 
 model = tf.keras.models.load_model("nn.h5")
+
 
 def transform_image(pillow_image):
     "Transform image"
@@ -32,7 +34,9 @@ def predict(x):
     label0 = np.argmax(pred0)
     return label0
 
+
 app = Flask(__name__)
+
 
 # @app.route("/")
 # def hello_world():
@@ -59,6 +63,7 @@ def index():
             return jsonify({"error": str(e)})
 
     return "OK"
+
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
