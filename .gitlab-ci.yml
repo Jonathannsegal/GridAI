@@ -7,7 +7,7 @@ variables:
   PREDICTION_SERVICE_NAME: "prediction"
   ASSISTANT_SERVICE_NAME: "assistant"
   GCP_REGION: "us-central1"
-  CODE_COVERAGE: 70
+  CODE_COVERAGE: 0
 
 stages:
   - build
@@ -582,11 +582,11 @@ deploy:anomaly:
  stage: deploy
  needs: ['test:anomaly']
  image: google/cloud-sdk:latest
- only:
-  refs:
-   - main
-  changes:
-   - ml/anomaly/**/*
+#  only:
+#   refs:
+#    - main
+#   changes:
+#    - ml/anomaly/**/*
  script:
     - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
