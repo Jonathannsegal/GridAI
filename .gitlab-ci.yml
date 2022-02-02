@@ -1,3 +1,6 @@
+include:
+  template: Jobs/Secret-Detection.gitlab-ci.yml
+
 variables:
   NEXT_SERVICE: "next"
   API_SERVICE: "api"
