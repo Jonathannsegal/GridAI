@@ -12,8 +12,14 @@ url = config('DATABASE_URL', default='url')
 graph = Graph(url, auth=(user, password))
 
 
-@app.route("/ping")
+@app.route("/")
 def index():
+    """default"""
+    return "Hello, GridAI Neo4j"
+
+
+@app.route("/ping")
+def ping():
     """Ping"""
     return "pong"
 
