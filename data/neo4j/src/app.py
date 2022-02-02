@@ -1,21 +1,40 @@
+# type: ignore
 """Imports"""
 import os
-
-from flask import Flask
+from py2neo import Graph
+from flask import Flask, request
+from decouple import config
 
 app = Flask(__name__)
+user = config('DATABASE_USERNAME', default='username')
+password = config('DATABASE_PASSWORD', default='password')
+url = config('DATABASE_URL', default='url')
+graph = Graph(url, auth=(user, password))
 
 
-def func(value):
-    """Add 2 to value"""
-    return value + 2
+@app.route("/ping")
+def index():
+    """Ping"""
+    return "pong"
 
 
-@app.route("/")
-def hello_world():
-    """Hello World Endpoint"""
-    name = os.environ.get("NAME", "World")
-    return f"Grid AI: NEO4J, Hello {name}!"
+@app.route('/addNode', methods=['POST'])
+def add_node():
+    """Create node"""
+    name = request.args['name']
+    query = ("CREATE (p1:Node { name: $node_name })")
+    graph.run(query, node_name=name)
+    return f"Created node {name} successfully"
+
+
+@app.route('/getNodes', methods=['GET'])
+def get_nodes():
+    """Get all nodes"""
+    query = ("MATCH (n:Node) RETURN n.name LIMIT 25")
+    result = ""
+    for record in graph.run(query):
+        result += "Node: " + record["n.name"] + "\n"
+    return result
 
 
 if __name__ == "__main__":

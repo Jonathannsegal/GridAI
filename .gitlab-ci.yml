@@ -391,7 +391,7 @@ test:api:
   - python --version
   - pip install -r api/src/requirements.txt
  script:
-  - pytest --cov=api api/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+  - pytest --cov-config=api/.coveragerc --cov=api api/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
  only:
   changes:
    - api/**/*
@@ -407,7 +407,7 @@ test:influx:
   - python --version
   - pip install -r data/influx/src/requirements.txt
  script:
-  - pytest --cov=influx data/influx/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+  - pytest --cov-config=data/influx/.coveragerc --cov=influx data/influx/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
  only:
   changes:
    - data/influx/**/*
@@ -423,7 +423,10 @@ test:neo4j:
   - python --version
   - pip install -r data/neo4j/src/requirements.txt
  script:
-  - pytest --cov=neo4j data/neo4j/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+  - echo "DATABASE_USERNAME"=$NEO4J_DATABASE_USERNAME >> "data/neo4j/.env"
+  - echo "DATABASE_PASSWORD"=$NEO4J_DATABASE_PASSWORD >> "data/neo4j/.env"
+  - echo "DATABASE_URL"=$NEO4J_DATABASE_URL >> "data/neo4j/.env"
+  - pytest --cov-config=data/neo4j/.coveragerc --cov=neo4j data/neo4j/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
  only:
   changes:
    - data/neo4j/**/*
@@ -439,7 +442,7 @@ test:anomaly:
   - python --version
   - pip install -r ml/anomaly/src/requirements.txt
  script:
-  - pytest --cov=anomaly ml/anomaly/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+  - pytest --cov-config=ml/anomaly/.coveragerc --cov=anomaly ml/anomaly/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
  only:
   changes:
    - ml/anomaly/**/*
@@ -455,7 +458,7 @@ test:assistant:
   - python --version
   - pip install -r ml/assistant/src/requirements.txt
  script:
-  - pytest --cov=assistant ml/assistant/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+  - pytest --cov-config=ml/assistant/.coveragerc --cov=assistant ml/assistant/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
  only:
   changes:
    - ml/assistant/**/*
@@ -471,7 +474,7 @@ test:prediction:
   - python --version
   - pip install -r ml/prediction/src/requirements.txt
  script:
-  - pytest --cov=prediction ml/prediction/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE
+  - pytest --cov-config=ml/prediction/.coveragerc --cov=prediction ml/prediction/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
  only:
   changes:
    - ml/prediction/**/*
@@ -565,6 +568,9 @@ deploy:neo4j:
   changes:
    - data/neo4j/**/*
  script:
+    - echo "DATABASE_USERNAME"=$NEO4J_DATABASE_USERNAME >> "data/neo4j/.env"
+    - echo "DATABASE_PASSWORD"=$NEO4J_DATABASE_PASSWORD >> "data/neo4j/.env"
+    - echo "DATABASE_URL"=$NEO4J_DATABASE_URL >> "data/neo4j/.env"
     - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
     - gcloud auth configure-docker # Configure docker environment
