@@ -372,20 +372,22 @@ test:next:
  script:
    - cd frontend/
    - yarn test:ci
- only:
-  changes:
-   - frontend/**/*
  cache:
   paths:
    - frontend/coverage/
+ only:
+  changes:
+   - frontend/**/*
  artifacts:
+  expire_in: 1 days
   paths:
    - frontend/coverage/
   when: always
   reports:
    junit:
     - frontend/junit.xml
-   cobertura: frontend/coverage/cobertura-coverage.xml
+   cobertura:
+    - frontend/coverage/cobertura-coverage.xml
 test:api:
  stage: test
  needs: []
@@ -394,14 +396,20 @@ test:api:
   - python --version
   - pip install -r api/src/requirements.txt
  script:
+  - coverage run -m pytest --cov-config=api/.coveragerc api/
+  - coverage report
+  - coverage xml
   - pytest --cov-config=api/.coveragerc --cov=api api/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
+ coverage: '/TOTAL.*\s+(\d+\%)/'
  only:
   changes:
    - api/**/*
  artifacts:
+  expire_in: 1 days
   when: always
   reports:
    junit: report.xml
+   cobertura: coverage.xml
 test:influx:
  stage: test
  needs: []
@@ -410,14 +418,20 @@ test:influx:
   - python --version
   - pip install -r data/influx/src/requirements.txt
  script:
+  - coverage run -m pytest --cov-config=data/influx/.coveragerc data/influx/
+  - coverage report
+  - coverage xml
   - pytest --cov-config=data/influx/.coveragerc --cov=influx data/influx/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
+ coverage: '/TOTAL.*\s+(\d+\%)/'
  only:
   changes:
    - data/influx/**/*
  artifacts:
+  expire_in: 1 days
   when: always
   reports:
    junit: report.xml
+   cobertura: coverage.xml
 test:neo4j:
  stage: test
  needs: []
@@ -429,14 +443,20 @@ test:neo4j:
   - echo "DATABASE_USERNAME"=$NEO4J_DATABASE_USERNAME >> "data/neo4j/.env"
   - echo "DATABASE_PASSWORD"=$NEO4J_DATABASE_PASSWORD >> "data/neo4j/.env"
   - echo "DATABASE_URL"=$NEO4J_DATABASE_URL >> "data/neo4j/.env"
+  - coverage run -m pytest --cov-config=data/neo4j/.coveragerc data/neo4j/
+  - coverage report
+  - coverage xml
   - pytest --cov-config=data/neo4j/.coveragerc --cov=neo4j data/neo4j/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
+ coverage: '/TOTAL.*\s+(\d+\%)/'
  only:
   changes:
    - data/neo4j/**/*
  artifacts:
+  expire_in: 1 days
   when: always
   reports:
    junit: report.xml
+   cobertura: coverage.xml
 test:anomaly:
  stage: test
  needs: []
@@ -445,14 +465,20 @@ test:anomaly:
   - python --version
   - pip install -r ml/anomaly/src/requirements.txt
  script:
+  - coverage run -m pytest --cov-config=ml/anomaly/.coveragerc ml/anomaly/
+  - coverage report
+  - coverage xml
   - pytest --cov-config=ml/anomaly/.coveragerc --cov=anomaly ml/anomaly/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
+ coverage: '/TOTAL.*\s+(\d+\%)/'
  only:
   changes:
    - ml/anomaly/**/*
  artifacts:
+  expire_in: 1 days
   when: always
   reports:
    junit: report.xml
+   cobertura: coverage.xml
 test:assistant:
  stage: test
  needs: []
@@ -461,14 +487,20 @@ test:assistant:
   - python --version
   - pip install -r ml/assistant/src/requirements.txt
  script:
+  - coverage run -m pytest --cov-config=ml/assistant/.coveragerc ml/assistant/
+  - coverage report
+  - coverage xml
   - pytest --cov-config=ml/assistant/.coveragerc --cov=assistant ml/assistant/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
+ coverage: '/TOTAL.*\s+(\d+\%)/'
  only:
   changes:
    - ml/assistant/**/*
  artifacts:
+  expire_in: 1 days
   when: always
   reports:
    junit: report.xml
+   cobertura: coverage.xml
 test:prediction:
  stage: test
  needs: []
@@ -477,14 +509,20 @@ test:prediction:
   - python --version
   - pip install -r ml/prediction/src/requirements.txt
  script:
+  - coverage run -m pytest --cov-config=ml/prediction/.coveragerc ml/prediction/
+  - coverage report
+  - coverage xml
   - pytest --cov-config=ml/prediction/.coveragerc --cov=prediction ml/prediction/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
+ coverage: '/TOTAL.*\s+(\d+\%)/'
  only:
   changes:
    - ml/prediction/**/*
  artifacts:
+  expire_in: 1 days
   when: always
   reports:
    junit: report.xml
+   cobertura: coverage.xml
 
 deploy:next:
  stage: deploy
@@ -513,6 +551,7 @@ deploy:next:
   name: $NEXT_SERVICE
   url: $ENVIRONMENT_URL
  artifacts:
+  expire_in: 1 days
   reports:
    dotenv: deploy.env
 deploy:api:
@@ -536,6 +575,7 @@ deploy:api:
   name: $API_SERVICE
   url: $ENVIRONMENT_URL
  artifacts:
+  expire_in: 1 days
   reports:
    dotenv: deploy.env
 deploy:influx:
@@ -559,6 +599,7 @@ deploy:influx:
   name: $INFLUX_SERVICE_NAME
   url: $ENVIRONMENT_URL
  artifacts:
+  expire_in: 1 days
   reports:
    dotenv: deploy.env
 deploy:neo4j:
@@ -582,6 +623,7 @@ deploy:neo4j:
   name: $NEO4J_SERVICE_NAME
   url: $ENVIRONMENT_URL
  artifacts:
+  expire_in: 1 days
   reports:
    dotenv: deploy.env
 deploy:anomaly:
@@ -605,6 +647,7 @@ deploy:anomaly:
   name: $ANOMALY_SERVICE_NAME
   url: $ENVIRONMENT_URL
  artifacts:
+  expire_in: 1 days
   reports:
    dotenv: deploy.env
 deploy:assistant:
@@ -628,6 +671,7 @@ deploy:assistant:
   name: $ASSISTANT_SERVICE_NAME
   url: $ENVIRONMENT_URL
  artifacts:
+  expire_in: 1 days
   reports:
    dotenv: deploy.env
 deploy:prediction:
@@ -651,5 +695,6 @@ deploy:prediction:
   name: $PREDICTION_SERVICE_NAME
   url: $ENVIRONMENT_URL
  artifacts:
+  expire_in: 1 days
   reports:
    dotenv: deploy.env
