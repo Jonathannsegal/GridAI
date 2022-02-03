@@ -571,15 +571,12 @@ deploy:neo4j:
   changes:
    - data/neo4j/**/*
  script:
-    - echo "DATABASE_USERNAME"=$NEO4J_DATABASE_USERNAME >> "data/neo4j/.env"
-    - echo "DATABASE_PASSWORD"=$NEO4J_DATABASE_PASSWORD >> "data/neo4j/.env"
-    - echo "DATABASE_URL"=$NEO4J_DATABASE_URL >> "data/neo4j/.env"
     - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
     - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME data/neo4j/ #Run the gcloud build command to build our image
-    - gcloud run deploy $NEO4J_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME --region=$GCP_REGION --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - gcloud run deploy $NEO4J_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$NEO4J_SERVICE_NAME --region=$GCP_REGION --platform managed --allow-unauthenticated --update-env-vars DATABASE_USERNAME=$NEO4J_DATABASE_USERNAME,DATABASE_PASSWORD=$NEO4J_DATABASE_PASSWORD,DATABASE_URL=$NEO4J_DATABASE_URL # Run the gcloud run deploy command to deploy our new service
     - echo "ENVIRONMENT_URL=$(gcloud run services list --platform managed --region $GCP_REGION | grep $NEO4J_SERVICE_NAME | awk '{print $4}')" >> deploy.env
  environment:
   name: $NEO4J_SERVICE_NAME

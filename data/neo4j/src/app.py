@@ -14,7 +14,7 @@ graph = Graph(url, auth=(user, password))
 
 @app.route("/")
 def index():
-    """default"""
+    """Root Directory"""
     return "Hello, GridAI Neo4j"
 
 
