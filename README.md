@@ -1,5 +1,8 @@
 # TODO
 
+[![pipeline status](https://git.ece.iastate.edu/sd/sdmay22-35/badges/main/pipeline.svg)](https://git.ece.iastate.edu/sd/sdmay22-35/-/commits/main)
+[![coverage report](https://git.ece.iastate.edu/sd/sdmay22-35/badges/main/coverage.svg)](https://git.ece.iastate.edu/sd/sdmay22-35/-/commits/main)
+
 GridAI
 # Git commands:
 - To clone: 

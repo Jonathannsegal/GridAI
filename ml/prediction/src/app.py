@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 
 def func(value):
-    """Add 2 to value"""
+    """Add 2 to value """
     return value + 2
 
 
