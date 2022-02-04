@@ -1,3 +1,4 @@
+"""Imports"""
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
@@ -6,6 +7,8 @@ from tensorflow import keras
 import numpy as np
 
 
+dir_name = os.path.dirname(__file__)
+model_path = os.path.join(dir_name, "nn.h5")
 model = keras.models.load_model("../nn.h5")
 
 # load the image

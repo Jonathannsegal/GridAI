@@ -23,6 +23,9 @@ neo4j_driver=GraphDatabase.driver(uri="neo4j://neo4j:7687",auth=("neo4j","test")
 neo4j_session_update=neo4j_driver.session()
 neo4j_session_query=neo4j_driver.session()
 
+app = Flask(__name__)
+
+
 # Return anomaly classification of only Single Phase transformers. Returns string ('failure','normal','spike') and confidence percentage.
 @app.route("/singlePhaseAnom",methods=["GET","POST"])
 def return_singlePhaseAnom():
@@ -258,10 +261,6 @@ def return_allAnom():
         busPreds.append(i['n.BusID'] + ': ' + anomType + ': ' + str(max_val))
         j+=1
     return {'predictions': busPreds}
-
-
-app = Flask(__name__)
-
 
 
 @app.route("/", methods=["GET", "POST"])
