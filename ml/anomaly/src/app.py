@@ -3,6 +3,7 @@ import os
 
 
 import io
+from posixpath import dirname
 import tensorflow as tf
 import numpy as np
 from PIL import Image
@@ -10,29 +11,31 @@ from PIL import Image
 
 from flask import Flask, request, jsonify
 
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
+# os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
-model = tf.keras.models.load_model("nn.h5")
+# dir_name = os.path.dirname(__file__)
+# model_path = os.path.join(dir_name, "nn.h5")
+# model = tf.keras.models.load_model(model_path)
 
 
-def transform_image(pillow_image):
-    "Transform image"
-    data = np.asarray(pillow_image)
-    data = data / 255.0
-    data = data[np.newaxis, ..., np.newaxis]
-    # --> [1, x, y, 1]
-    data = tf.image.resize(data, [28, 28])
-    return data
+# def transform_image(pillow_image):
+#     "Transform image"
+#     data = np.asarray(pillow_image)
+#     data = data / 255.0
+#     data = data[np.newaxis, ..., np.newaxis]
+#     # --> [1, x, y, 1]
+#     data = tf.image.resize(data, [28, 28])
+#     return data
 
 
-def predict(x):
-    """Predict"""
-    predictions = model(x)
-    predictions = tf.nn.softmax(predictions)
-    pred0 = predictions[0]
-    label0 = np.argmax(pred0)
-    return label0
+# def predict(x):
+#     """Predict"""
+#     predictions = model(x)
+#     predictions = tf.nn.softmax(predictions)
+#     pred0 = predictions[0]
+#     label0 = np.argmax(pred0)
+#     return label0
 
 
 app = Flask(__name__)
@@ -53,11 +56,13 @@ def index():
             return jsonify({"error": "no file"})
 
         try:
-            image_bytes = file.read()
-            pillow_img = Image.open(io.BytesIO(image_bytes)).convert('L')
-            tensor = transform_image(pillow_img)
-            prediction = predict(tensor)
-            data = {"prediction": int(prediction)}
+            # image_bytes = file.read()
+            # pillow_img = Image.open(io.BytesIO(image_bytes)).convert('L')
+            # tensor = transform_image(pillow_img)
+            # prediction = predict(tensor)
+            # data = {"prediction": int(prediction)}
+            model = tf.keras.model.Sequential()
+            data = {"NEVER GONNA GIVE YOU UP. NEVER GONNA LET YOU DOWN. NEVER GONNA RUN AROUND AND DESERT YOU."}
             return jsonify(data)
         except Exception as e:
             return jsonify({"error": str(e)})

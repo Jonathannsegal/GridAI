@@ -1,7 +1,8 @@
 import os
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 from tensorflow import keras
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 
 mnist = keras.datasets.mnist
