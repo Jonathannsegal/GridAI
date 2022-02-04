@@ -10,4 +10,4 @@ gunicorn==20.1.0
 tensorflow==2.8
 numpy==1.22
 requests
-pillow
+neo4j
