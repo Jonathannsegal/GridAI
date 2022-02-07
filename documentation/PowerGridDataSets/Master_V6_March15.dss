@@ -1,0 +1,76 @@
+!Master File for case CLW13_Jan2021_V5_March15CaseDay
+!Developed by: Karen Montano - Sushrut Thakar
+!Arizona State University
+
+Clear
+Set Datapath = "\\Mac\AllFiles\Volumes\GoogleDrive\My Drive\ASU-PhD\Research\Project ARPA_E\APS Data 2019\Databases and txt files\CLW13 Data\1ReactivePowerOptimization\Pyomo\CLW13_March15_v6"
+
+!Do not edit the sources
+New Circuit.CLW13_source_a bus1=HEADNODE_FCB534.1 phases=1 BasekV=7.199557857  pu=1 angle=-2.9999777385695796 r1=0.0263746666666667 r0=0.0263746666666667 x1=0.554283000000000 x0=0.554283000000000
+New Vsource.CLW13_source_b bus1=HEADNODE_FCB534.2 phases=1 basekv=7.199557857 pu=1 angle=-122.9999979230008 r1=0.0263746666666667 r0=0.0263746666666667 x1=0.554283000000000 x0=0.554283000000000
+New Vsource.CLW13_source_c bus1=HEADNODE_FCB534.3 phases=1 basekv=7.199557857 pu=1 angle=122.9999983415835 r1=0.0263746666666667 r0=0.0263746666666667 x1=0.554283000000000 x0=0.554283000000000
+
+!This Contains the magnitude per phase per hour(from PYOMO)
+Redirect Vshape_PYOMO15March.dss
+Edit vsource.source daily=Va
+Edit vsource.CLW13_source_b daily=Vb
+Edit vsource.CLW13_source_c daily=Vc
+!Line Information
+Redirect linespacing.dss
+Redirect wiredata.dss
+Redirect linegeometryover.dss
+Redirect linecodes.dss
+Redirect protection.dss
+Redirect linesover.dss
+Redirect linesunder.dss
+Redirect switchcontrol.dss
+!Transformers
+Redirect transformerscodes.dss
+Redirect transformers.dss
+!Capacitor (states=0 (OFF) - states=1 (ON))
+Redirect capacitors.dss
+!PV
+Redirect PV_Profile_03155_updated.dss
+Redirect PVs_July15_basecase_15March.dss
+!PYOMO output
+Redirect Load_profile_PYOMO_March15.dss
+Redirect Loads_PYOMO.dss
+
+set Voltagebases = [12.470000,0.48,0.4156921938165305,0.208000]
+CalcVoltagebases
+Buscoords buscoords.dss
+
+!Measurements at the Head of the Feeder
+New Energymeter.CW13 Element= Line.8638910 Terminal=1 option=(r,e,v)
+New Monitor.FeederHead Line.8638910 terminal=1 mode=0
+! Measurement at capacitor bank (ON)
+New Monitor.Capacitor4 Capacitor.CS659779 terminal=1 mode=1 ppolar=no
+! Measurement at each voltage meter
+!Redirect MonitorDefinitions.dss
+
+! Power flow mode, mode=daily considers the time series values (mode=snapshot is not correct)
+set mode = daily
+
+!Solution
+!solve !solve for 24 hours
+!solve number=10  !number correspond to an especific hour snapshot (1-24)
+
+! Export of measurements
+Export Monitor FeederHead
+!Export Monitor Capacitor4
+!Redirect MonitorExport.dss
+
+
+
+!Set casename=March15_V6
+!Set tracecontrol = yes
+!set overloadreport=true
+!set voltexceptionreport=true
+!set DIVerbose=true
+!set demand=true
+!solve
+!CloseDI
+
+solve number=14
+export elempowers
+export profile phases = all
