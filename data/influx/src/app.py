@@ -1,21 +1,57 @@
+# type: ignore
 """Imports"""
 import os
 
-from flask import Flask
+import influxdb_client
+from influxdb_client.client.write_api import SYNCHRONOUS
+from flask import Flask, request, jsonify
+from decouple import config
 
 app = Flask(__name__)
 
+# You can generate a Token from the "Tokens Tab" in the UI
+token = config('DATABASE_TOKEN', default='token')
+org = config('DATABASE_ORG', default='org')
+bucket = config('DATABASE_BUCKET', default='bucket')
+url = config('DATABASE_URL', default='url')
 
-def func(value):
-    """Add 2 to value """
-    return value + 2
+client = influxdb_client.InfluxDBClient(
+    url=url,
+    token=token,
+    org=org
+)
 
 
 @app.route("/")
-def hello_world():
-    """Hello World Endpoint"""
-    name = os.environ.get("NAME", "World")
-    return f"Grid AI: INFLUX, Hello {name}!"
+def index():
+    """Root Directory"""
+    return "Hello, GridAI Influx"
+
+
+@app.route('/writeInflux', methods=['POST'])
+def write_influx():
+    """write to bucket"""
+    bus_name = request.args["bus"]
+    voltage = request.args["voltage"]
+    write_api = client.write_api(write_options=SYNCHRONOUS)
+    point = influxdb_client.Point(bus_name).field("voltage", voltage)
+    write_api.write(bucket=bucket, org=org, record=point)
+    return f"Created bus {bus_name}, voltage {voltage} successfully"
+
+
+@app.route('/readInflux', methods=['GET'])
+def read_influx():
+    """read from bucket"""
+    query_api = client.query_api()
+    query = """ from(bucket:"gherring's Bucket")\
+    |> range(start: -7d)\
+    |> filter(fn:(r) => r._field == "voltage" )"""
+    result = query_api.query(org=org, query=query)
+    results = []
+    for table in result:
+        for record in table.records:
+            results.append((record.get_time(), record.get_measurement(), record.get_value()))
+    return jsonify(results)
 
 
 if __name__ == "__main__":

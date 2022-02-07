@@ -27,3 +27,5 @@ htmlcov/
 
 # mypy files
 .mypy_cache/
+
+.env
