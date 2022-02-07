@@ -2,12 +2,12 @@ include:
   template: Jobs/Secret-Detection.gitlab-ci.yml
 
 variables:
-  NEXT_SERVICE: "next"
+  NEXT_SERVICE: "frontend:next"
   API_SERVICE: "api"
-  INFLUX_SERVICE_NAME: "influx"
-  NEO4J_SERVICE_NAME: "neo4j"
-  ANOMALY_SERVICE_NAME: "anomaly"
-  PREDICTION_SERVICE_NAME: "prediction"
+  INFLUX_SERVICE_NAME: "data:influx"
+  NEO4J_SERVICE_NAME: "data:neo4j"
+  ANOMALY_SERVICE_NAME: "ml:anomaly"
+  PREDICTION_SERVICE_NAME: "ml:prediction"
   ASSISTANT_SERVICE_NAME: "assistant"
   GCP_REGION: "us-central1"
   CODE_COVERAGE: 70
@@ -93,12 +93,12 @@ mypy:assistant:
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/assistant/src/requirements.txt
+  - pip install -r assistant/src/requirements.txt
  script:
-  - python -m mypy ml/assistant/src/app.py
+  - python -m mypy assistant/src/app.py
  only:
   changes:
-   - ml/assistant/**/*
+   - assistant/**/*
 mypy:prediction:
  stage: analysis
  needs: []
@@ -166,12 +166,12 @@ flake8:assistant:
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/assistant/src/requirements.txt
+  - pip install -r assistant/src/requirements.txt
  script:
-  - flake8 --max-line-length=120 --max-complexity 8 ml/assistant/src/*.py
+  - flake8 --max-line-length=120 --max-complexity 8 assistant/src/*.py
  only:
   changes:
-   - ml/assistant/**/*
+   - assistant/**/*
 flake8:prediction:
  stage: analysis
  needs: []
@@ -257,12 +257,12 @@ pylint:assistant:
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/assistant/src/requirements.txt
+  - pip install -r assistant/src/requirements.txt
  script:
-  - pylint -d C0301 -d R0902 ml/assistant/src/*.py
+  - pylint -d C0301 -d R0902 assistant/src/*.py
  only:
   changes:
-   - ml/assistant/**/*
+   - assistant/**/*
 pylint:prediction:
  stage: lint
  needs: []
@@ -330,12 +330,12 @@ isort:assistant:
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/assistant/src/requirements.txt
+  - pip install -r assistant/src/requirements.txt
  script:
-  - isort ml/assistant/src/*.py
+  - isort assistant/src/*.py
  only:
   changes:
-   - ml/assistant/**/*
+   - assistant/**/*
 isort:prediction:
  stage: lint
  needs: []
@@ -485,16 +485,16 @@ test:assistant:
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r ml/assistant/src/requirements.txt
+  - pip install -r assistant/src/requirements.txt
  script:
-  - coverage run -m pytest --cov-config=ml/assistant/.coveragerc ml/assistant/
+  - coverage run -m pytest --cov-config=assistant/.coveragerc assistant/
   - coverage report
   - coverage xml
-  - pytest --cov-config=ml/assistant/.coveragerc --cov=assistant ml/assistant/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
+  - pytest --cov-config=assistant/.coveragerc --cov=assistant assistant/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
  coverage: '/TOTAL.*\s+(\d+\%)/'
  only:
   changes:
-   - ml/assistant/**/*
+   - assistant/**/*
  artifacts:
   expire_in: 1 days
   when: always
@@ -658,13 +658,13 @@ deploy:assistant:
   refs:
    - main
   changes:
-   - ml/assistant/**/*
+   - assistant/**/*
  script:
     - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
-    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$ASSISTANT_SERVICE_NAME ml/assistant/ #Run the gcloud build command to build our image
+    - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$ASSISTANT_SERVICE_NAME assistant/ #Run the gcloud build command to build our image
     - gcloud run deploy $ASSISTANT_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$ASSISTANT_SERVICE_NAME --region=$GCP_REGION --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
     - echo "ENVIRONMENT_URL=$(gcloud run services list --platform managed --region $GCP_REGION | grep $ASSISTANT_SERVICE_NAME | awk '{print $4}')" >> deploy.env
  environment:
