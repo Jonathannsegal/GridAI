@@ -593,7 +593,7 @@ deploy:influx:
     - gcloud auth configure-docker # Configure docker environment
     - gcloud config set project $GCP_PROJECT_ID #Set the GCP Project ID to the variable name
     - gcloud builds submit --tag gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME data/influx/ #Run the gcloud build command to build our image
-    - gcloud run deploy $INFLUX_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME --region=$GCP_REGION --platform managed --allow-unauthenticated # Run the gcloud run deploy command to deploy our new service
+    - gcloud run deploy $INFLUX_SERVICE_NAME --image gcr.io/$GCP_PROJECT_ID/$INFLUX_SERVICE_NAME --region=$GCP_REGION --platform managed --allow-unauthenticated --set-env-vars DATABASE_TOKEN=$INFLUX_DATABASE_TOKEN,DATABASE_ORG=$INFLUX_DATABSE_ORG,DATABASE_URL=$INFLUX_DATABASE_URL,DATABASE_BUCKET=$INFLUX_DATABASE_BUCKET # Run the gcloud run deploy command to deploy our new service
     - echo "ENVIRONMENT_URL=$(gcloud run services list --platform managed --region $GCP_REGION | grep $INFLUX_SERVICE_NAME | awk '{print $4}')" >> deploy.env
  environment:
   name: $INFLUX_SERVICE_NAME
