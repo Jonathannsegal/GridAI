@@ -43,7 +43,7 @@ def write_influx():
 def read_influx():
     """read from bucket"""
     query_api = client.query_api()
-    query = """ from(bucket:"gherring's Bucket")\
+    query = f""" from(bucket:${bucket}")\
     |> range(start: -7d)\
     |> filter(fn:(r) => r._field == "voltage" )"""
     result = query_api.query(org=org, query=query)
