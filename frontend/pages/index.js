@@ -7,7 +7,7 @@ export default function Home(props) {
       {/* <Metatags title="Dashboard" description="GridAI" /> */}
 
       <div className="card card-info">
-        <h2>Grid AI!</h2>
+        <h2>Grid AI</h2>
         <p>GridAI Cloud-based Machine Deep Learning for Power Grid Data Analytic tes</p>
       </div>
 
