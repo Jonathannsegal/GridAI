@@ -2,12 +2,12 @@ include:
   template: Jobs/Secret-Detection.gitlab-ci.yml
 
 variables:
-  NEXT_SERVICE: "frontend:next"
+  NEXT_SERVICE: "frontend-next"
   API_SERVICE: "api"
-  INFLUX_SERVICE_NAME: "data:influx"
-  NEO4J_SERVICE_NAME: "data:neo4j"
-  ANOMALY_SERVICE_NAME: "ml:anomaly"
-  PREDICTION_SERVICE_NAME: "ml:prediction"
+  INFLUX_SERVICE_NAME: "data-influx"
+  NEO4J_SERVICE_NAME: "data-neo4j"
+  ANOMALY_SERVICE_NAME: "ml-anomaly"
+  PREDICTION_SERVICE_NAME: "ml-prediction"
   ASSISTANT_SERVICE_NAME: "assistant"
   GCP_REGION: "us-central1"
   CODE_COVERAGE: 70
