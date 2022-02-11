@@ -20,7 +20,7 @@ def index():
 
 @app.route("/ping")
 def ping():
-    """Ping"""
+    """Ping the server"""
     return "pong"
 
 
