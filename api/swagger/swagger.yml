@@ -1,0 +1,23 @@
+consumes:
+- application/example.com/m/v2.v1+json
+info:
+  description: Grid AI API Gateway
+  title: Grid AI API Gateway
+  version: 1.0.0
+paths:
+  /health-check:
+    get:
+      produces:
+        - text/plain
+      operationId: healthCheck
+      responses:
+        200:
+          description: returns a status of microservices
+          schema:
+              type: string
+              description: contains the status of each microservice
+produces:
+- application/examples.com/m/v2.v1+json
+schemes:
+- http
+swagger: "2.0"
