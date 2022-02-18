@@ -39,18 +39,18 @@ build:next:
   paths:
    - frontend/node_modules/
 
-mypy:api:
- stage: analysis
- needs: []
- image: 'python:3.9'
- before_script:
-  - python --version
-  - pip install -r api/src/requirements.txt
- script:
-  - python -m mypy api/src/app.py
- only:
-  changes:
-   - api/**/*
+# mypy:api:
+#  stage: analysis
+#  needs: []
+#  image: 'python:3.9'
+#  before_script:
+#   - python --version
+#   - pip install -r api/src/requirements.txt
+#  script:
+#   - python -m mypy api/src/app.py
+#  only:
+#   changes:
+#    - api/**/*
 mypy:influx:
  stage: analysis
  needs: []
@@ -112,18 +112,18 @@ mypy:prediction:
   changes:
    - ml/prediction/**/*
 
-flake8:api:
- stage: analysis
- needs: []
- image: 'python:3.9'
- before_script:
-  - python --version
-  - pip install -r api/src/requirements.txt
- script:
-  - flake8 --max-line-length=120 --max-complexity 8 api/src/*.py
- only:
-  changes:
-   - api/**/*
+# flake8:api:
+#  stage: analysis
+#  needs: []
+#  image: 'python:3.9'
+#  before_script:
+#   - python --version
+#   - pip install -r api/src/requirements.txt
+#  script:
+#   - flake8 --max-line-length=120 --max-complexity 8 api/src/*.py
+#  only:
+#   changes:
+#    - api/**/*
 flake8:influx:
  stage: analysis
  needs: []
@@ -203,18 +203,18 @@ eslint:next:
  only:
   changes:
    - frontend/**/*
-pylint:api:
- stage: lint
- needs: []
- image: 'python:3.9'
- before_script:
-  - python --version
-  - pip install -r api/src/requirements.txt
- script:
-  - pylint -d C0301 -d R0902 api/src/*.py
- only:
-  changes:
-   - api/**/*
+# pylint:api:
+#  stage: lint
+#  needs: []
+#  image: 'python:3.9'
+#  before_script:
+#   - python --version
+#   - pip install -r api/src/requirements.txt
+#  script:
+#   - pylint -d C0301 -d R0902 api/src/*.py
+#  only:
+#   changes:
+#    - api/**/*
 pylint:influx:
  stage: lint
  needs: []
@@ -276,18 +276,18 @@ pylint:prediction:
   changes:
    - ml/prediction/**/*
 
-isort:api:
- stage: lint
- needs: []
- image: 'python:3.9'
- before_script:
-  - python --version
-  - pip install -r api/src/requirements.txt
- script:
-  - isort api/src/*.py
- only:
-  changes:
-   - api/**/*
+# isort:api:
+#  stage: lint
+#  needs: []
+#  image: 'python:3.9'
+#  before_script:
+#   - python --version
+#   - pip install -r api/src/requirements.txt
+#  script:
+#   - isort api/src/*.py
+#  only:
+#   changes:
+#    - api/**/*
 isort:influx:
  stage: lint
  needs: []
@@ -355,12 +355,11 @@ safety:
  image: 'python:3.9'
  before_script:
   - python --version
-  - pip install -r api/src/requirements.txt
+  - pip install -r data/influx/src/requirements.txt
  script:
   - safety check
  only:
   changes:
-   - api/**/*
    - data/**/*
    - ml/**/*
 
@@ -388,28 +387,28 @@ test:next:
     - frontend/junit.xml
    cobertura:
     - frontend/coverage/cobertura-coverage.xml
-test:api:
- stage: test
- needs: []
- image: 'python:3.9'
- before_script:
-  - python --version
-  - pip install -r api/src/requirements.txt
- script:
-  - coverage run -m pytest --cov-config=api/.coveragerc api/
-  - coverage report
-  - coverage xml
-  - pytest --cov-config=api/.coveragerc --cov=api api/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
- coverage: '/TOTAL.*\s+(\d+\%)/'
- only:
-  changes:
-   - api/**/*
- artifacts:
-  expire_in: 1 days
-  when: always
-  reports:
-   junit: report.xml
-   cobertura: coverage.xml
+# test:api:
+#  stage: test
+#  needs: []
+#  image: 'python:3.9'
+#  before_script:
+#   - python --version
+#   - pip install -r api/src/requirements.txt
+#  script:
+#   - coverage run -m pytest --cov-config=api/.coveragerc api/
+#   - coverage report
+#   - coverage xml
+#   - pytest --cov-config=api/.coveragerc --cov=api api/ --junitxml=report.xml --cov-fail-under=$CODE_COVERAGE --cov-report term-missing
+#  coverage: '/TOTAL.*\s+(\d+\%)/'
+#  only:
+#   changes:
+#    - api/**/*
+#  artifacts:
+#   expire_in: 1 days
+#   when: always
+#   reports:
+#    junit: report.xml
+#    cobertura: coverage.xml
 test:influx:
  stage: test
  needs: []
@@ -556,7 +555,7 @@ deploy:next:
    dotenv: deploy.env
 deploy:api:
  stage: deploy
- needs: ['test:api']
+#  needs: ['test:api']
  image: google/cloud-sdk:latest
  only:
   refs:

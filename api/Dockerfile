@@ -1,22 +1,20 @@
-# https://hub.docker.com/_/python
-FROM python:3.10-slim
-# Allow statements and log messages to immediately appear in the Knative logs
-ENV PYTHONUNBUFFERED True
-# Copy local code to the container image.
-ENV APP_HOME /app
-WORKDIR $APP_HOME
-COPY src/requirements.txt ./
-
-# Service must listen to $PORT environment variable.
-ENV PORT 8080
-# Install production dependencies.
-RUN pip install --no-cache-dir -r requirements.txt
-
-# Bundle app source
-COPY src /app
-
-# Run the web service on container startup. Here we use the gunicorn
-# webserver, with one worker process and 8 threads.
-# For environments with multiple CPU cores, increase the number of workers
-# to be equal to the cores available.
-CMD exec gunicorn --bind :$PORT --workers 1 --threads 8 --timeout 0 app:app
+## We specify the base image we need for our
+## go application
+FROM golang:alpine
+## We create an /app directory within our
+## image that will hold our application source
+## files
+RUN mkdir /app
+## We copy everything in the root directory
+## into our /app directory
+ADD . /app
+## We specify that we now wish to execute
+## any further commands inside our /app
+## directory
+WORKDIR /app
+## we run go build to compile the binary
+## executable of our Go program
+RUN go build -o main .
+## Our start command which kicks off
+## our newly created binary executable
+CMD ["/app/main"]
