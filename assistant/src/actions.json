@@ -1,0 +1,276 @@
+{
+    "manifest": {
+        "displayName": "Dialog Management",
+        "invocationName": "Dialog Management",
+        "category": "PRODUCTIVITY"
+    },
+    "actions": [
+        {
+            "name": "com.assistant.actions.VoltagePeakSpecific",
+            "availability": {
+                "deviceClasses": [
+                    {
+                        "assistantSdkDevice": {}
+                    }
+                ]
+            },
+            "intent": {
+                "name": "com.assistant.actions.VoltagePeakSpecific",
+                "parameters": [
+                    {
+                        "name": "feeder_num",
+                        "type": "Integer"
+                    },
+                    {
+                        "name": "request",
+                        "type": "Request"
+                    }
+                ],
+                "trigger": {
+                    "queryPatterns": [
+                        "($Request:request)? voltage peak feeder $Integer:feeder_num",
+                        "Feeder $Integer:feeder_num ($Request:request)? voltage peak"
+                    ]
+                }
+            },
+            "fulfillment": {
+                "staticFulfillment": {
+                    "templatedResponse": {
+                        "items": [
+                            {
+                                "simpleResponse": {
+                                    "textToSpeech": "Voltage peak for Feeder $feeder_num"
+                                }
+                            },
+                            {
+                                "deviceExecution": {
+                                    "command": "com.assistant.commands.VoltagePeakSpecific",
+                                    "params": {
+                                        "feeder_num": "$feeder_num"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+
+        {
+            "name": "com.assistant.actions.VoltageComparisonSpecific",
+            "availability": {
+                "deviceClasses": [
+                    {
+                        "assistantSdkDevice": {}
+                    }
+                ]
+            },
+            "intent": {
+                "name": "com.assistant.actions.VoltageComparisonSpecific",
+                "parameters": [
+                    {
+                        "name": "feeder_num",
+                        "type": "Integer"
+                    },
+                    {
+                        "name": "request",
+                        "type": "Request"
+                    },
+                    {
+                        "name": "voltage",
+                        "type": "Voltage"
+                    },
+                    {
+                        "name": "comparison",
+                        "type": "Comparison"
+                    }
+                ],
+                "trigger": {
+                    "queryPatterns": [
+                        "($Request:request)? voltages $Comparison:comparison $Voltage:voltage feeder $Integer:feeder_num"
+                    ]
+                }
+            },
+            "fulfillment": {
+                "staticFulfillment": {
+                    "templatedResponse": {
+                        "items": [
+                            {
+                                "simpleResponse": {
+                                    "textToSpeech": "Showing voltages $comparison $voltage for Feeder $feeder_num"
+                                }
+                            },
+                            {
+                                "deviceExecution": {
+                                    "command": "com.assistant.commands.VoltageComparisonSpecific",
+                                    "params": {
+                                        "feeder_num": "$feeder_num",
+                                        "comparison": "$comparison",
+                                        "voltage": "$voltage"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+
+        {
+            "name": "com.assistant.actions.NumberOf",
+            "availability": {
+                "deviceClasses": [
+                    {
+                        "assistantSdkDevice": {}
+                    }
+                ]
+            },
+            "intent": {
+                "name": "com.assistant.actions.NumberOf",
+                "parameters": [
+                    {
+                        "name": "request_count",
+                        "type": "Request_count"
+                    },
+                    {
+                        "name": "object_type",
+                        "type": "Objects"
+                    }
+                ],
+                "trigger": {
+                    "queryPatterns": [
+                        "($Request_count:request_count)? $Objects:object_type"
+                    ]
+                }
+            },
+            "fulfillment": {
+                "staticFulfillment": {
+                    "templatedResponse": {
+                        "items": [
+                            {
+                                "simpleResponse": {
+                                    "textToSpeech": "There are X $object_type in the system."
+                                }
+                            },
+                            {
+                                "deviceExecution": {
+                                    "command": "com.assistant.commands.NumberOf",
+                                    "params": {
+                                        "object_type": "$object_type"
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ],
+    "types": [
+        {
+            "name": "$Comparison",
+            "entities": [
+                {
+                    "key": "GREATER",
+                    "synonyms": [
+                        "greater than",
+                        "great than",
+                        "more than"
+                    ]
+                },
+                {
+                    "key": "LESS",
+                    "synonyms": [
+                        "less than",
+                        "lesser than",
+                        "more than"
+                    ]
+                },
+                {
+                    "key": "EQUAL",
+                    "synonyms": [
+                        "equal to",
+                        "equaling",
+                        "equals",
+                        "equal"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "$Objects",
+            "entities": [
+                {
+                    "key": "DER",
+                    "synonyms": [
+                        "DERs",
+                        "DER"
+                    ]
+                },
+                {
+                    "key": "TRANSFORMER",
+                    "synonyms": [
+                        "Transformers",
+                        "Transformer"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "$Integer",
+            "entities": [
+                {
+                    "key": "INTEGER",
+                    "synonyms": [
+                        "\\d+"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "$Voltage",
+            "entities": [
+                {
+                    "key": "PER_UNIT",
+                    "synonyms": [
+                        "\\d+\\.\\d+ p\\.?u\\.?"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "$Request",
+            "entities": [
+                {
+                    "key": "REQUEST",
+                    "synonyms": [
+                        "What is",
+                        "Get",
+                        "Show"
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "$Request_count",
+            "entities": [
+                {
+                    "key": "REQUEST_COUNT",
+                    "synonyms": [
+                        "How many",
+                        "Many",
+                        "Number of",
+                        "Number",
+                        "Total"
+                    ]
+                }
+            ]
+        }
+    ],
+    "stopWords": [
+        "the",
+        "a",
+        "on",
+        "for"
+    ]
+}
