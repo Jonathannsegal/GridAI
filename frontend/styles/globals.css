@@ -1,6 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400&display=swap'); */
 
-:root {
+/* :root {
   --color-bg: #eef0f1;
   --color-text: #08090a;
   --color-blue: #3b49df;
@@ -17,8 +20,6 @@ body {
   color: var(--color-text);
   margin-top: 50px;
 }
-
-
 
 main {
   padding: 1rem 10vw;
@@ -40,8 +41,8 @@ a {
 
 img {max-width: 100%;}
 
-input { 
-  display: inline-block; 
+input {
+  display: inline-block;
   outline: none;
   border: none;
   font-size: 1.5rem;
@@ -58,8 +59,6 @@ fieldset {
 code {
   overflow-x: scroll;
 }
-
-/* Navbar */
 
 .navbar {
   height: 70px;
@@ -84,19 +83,10 @@ code {
   height: 100%;
 }
 
-.navbar img {
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  cursor: pointer;
-}
-
 .navbar li {
   border-radius: 50%;
-  
-}
 
-/* Buttons */
+}
 
 .btn, button {
   background-color: var(--color-gray);
@@ -121,7 +111,6 @@ code {
     font-size: 0.8rem;
   }
 }
-
 
 button:hover {
   filter: brightness(90%);
@@ -166,8 +155,6 @@ button.btn-logo {
   padding: 0.5rem 1rem;
 }
 
-/* Cards */
-
 .card {
   padding: 2rem;
   margin: 1rem 0;
@@ -193,11 +180,9 @@ button.btn-logo {
   background: var(--color-blue);
 }
 
-/* Loader */
-
 .loader {
-  border: 10px solid var(--color-bg); 
-  border-top: 10px solid var(--color-blue); 
+  border: 10px solid var(--color-bg);
+  border-top: 10px solid var(--color-blue);
   border-radius: 50%;
   width: 50px;
   height: 50px;
@@ -208,8 +193,6 @@ button.btn-logo {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
-
-/* File uploads */
 
 input[type="file"] {
   display: none;
@@ -222,7 +205,6 @@ input[type="file"] {
     padding: 5px;
     margin: 5px 0;
 }
-/* Utilities */
 
 .push-left {
   margin-left: auto;
@@ -259,4 +241,4 @@ input[type="file"] {
   text-align: center;
 }
 
-.hidden { display:  none; }
+.hidden { display:  none; } */

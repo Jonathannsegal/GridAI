@@ -1,15 +1,79 @@
-/* eslint-disable no-unused-vars */
-// import Metatags from '@components/Metatags';
+/* eslint-disable react/prop-types */
+import * as React from "react";
+import { useState } from "react";
+import MapGL from "react-map-gl";
+import Metatags from "../components/Metatags";
+import Button from "../components/Button";
+import Map from "../components/Map"
+import DeckGL from '@deck.gl/react';
+import {IconLayer} from '@deck.gl/layers';
+import {
+  getCurrentVoltage,
+  getCoordinates,
+  getNextHourVoltage,
+  getCurrentAnomalies,
+  sendTextRequest,
+} from "../lib/calls.js";
 
-export default function Home(props) {
+export default function Home() {
+
   return (
     <main>
-      {/* <Metatags title="Dashboard" description="GridAI" /> */}
+      <Metatags title="Grid AI" description="GridAI" />
 
-      <div className="card card-info">
-        <h2>Grid AI</h2>
-        <p>GridAI Cloud-based Machine Deep Learning for Power Grid Data Analytic tes</p>
-      </div>
+      <section className="w-full bg-white">
+
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-col lg:flex-row">
+            <div className="relative w-full bg-cover lg:w-6/12 xl:w-8/12 ">
+              <div className="relative flex flex-col items-center justify-center w-full h-full px-0 my-0 lg:px-10 lg:my-0">
+                <div className="container px-8 mx-auto sm:px-0 xl:px-0">
+                  <div className="w-full px-0 py-0 mx-auto mt-5 bg-white border border-gray-200 rounded-lg sm:px-0 md:px-0 sm:py-0 sm:shadow">
+                  <Map/>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="w-full lg:w-6/12 xl:w-4/12">
+              <div className="flex flex-col items-start justify-start w-full h-full p-10 my-0 lg:p-16 xl:p-24">
+                Recent Updates
+                <Button
+                  size="base"
+                  onClick={getCurrentVoltage}
+                  text="Get Current Voltage"
+                  type="secondary"
+                />
+                <Button
+                  size="base"
+                  onClick={getCoordinates}
+                  text="Get Coordinates"
+                  type="secondary"
+                />
+                <Button
+                  size="base"
+                  onClick={getNextHourVoltage}
+                  text="Get Next Hour Voltage"
+                  type="secondary"
+                />
+                <Button
+                  size="base"
+                  onClick={getCurrentAnomalies}
+                  text="Get Current Anomalies"
+                  type="secondary"
+                />
+                <Button
+                  size="base"
+                  onClick={sendTextRequest}
+                  text="Send Text Request"
+                  type="secondary"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </section>
 
     </main>
   );

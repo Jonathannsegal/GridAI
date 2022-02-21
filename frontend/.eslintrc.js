@@ -6,7 +6,6 @@ module.exports = {
   },
   extends: [
     'plugin:react/recommended',
-    // 'eslint:recommended', 'next',
     'airbnb',
   ],
   parserOptions: {
