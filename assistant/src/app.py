@@ -1,21 +1,48 @@
 """Imports"""
 import os
 
-from flask import Flask
+from flask import Flask, jsonify, request
+
+from assistant.src.assistant_service import AssistantService
 
 app = Flask(__name__)
 
 
-def func(value):
-    """Add 2 to value """
-    return value + 2
+def process_text_query(text_query):
+    """Process the text query and return an appropriate response"""
+
+    service = AssistantService()
+
+    response = service.process_query(text_query)
+
+    return jsonify(response)
 
 
-@app.route("/")
-def hello_world():
-    """Hello World Endpoint"""
-    name = os.environ.get("NAME", "World")
-    return f"Grid AI: ASSISTANT, Hello {name}!"
+def voice_to_text(voice_file):
+    """Converts voice file to a text string"""
+
+    # TODO # pylint: disable=fixme
+
+    return f"Grid AI: ASSISTANT, PLACEHOLDER: {str(voice_file)}"
+
+
+@app.route("/text", methods=["POST"])
+def text_request():
+    """Text Request Endpoint"""
+
+    text_query = request.form.get('text')
+
+    return process_text_query(text_query)
+
+
+@app.route("/voice", methods=["POST"])
+def voice_request():
+    """Voice Request Endpoint"""
+
+    voice_query = request.files.get('voice')
+    text_query = voice_to_text(voice_query)
+
+    return process_text_query(text_query)
 
 
 if __name__ == "__main__":
