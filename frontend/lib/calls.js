@@ -1,10 +1,10 @@
 /* eslint-disable import/prefer-default-export */
 
-const url = 'https://03d8563c-be05-48fc-b7c3-72a89574ac30.mock.pstmn.io';
+const url = process.env.NEXT_PUBLIC_API_URL;
 
 // From Influx
 export function getCurrentVoltage() {
-  fetch(`${url}/getCurrentVoltage/45`)
+  fetch(`${url}/getCurrentVoltage/1`)
     .then((response) => response.json())
     .then((data) => console.log(data));
 }
