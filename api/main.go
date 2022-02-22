@@ -143,6 +143,7 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	} else {
 		response.Prediction = "Down"
 	}
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jsonResponse, err := json.Marshal(response)
@@ -189,6 +190,7 @@ func getCurrentVoltage(w http.ResponseWriter, r *http.Request) {
 			response = buses[i].Voltage
 		}
 	}
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jsonResponse, err := json.Marshal(response)
@@ -209,6 +211,7 @@ func getCoordinates(w http.ResponseWriter, r *http.Request) {
 
 		}
 	}
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jsonResponse, err := json.Marshal(response)
@@ -228,6 +231,7 @@ func getNextHourVoltage(w http.ResponseWriter, r *http.Request) {
 			response = buses[i].NextVoltage
 		}
 	}
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jsonResponse, err := json.Marshal(response)
@@ -241,6 +245,7 @@ func getCurrentAnomalies(w http.ResponseWriter, r *http.Request) {
 	var response Anomalies
 	ids := []int{1, 2, 3}
 	response.Ids = ids
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jsonResponse, err := json.Marshal(response)
@@ -254,6 +259,7 @@ func sendTextRequest(w http.ResponseWriter, r *http.Request) {
 	var response Voltage
 	buses := prepareResponse()
 	response = buses[1].Voltage
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 	jsonResponse, err := json.Marshal(response)
