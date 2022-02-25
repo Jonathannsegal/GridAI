@@ -51,20 +51,19 @@ export async function getUserWithUsername(username) {
 }
 
 /**
- * 
+ *
  * Trying to figure out promises:
  * https://dev.to/ramonak/javascript-how-to-access-the-return-value-of-a-promise-object-1bck
  */
-export async function getAllNodes(username){
+export async function getAllNodes() {
   // const useruid = firebase.auth().currentUser.uid
-  const db = firebase.firestore();
-  
+  // const db = firebase.firestore();
 
-  let usersRef = db.collection('users/'+ "ZyZ2MNHXhoW8pupQjHMHVxP4Ed63"+'/nodes');
-  let allUsers = await usersRef.get();
-  let nodes = allUsers.docs.map(doc=> doc.data());
-  console.log("Bad energy type nodes: ", typeof(nodes));
-  console.log("Xander's bad energy", nodes);
+  // const usersRef = db.collection('users/ZyZ2MNHXhoW8pupQjHMHVxP4Ed63/nodes');
+  // const allUsers = await usersRef.get();
+  // const nodes = allUsers.docs.map((doc) => doc.data());
+  // console.log('Bad energy type nodes: ', typeof (nodes));
+  // console.log("Xander's bad energy", nodes);
 
   // let docs = await users.collection('nodes');
   // console.log("Good energy:", docs)
@@ -72,7 +71,6 @@ export async function getAllNodes(username){
   // console.log("Marissa Good Energy nodes: ", nodes);
   // let nodes = [];
 
-  
   //     users.forEach(userDoc => {
   //       userDoc.ref.collection('nodes').get().then(nodesSnapshot => {
   //         nodesSnapshot.forEach(nodesDoc => {
@@ -82,15 +80,12 @@ export async function getAllNodes(username){
   //         });
   //       });
   //     })
-  //   .catch((error) => { 
+  //   .catch((error) => {
   //       console.log("Error getting document: ", error);
-  //   }); 
+  //   });
 
   //   console.log("Good energy nodes: ", nodes)
-  let nodesArray = [];
-  for(var i in nodes)
-    nodesArray.push(nodes[i]);
+  const nodesArray = [];
+  // for (const i in nodes) nodesArray.push(nodes[i]);
   return nodesArray;
 }
-
-

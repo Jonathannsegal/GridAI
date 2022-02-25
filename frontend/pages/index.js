@@ -1,22 +1,24 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable import/extensions */
 /* eslint-disable react/prop-types */
-import * as React from "react";
-import { useState } from "react";
-import MapGL from "react-map-gl";
-import Metatags from "../components/Metatags";
-import Button from "../components/Button";
-import Map from "../components/Map"
+import * as React from 'react';
+import { useState } from 'react';
+import MapGL from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
-import {IconLayer} from '@deck.gl/layers';
+import { IconLayer } from '@deck.gl/layers';
+import Metatags from '../components/Metatags';
+import Button from '../components/Button';
+import Map from '../components/Map';
 import {
   getCurrentVoltage,
   getCoordinates,
   getNextHourVoltage,
   getCurrentAnomalies,
   sendTextRequest,
-} from "../lib/calls.js";
+} from '../lib/calls.js';
 
 export default function Home() {
-
   return (
     <main>
       <Metatags title="Grid AI" description="GridAI" />
@@ -29,7 +31,7 @@ export default function Home() {
               <div className="relative flex flex-col items-center justify-center w-full h-full px-0 my-0 lg:px-10 lg:my-0">
                 <div className="container px-8 mx-auto sm:px-0 xl:px-0">
                   <div className="w-full px-0 py-0 mx-auto mt-5 bg-white border border-gray-200 rounded-lg sm:px-0 md:px-0 sm:py-0 sm:shadow">
-                  <Map/>
+                    <Map />
                   </div>
                 </div>
               </div>

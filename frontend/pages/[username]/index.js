@@ -1,3 +1,6 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
+/* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import UserProfile from '../../components/UserProfile';
 import Metatags from '../../components/Metatags';
@@ -39,12 +42,12 @@ export default function UserProfilePage({ user }) {
         'https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60',
     },
     // More people...
-  ]
-  
-  var nodes = [];
-  nodes = getAllNodes(user.username); 
-  console.log("Nodes: ", nodes); 
-  
+  ];
+
+  let nodes = [];
+  nodes = getAllNodes(user.username);
+  console.log('Nodes: ', nodes);
+
   // console.log("Index: ", typeof(nodes));
   // console.log("Nodes:",nodes);
   // let hooba = getAllNodes(user.username).then(result => {
@@ -59,10 +62,10 @@ export default function UserProfilePage({ user }) {
   // console.log("outside nodes = ", nodes);
   // console.log("Nodes:",nodes);
   // var result = Promise.resolve(nodes);
-  
+
   // console.log("index: ", result);
   // console.log("People:", people)
-  return(
+  return (
     <div className="flex flex-col">
       <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
         <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">

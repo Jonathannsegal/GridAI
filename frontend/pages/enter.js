@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/label-has-associated-control */
 /* eslint-disable import/order */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
@@ -40,7 +41,7 @@ function SignInButton() {
 
   return (
     <>
-          <section className="w-full bg-white">
+      <section className="w-full bg-white">
 
         <div className="mx-auto max-w-7xl">
           <div className="flex flex-col lg:flex-row">
@@ -51,7 +52,7 @@ function SignInButton() {
                     <p className="mb-2 font-medium text-gray-700 uppercase">Work smarter</p>
                     <h2 className="text-5xl font-bold text-gray-900 xl:text-6xl">Features to help you work smarter</h2>
                   </div>
-                  <p className="text-2xl text-gray-700">We've created a simple formula to follow in order to gain more out of your business and your application.</p>
+                  <p className="text-2xl text-gray-700">Weve created a simple formula to follow in order to gain more out of your business and your application.</p>
                   <a href="#_" className="inline-block px-8 py-5 text-xl font-medium text-center text-white transition duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 ease">Get Started Today</a>
                 </div>
               </div>
@@ -82,7 +83,7 @@ function SignInButton() {
                     <a href="#_" className="inline-block w-full px-5 py-4 text-lg font-medium text-center text-white transition duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 ease">Create Account</a>
                     <button onClick={signInWithGoogle} className="inline-block w-full px-5 py-4 mt-3 text-lg font-bold text-center text-gray-900 transition duration-200 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 ease">
                       Sign up with Google
-                      </button>
+                    </button>
                   </div>
                 </div>
               </div>
