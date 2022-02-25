@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 /* eslint-disable import/prefer-default-export */
 
 const url = process.env.NEXT_PUBLIC_API_URL;
