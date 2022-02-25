@@ -31,8 +31,11 @@ export function getCurrentAnomalies() {
 }
 
 // To Voice Assistant
+// TODO: this needs to be fixed
+// also need to add a body to send post data not use the url
 export function sendTextRequest() {
-  fetch(`${url}/sendTextRequest/getCurrentVoltage/45`, { method: 'POST' })
-    .then((response) => response.json())
-    .then((data) => console.log(data));
+  fetch(`${url}/sendTextRequest`, { method: 'POST', mode: 'no-cors' })
+    .then((response) => console.log(response));
+  // .then((response) => response.json())
+  // .then((data) => console.log(data));
 }
