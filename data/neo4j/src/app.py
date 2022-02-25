@@ -5,6 +5,7 @@ from py2neo import Graph
 from flask import Flask, request
 from decouple import config
 
+
 app = Flask(__name__)
 user = config('DATABASE_USERNAME', default='username')
 password = config('DATABASE_PASSWORD', default='password')
@@ -36,11 +37,21 @@ def add_node():
 @app.route('/getNodes', methods=['GET'])
 def get_nodes():
     """Get all nodes"""
-    query = ("MATCH (n:Node) RETURN n.name LIMIT 25")
+    query = ("MATCH (n:Node) RETURN n.NodeId")
     result = ""
     for record in graph.run(query):
-        result += "Node: " + record["n.name"] + "\n"
+        result += "Node: " + record["n.NodeId"] + "\n"
     return result
+
+
+@app.route('/uploadFile', methods=['POST'])
+def upload_file():
+    """upload a csv file to import data"""
+    csv_url = request.args['url']
+    query = ("""LOAD CSV WITH HEADERS FROM $url_name AS row MERGE
+    (n:Node {NodeId: row.busID, longitude: row.longitude, latitude: row.latitude})""")
+    graph.run(query, url_name=csv_url)
+    return "success"
 
 
 if __name__ == "__main__":

@@ -8,7 +8,7 @@ def client(mocker):
     with app.test_client() as client:
         with app.app_context():
             assert current_app.config["ENV"] == "production"
-            mocker.patch("neo4j.src.app.graph.run", return_value=[{'n.name':'1'}, {'n.name':'2'}])
+            mocker.patch("neo4j.src.app.graph.run", return_value=[{'n.NodeId':'1'}, {'n.NodeId':'2'}])
             yield client
 
 
@@ -34,3 +34,9 @@ def test_get_nodes(client):
     response = client.get('/getNodes')
     assert response.status_code == 200
     assert response.data.decode('utf-8') == 'Node: 1\nNode: 2\n'
+
+
+def test_upload_file(client):
+    response = client.post('/uploadFile?url=1')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == 'success'
