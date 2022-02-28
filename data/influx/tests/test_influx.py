@@ -40,16 +40,16 @@ def test_root(client):
     assert b'Hello, GridAI Influx' in response.data
 
 
-def test_write_influx(client):
+def test_write_voltage_with_id(client):
     """Test write to bucket"""
-    response = client.post('/writeInflux?bus=1&voltage=2')
+    response = client.post('/writeVoltageById?bus=1&voltage=2')
     assert response.status_code == 200
     assert response.data.decode('utf-8') == 'Created bus 1, voltage 2 successfully'
 
 
-def test_read_influx(client):
+def test_get_voltage_by_id(client):
     """test read from bucket"""
-    response = client.get('/readInflux?busId=1')
+    response = client.get('/getVoltageById?busId=1')
     assert response.status_code == 200
     assert response.data.decode('utf-8') == '[]\n'
 
