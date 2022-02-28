@@ -18,16 +18,16 @@ def client(mocker):
 
             class ClientMock():
                 """Mock Function"""
-                class query_api():
+                class QueryApi():
                     """Mock Function"""
                     def query(org, query):
                         """Mock query"""
                         return FluxTable()
                 class WriteApiMock():
-                  """Mock Function"""
-                  def write(bucket, org, record):
-                      """Mock query"""
-                      return "hello"
+                    """Mock Function"""
+                    def write(bucket, org, record):
+                        """Mock query"""
+                        return "hello"
 
             mocker.patch("influx.src.app.client", return_value=ClientMock)
             yield client
@@ -49,6 +49,13 @@ def test_write_influx(client):
 
 def test_read_influx(client):
     """test read from bucket"""
-    response = client.get('/readInflux')
+    response = client.get('/readInflux?busId=1')
     assert response.status_code == 200
     assert response.data.decode('utf-8') == '[]\n'
+
+def test_ping_influx(client):
+    """test ping"""
+    response = client.get('/ping')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == 'pong'
+    

@@ -42,16 +42,24 @@ def write_influx():
 @app.route('/readInflux', methods=['GET'])
 def read_influx():
     """read from bucket"""
+    bus_name = request.args["busId"]
     query_api = client.query_api()
-    query = """ from(bucket:"storage")\
-    |> range(start: -7d)\
-    |> filter(fn:(r) => r._field == "voltage" )"""
+    query = f""" from(bucket:"{bucket}")\
+    |> range(start: -30d)
+    |> filter(fn:(r) => r._measurement == "{bus_name}" )\
+    |> last()"""
     result = query_api.query(org=org, query=query)
     results = []
     for table in result:
         for record in table.records:
             results.append((record.get_time(), record.get_measurement(), record.get_value()))
     return jsonify(results)
+
+
+@app.route("/ping")
+def ping():
+    """Ping the server"""
+    return "pong"
 
 
 if __name__ == "__main__":
