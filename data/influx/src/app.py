@@ -28,18 +28,18 @@ def index():
     return "Hello, GridAI Influx"
 
 
-@app.route('/writeInflux', methods=['POST'])
+@app.route('/writeVoltageById', methods=['POST'])
 def write_influx():
     """write to bucket"""
     bus_name = request.args["bus"]
     voltage = request.args["voltage"]
     write_api = client.write_api(write_options=SYNCHRONOUS)
-    point = influxdb_client.Point(bus_name).field("voltage", voltage)
+    point = influxdb_client.Point(bus_name).field("voltage", voltage)  #
     write_api.write(bucket=bucket, org=org, record=point)
     return f"Created bus {bus_name}, voltage {voltage} successfully"
 
 
-@app.route('/readInflux', methods=['GET'])
+@app.route('/getVoltageById', methods=['GET'])
 def read_influx():
     """read from bucket"""
     bus_name = request.args["busId"]
