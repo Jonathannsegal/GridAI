@@ -8,7 +8,7 @@ def client(mocker):
     with app.test_client() as client:
         with app.app_context():
             assert current_app.config["ENV"] == "production"
-            mocker.patch("neo4j.src.app.graph.run", return_value=[{'n.NodeId':'1'}, {'n.NodeId':'2'}])
+            mocker.patch("neo4j.src.app.graph.run", return_value=[{'n.NodeId':'1', 'n.longitude':'1', 'n.latitude':'1'}, {'n.NodeId':'2', 'n.longitude':'2', 'n.latitude':'2'}])
             yield client
 
 
@@ -34,6 +34,12 @@ def test_get_nodes(client):
     response = client.get('/getNodes')
     assert response.status_code == 200
     assert response.data.decode('utf-8') == 'Node: 1\nNode: 2\n'
+
+
+def test_get_all_coordinates(client):
+    response = client.get('/getCoords')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == 'Node: 1 1 1\nNode: 2 2 2\n'
 
 
 def test_upload_file(client):

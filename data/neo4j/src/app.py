@@ -1,4 +1,5 @@
 # type: ignore
+# pylint: disable=line-too-long
 """Imports"""
 import os
 from py2neo import Graph
@@ -41,6 +42,16 @@ def get_nodes():
     result = ""
     for record in graph.run(query):
         result += "Node: " + record["n.NodeId"] + "\n"
+    return result
+
+
+@app.route('/getCoords', methods=['GET'])
+def get_all_coordinates():
+    """Get all node coordinates"""
+    query = ("MATCH (n:Node) RETURN n.NodeId,n.latitude,n.longitude")
+    result = ""
+    for record in graph.run(query):
+        result += "Node: " + record["n.NodeId"] + " " + record["n.longitude"] + " " + record["n.latitude"] + "\n"
     return result
 
 

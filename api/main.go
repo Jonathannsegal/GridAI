@@ -75,6 +75,7 @@ func main() {
 
 	router.HandleFunc("/getCurrentVoltage/{busid}", getCurrentVoltage).Methods("GET")
 	router.HandleFunc("/getCoordinates/{busid}", getCoordinates).Methods("GET")
+	router.HandleFunc("/getAllCoordinates", getAllCoordinates).Methods("GET")
 	router.HandleFunc("/getNextHourVoltage/{busid}", getNextHourVoltage).Methods("GET")
 	router.HandleFunc("/getCurrentAnomalies", getCurrentAnomalies).Methods("GET")
 	router.HandleFunc("/sendTextRequest", sendTextRequest).Methods("POST")
@@ -219,6 +220,53 @@ func getCoordinates(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	w.Write(jsonResponse)
+}
+
+func getAllCoordinates(w http.ResponseWriter, r *http.Request) {
+	// log.Println("Calling neo4j service")
+	// response, err := http.Get("https://neo4j-kxcfw5balq-uc.a.run.app/getNodes")
+
+	// if err != nil {
+	// 	fmt.Print(err.Error())
+	// 	os.Exit(1)
+	// }
+
+	// responseData, err := ioutil.ReadAll(response.Body)
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
+	// // fmt.Println(string(responseData))
+	// // fmt.Fprintf(w, "API is up and running")
+	// fmt.Fprintf(w, "%+v", string(responseData))
+
+	response, err := http.Get("https://data-neo4j-kxcfw5balq-uc.a.run.app/getNodes")
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// fmt.Fprintf(w, "%+v", string(responseData))
+
+	// var response Coords
+	// buses := prepareResponse()
+	// vars := mux.Vars(r)
+	// intVar, err := strconv.Atoi(vars["busid"])
+	// for i := range buses {
+	// 	if buses[i].id == intVar {
+	// 		response = buses[i].Coords
+	// 	}
+	// }
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	// jsonResponse, err := json.Marshal(response)
+	w.Write(responseData)
 }
 
 func getNextHourVoltage(w http.ResponseWriter, r *http.Request) {
