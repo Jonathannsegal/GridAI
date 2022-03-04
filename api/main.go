@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -25,9 +26,19 @@ type Voltage struct {
 type NextVoltage struct {
 	Voltage int `json:"voltage"`
 }
+
+type Node struct {
+	// id       int
+	Node     string     `json:"nodeid"`
+	Position [2]float64 `json:"coordinates"`
+}
 type Coords struct {
 	Long float32 `json:"long"`
 	Lat  float32 `json:"lat"`
+}
+type Position struct {
+	Longitude float64 `json:"lng"`
+	Latitude  float64 `json:"lat"`
 }
 type Anomalies struct {
 	Ids []int `json:"anomalies"`
@@ -88,7 +99,7 @@ func main() {
 }
 
 func GetNodes(w http.ResponseWriter, r *http.Request) {
-	log.Println("Calling neo4j service")
+	log.Println("Calling neo4j service ")
 	w.WriteHeader(http.StatusOK)
 	response, err := http.Get("https://neo4j-kxcfw5balq-uc.a.run.app/getNodes")
 
@@ -223,24 +234,7 @@ func getCoordinates(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllCoordinates(w http.ResponseWriter, r *http.Request) {
-	// log.Println("Calling neo4j service")
-	// response, err := http.Get("https://neo4j-kxcfw5balq-uc.a.run.app/getNodes")
-
-	// if err != nil {
-	// 	fmt.Print(err.Error())
-	// 	os.Exit(1)
-	// }
-
-	// responseData, err := ioutil.ReadAll(response.Body)
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
-	// // fmt.Println(string(responseData))
-	// // fmt.Fprintf(w, "API is up and running")
-	// fmt.Fprintf(w, "%+v", string(responseData))
-
-	response, err := http.Get("https://data-neo4j-kxcfw5balq-uc.a.run.app/getNodes")
+	response, err := http.Get("https://data-neo4j-kxcfw5balq-uc.a.run.app/getCoords")
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
@@ -251,22 +245,35 @@ func getAllCoordinates(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	// fmt.Fprintf(w, "%+v", string(responseData))
+	var lines []string
+	sc := bufio.NewScanner(strings.NewReader(string(responseData)))
+	for sc.Scan() {
+		lines = append(lines, sc.Text())
+	}
+	fmt.Print(lines)
 
-	// var response Coords
-	// buses := prepareResponse()
-	// vars := mux.Vars(r)
-	// intVar, err := strconv.Atoi(vars["busid"])
-	// for i := range buses {
-	// 	if buses[i].id == intVar {
-	// 		response = buses[i].Coords
-	// 	}
-	// }
+	var Nodes []Node
+
+	for _, i := range lines {
+		words := strings.Fields(i)
+		var node Node
+		node.Node = words[1]
+		if s, err := strconv.ParseFloat(words[2], 64); err == nil {
+			node.Position[0] = s
+		}
+		if s, err := strconv.ParseFloat(words[3], 64); err == nil {
+			node.Position[1] = s
+		}
+		Nodes = append(Nodes, node)
+	}
 	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	// jsonResponse, err := json.Marshal(response)
-	w.Write(responseData)
+	jsonResponse, err := json.Marshal(Nodes)
+	if err != nil {
+		return
+	}
+	w.Write(jsonResponse)
 }
 
 func getNextHourVoltage(w http.ResponseWriter, r *http.Request) {
