@@ -598,18 +598,18 @@ deploy:influx:
  environment:
   name: $INFLUX_SERVICE_NAME
   url: $ENVIRONMENT_URL
-#  artifacts:
-#   reports:
-#    dotenv: deploy.env
+ artifacts:
+  reports:
+   dotenv: deploy.env
 deploy:neo4j:
  stage: deploy
-#  needs: ['test:neo4j']
+ needs: ['test:neo4j']
  image: google/cloud-sdk:latest
-#  only:
-#   refs:
-#    - main
-#   changes:
-#    - data/neo4j/**/*
+ only:
+  refs:
+   - main
+  changes:
+   - data/neo4j/**/*
  script:
     - echo $GCP_SERVICE_ACCOUNT > gcloud-service-key.json # Save Google cloud contents in a temporary json file
     - gcloud auth activate-service-account --key-file gcloud-service-key.json # Activate your service account
