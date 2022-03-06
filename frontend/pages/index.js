@@ -3,20 +3,16 @@
 /* eslint-disable import/extensions */
 /* eslint-disable react/prop-types */
 import * as React from 'react';
-import { useState } from 'react';
-import MapGL from 'react-map-gl';
-import DeckGL from '@deck.gl/react';
-import { IconLayer } from '@deck.gl/layers';
 import Metatags from '../components/Metatags';
 import Button from '../components/Button';
-import Map from '../components/Map';
+import HoverMap from '../components/HoverMap';
 import {
   getCurrentVoltage,
   getCoordinates,
   getNextHourVoltage,
   getCurrentAnomalies,
   sendTextRequest,
-} from '../lib/calls.js';
+} from '../lib/calls';
 
 export default function Home() {
   return (
@@ -31,12 +27,11 @@ export default function Home() {
               <div className="relative flex flex-col items-center justify-center w-full h-full px-0 my-0 lg:px-10 lg:my-0">
                 <div className="container px-8 mx-auto sm:px-0 xl:px-0">
                   <div className="w-full px-0 py-0 mx-auto mt-5 bg-white border border-gray-200 rounded-lg sm:px-0 md:px-0 sm:py-0 sm:shadow">
-                    <Map />
+                    <HoverMap />
                   </div>
                 </div>
               </div>
             </div>
-
             <div className="w-full lg:w-6/12 xl:w-4/12">
               <div className="flex flex-col items-start justify-start w-full h-full p-10 my-0 lg:p-16 xl:p-24">
                 Recent Updates

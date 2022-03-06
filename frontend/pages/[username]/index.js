@@ -2,9 +2,10 @@
 /* eslint-disable no-console */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import UserProfile from '../../components/UserProfile';
-import Metatags from '../../components/Metatags';
-import { getUserWithUsername, getAllNodes } from '../../lib/firebase';
+/* eslint-disable no-console */
+import * as React from 'react';
+// import { getUserWithUsername, getAllNodes } from '../../lib/firebase';
+import { getUserWithUsername } from '../../lib/firebase';
 
 export async function getServerSideProps({ query }) {
   const { username } = query;
@@ -30,7 +31,7 @@ export async function getServerSideProps({ query }) {
   };
 }
 
-export default function UserProfilePage({ user }) {
+export default function UserProfilePage() {
   const people = [
     {
       name: 'Jane Cooper',
@@ -44,9 +45,9 @@ export default function UserProfilePage({ user }) {
     // More people...
   ];
 
-  let nodes = [];
-  nodes = getAllNodes(user.username);
-  console.log('Nodes: ', nodes);
+  // let nodes = [];
+  // nodes = getAllNodes(user.username);
+  // console.log('Nodes: ', nodes);
 
   // console.log("Index: ", typeof(nodes));
   // console.log("Nodes:",nodes);
@@ -124,12 +125,6 @@ export default function UserProfilePage({ user }) {
                       <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                         Active
                       </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{person.role}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <a href="#" className="text-indigo-600 hover:text-indigo-900">
-                        Edit
-                      </a>
                     </td>
                   </tr>
                 ))}

@@ -1,3 +1,8 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-useless-concat */
+/* eslint-disable no-console */
+/* eslint-disable no-trailing-spaces */
+/* eslint-disable indent */
 import firebase from 'firebase/app';
 import 'firebase/auth';
 import 'firebase/firestore';
@@ -55,22 +60,19 @@ export async function getUserWithUsername(username) {
  * Trying to figure out promises:
  * https://dev.to/ramonak/javascript-how-to-access-the-return-value-of-a-promise-object-1bck
  */
-export async function getAllNodes() {
+// export async function getAllNodes() {
   // const useruid = firebase.auth().currentUser.uid
   // const db = firebase.firestore();
 
-  // const usersRef = db.collection('users/ZyZ2MNHXhoW8pupQjHMHVxP4Ed63/nodes');
+  // const usersRef = db.collection('users/' + 'ZyZ2MNHXhoW8pupQjHMHVxP4Ed63' + '/nodes');
   // const allUsers = await usersRef.get();
   // const nodes = allUsers.docs.map((doc) => doc.data());
-  // console.log('Bad energy type nodes: ', typeof (nodes));
-  // console.log("Xander's bad energy", nodes);
 
   // let docs = await users.collection('nodes');
   // console.log("Good energy:", docs)
   // let nodes = users.ref.collection('nodes').get();
   // console.log("Marissa Good Energy nodes: ", nodes);
   // let nodes = [];
-
   //     users.forEach(userDoc => {
   //       userDoc.ref.collection('nodes').get().then(nodesSnapshot => {
   //         nodesSnapshot.forEach(nodesDoc => {
@@ -85,7 +87,8 @@ export async function getAllNodes() {
   //   });
 
   //   console.log("Good energy nodes: ", nodes)
-  const nodesArray = [];
-  // for (const i in nodes) nodesArray.push(nodes[i]);
-  return nodesArray;
-}
+//   const nodesArray = [];
+//   for(var i in nodes)
+//     nodesArray.push(nodes[i]);
+//   return nodesArray;
+// }
