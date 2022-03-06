@@ -20,19 +20,19 @@ stages:
   - test
   - deploy
 
-build:next:
- stage: build
- needs: []
- image: node:latest
- script:
-  - cd frontend/
-  - yarn
- only:
-  changes:
-   - frontend/**/*
- cache:
-  paths:
-   - frontend/node_modules/
+# build:next:
+#  stage: build
+#  needs: []
+#  image: node:latest
+#  script:
+#   - cd frontend/
+#   - yarn
+#  only:
+#   changes:
+#    - frontend/**/*
+#  cache:
+#   paths:
+#    - frontend/node_modules/
 #  artifacts:
 #   expire_in: 1 days
 #   when: on_success
@@ -185,24 +185,24 @@ flake8:prediction:
   changes:
    - ml/prediction/**/*
 
-# eslint:next:
-#  stage: lint
-#  needs: []
-#  image: node:latest
-#  script:
-#   - |
-#     npm install eslint \
-#     eslint-config-airbnb \
-#     eslint-config-prettier \
-#     eslint-plugin-flowtype \
-#     eslint-plugin-import \
-#     eslint-plugin-jsx-a11y \
-#     eslint-plugin-prettier \
-#     eslint-plugin-react
-#   - node_modules/eslint/bin/eslint.js frontend/
-#  only:
-#   changes:
-#    - frontend/**/*
+eslint:next:
+ stage: lint
+ needs: []
+ image: node:latest
+ script:
+  - |
+    npm install eslint \
+    eslint-config-airbnb \
+    eslint-config-prettier \
+    eslint-plugin-flowtype \
+    eslint-plugin-import \
+    eslint-plugin-jsx-a11y \
+    eslint-plugin-prettier \
+    eslint-plugin-react
+  - node_modules/eslint/bin/eslint.js frontend/
+ only:
+  changes:
+   - frontend/**/*
 # pylint:api:
 #  stage: lint
 #  needs: []
@@ -363,30 +363,30 @@ safety:
    - data/**/*
    - ml/**/*
 
-test:next:
- stage: test
- coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
- needs: ['build:next']
- image: node:latest
- script:
-   - cd frontend/
-   - yarn test:ci
- cache:
-  paths:
-   - frontend/coverage/
- only:
-  changes:
-   - frontend/**/*
- artifacts:
-  expire_in: 1 days
-  paths:
-   - frontend/coverage/
-  when: always
-  reports:
-   junit:
-    - frontend/junit.xml
-   cobertura:
-    - frontend/coverage/cobertura-coverage.xml
+# test:next:
+#  stage: test
+#  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+#  needs: ['build:next']
+#  image: node:latest
+#  script:
+#    - cd frontend/
+#    - yarn test:ci
+#  cache:
+#   paths:
+#    - frontend/coverage/
+#  only:
+#   changes:
+#    - frontend/**/*
+#  artifacts:
+#   expire_in: 1 days
+#   paths:
+#    - frontend/coverage/
+#   when: always
+#   reports:
+#    junit:
+#     - frontend/junit.xml
+#    cobertura:
+#     - frontend/coverage/cobertura-coverage.xml
 # test:api:
 #  stage: test
 #  needs: []
@@ -525,7 +525,7 @@ test:prediction:
 
 deploy:next:
  stage: deploy
- needs: ['test:next']
+#  needs: ['test:next']
  image: google/cloud-sdk:latest
  only:
   refs:

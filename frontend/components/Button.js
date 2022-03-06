@@ -1,4 +1,6 @@
 /* eslint-disable react/prop-types */
+/* eslint-disable max-len */
+/* eslint-disable no-console */
 import * as React from 'react';
 
 function Button({

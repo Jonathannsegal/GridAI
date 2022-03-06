@@ -1,22 +1,20 @@
-/* eslint-disable jsx-a11y/label-has-associated-control */
-/* eslint-disable import/order */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-nested-ternary */
-/* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/button-has-type */
 /* eslint-disable max-len */
 /* eslint-disable no-use-before-define */
 /* eslint-disable no-console */
 /* eslint-disable no-shadow */
-import { auth, firestore, googleAuthProvider } from '../lib/firebase';
-import { UserContext } from '../lib/context';
-import Metatags from '../components/Metatags';
-
+/* eslint-disable jsx-a11y/label-has-associated-control */
+import * as React from 'react';
 import {
   useEffect, useState, useCallback, useContext,
 } from 'react';
 import debounce from 'lodash.debounce';
+import { auth, firestore, googleAuthProvider } from '../lib/firebase';
+import { UserContext } from '../lib/context';
+import Metatags from '../components/Metatags';
 
 export default function Enter(props) {
   const { user, username } = useContext(UserContext);
@@ -52,7 +50,7 @@ function SignInButton() {
                     <p className="mb-2 font-medium text-gray-700 uppercase">Work smarter</p>
                     <h2 className="text-5xl font-bold text-gray-900 xl:text-6xl">Features to help you work smarter</h2>
                   </div>
-                  <p className="text-2xl text-gray-700">Weve created a simple formula to follow in order to gain more out of your business and your application.</p>
+                  <p className="text-2xl text-gray-700">We&apos;ve created a simple formula to follow in order to gain more out of your business and your application.</p>
                   <a href="#_" className="inline-block px-8 py-5 text-xl font-medium text-center text-white transition duration-200 bg-blue-600 rounded-lg hover:bg-blue-700 ease">Get Started Today</a>
                 </div>
               </div>

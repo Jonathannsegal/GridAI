@@ -1,5 +1,3 @@
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable max-len */
 /* eslint-disable react/prop-types */
 /* eslint-disable max-len */
 /* eslint-disable no-console */
@@ -15,6 +13,8 @@ import {
 // Reference from : https://github.com/visgl/deck.gl/blob/master/docs/api-reference/layers/icon-layer.md
 // Reference from : https://deck.gl/docs/developer-guide/interactivity
 function Map() {
+  const def = [{ node: 0, coordinates: [0, 0] }];
+  const [hoverInfo, setHoverInfo] = useState(def);
   const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFyaXNzYWciLCJhIjoiY2t6aXZ5M2FkNGZiNTJ3bmZ1Ymx4cXEzaSJ9.oxEaAW-mjM0Cc9NDNfDQPg'; // Set your mapbox token here
 
   // Viewport settings
@@ -53,13 +53,15 @@ function Map() {
     // getIcon: return a string
     iconAtlas: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png',
     iconMapping: ICON_MAPPING,
-    getIcon: () => 'marker',
+    // getIcon: (d) => 'marker',
 
     sizeScale: 15,
     getPosition: (d) => d.coordinates,
-    getSize: () => 5,
+    // getSize: (d) => 5,
     getColor: (d) => [Math.sqrt(d.exits), 140, 0],
+    onHover: (d) => setHoverInfo(d),
   });
+
   const layers = [
     iconlayer,
   ];
@@ -79,6 +81,22 @@ function Map() {
         onViewportChange={setViewport}
         mapboxApiAccessToken={MAPBOX_TOKEN}
       />
+      {hoverInfo.object && (
+        // <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
+        <div style={{
+          position: 'absolute', zIndex: 1, pointerEvents: 'none', left: 0, top: 0,
+        }}
+        >
+          <div className="max-w-md py-4 px-8 bg-white shadow-lg rounded-lg my-20">
+            <div>
+              <h2 className="text-gray-800 text-3xl font-semibold">
+                Node id:
+                { hoverInfo.object.node }
+              </h2>
+            </div>
+          </div>
+        </div>
+      )}
     </DeckGL>
   );
 }
