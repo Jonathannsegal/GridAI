@@ -579,7 +579,7 @@ deploy:api:
    dotenv: deploy.env
 deploy:influx:
  stage: deploy
-#  needs: ['test:influx']
+ needs: ['test:influx']
  image: google/cloud-sdk:latest
  only:
   refs:

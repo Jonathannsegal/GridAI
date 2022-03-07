@@ -7,6 +7,8 @@ from influxdb_client.client.write_api import SYNCHRONOUS
 from flask import Flask, request, jsonify
 from decouple import config
 
+import pandas as pd
+
 app = Flask(__name__)
 
 # You can generate a Token from the "Tokens Tab" in the UI
@@ -34,7 +36,7 @@ def write_influx():
     bus_name = request.args["bus"]
     voltage = request.args["voltage"]
     write_api = client.write_api(write_options=SYNCHRONOUS)
-    point = influxdb_client.Point(bus_name).field("voltage", voltage)  #
+    point = influxdb_client.Point(bus_name).field("voltage", voltage)
     write_api.write(bucket=bucket, org=org, record=point)
     return f"Created bus {bus_name}, voltage {voltage} successfully"
 
@@ -54,6 +56,21 @@ def read_influx():
         for record in table.records:
             results.append((record.get_time(), record.get_measurement(), record.get_value()))
     return jsonify(results)
+
+
+@app.route("/uploadCsv", methods=['POST'])
+def upload_csv():
+    """Uploads csv to influx db"""
+    csv_url = request.args["url"]
+    data = pd.read_csv(csv_url)  #
+    for i in range(data.shape[0]):
+        # pylint: disable=maybe-no-member
+        point = influxdb_client.Point(data.iat[i, 0]) \
+            .field('voltage', data.at[i, 'kw']) \
+            .time(data.at[i, 'date'])
+        write_api = client.write_api(write_options=SYNCHRONOUS)
+        write_api.write(bucket=bucket, org=org, record=point)  #
+    return f"Uploaded data from {csv_url} successfully"
 
 
 @app.route("/ping")
