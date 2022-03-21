@@ -30,7 +30,7 @@ def voice_to_text(voice_file):
 def text_request():
     """Text Request Endpoint"""
 
-    text_query = request.form.get('text')
+    text_query = request.json['text']
 
     return process_text_query(text_query)
 
