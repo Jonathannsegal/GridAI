@@ -485,6 +485,7 @@ test:assistant:
  before_script:
   - python --version
   - pip install -r assistant/src/requirements.txt
+  - python assistant/src/create_actions_json.py
  script:
   - coverage run -m pytest --cov-config=assistant/.coveragerc assistant/
   - coverage report

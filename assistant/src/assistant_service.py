@@ -19,7 +19,7 @@ class AssistantService():
     def process_query(self, query: str):
         """Processes the text query"""
         query = query.lower()
-        for stop_word in self.actions["stopWords"]:
+        for stop_word in self.actions["stop_words"]:
             query = query.replace(f' {stop_word} ', " ")
 
         for action in self.actions["actions"]:

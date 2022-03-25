@@ -1,0 +1,50 @@
+{
+    "name": "com.assistant.actions.VoltagePeakSpecific",
+    "availability": {
+        "deviceClasses": [
+            {
+                "assistantSdkDevice": {}
+            }
+        ]
+    },
+    "intent": {
+        "name": "com.assistant.intents.VoltagePeakSpecific",
+        "parameters": [
+            {
+                "name": "feeder_num",
+                "type": "Integer"
+            },
+            {
+                "name": "request",
+                "type": "Request"
+            }
+        ],
+        "trigger": {
+            "queryPatterns": [
+                "($Request:request)? voltage peak feeder $Integer:feeder_num",
+                "Feeder $Integer:feeder_num ($Request:request)? voltage peak"
+            ]
+        }
+    },
+    "fulfillment": {
+        "staticFulfillment": {
+            "templatedResponse": {
+                "items": [
+                    {
+                        "simpleResponse": {
+                            "textToSpeech": "Voltage peak for Feeder $feeder_num"
+                        }
+                    },
+                    {
+                        "deviceExecution": {
+                            "command": "com.assistant.commands.VoltagePeakSpecific",
+                            "params": {
+                                "feeder_num": "$feeder_num"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
