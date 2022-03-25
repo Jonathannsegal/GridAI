@@ -1,0 +1,59 @@
+{
+    "name": "com.assistant.actions.VoltageComparisonSpecific",
+    "availability": {
+        "deviceClasses": [
+            {
+                "assistantSdkDevice": {}
+            }
+        ]
+    },
+    "intent": {
+        "name": "com.assistant.intents.VoltageComparisonSpecific",
+        "parameters": [
+            {
+                "name": "feeder_num",
+                "type": "Integer"
+            },
+            {
+                "name": "request",
+                "type": "Request"
+            },
+            {
+                "name": "voltage",
+                "type": "Voltage"
+            },
+            {
+                "name": "comparison",
+                "type": "Comparison"
+            }
+        ],
+        "trigger": {
+            "queryPatterns": [
+                "($Request:request)? voltages $Comparison:comparison $Voltage:voltage feeder $Integer:feeder_num"
+            ]
+        }
+    },
+    "fulfillment": {
+        "staticFulfillment": {
+            "templatedResponse": {
+                "items": [
+                    {
+                        "simpleResponse": {
+                            "textToSpeech": "Showing voltages $comparison $voltage for Feeder $feeder_num"
+                        }
+                    },
+                    {
+                        "deviceExecution": {
+                            "command": "com.assistant.commands.VoltageComparisonSpecific",
+                            "params": {
+                                "feeder_num": "$feeder_num",
+                                "comparison": "$comparison",
+                                "voltage": "$voltage"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

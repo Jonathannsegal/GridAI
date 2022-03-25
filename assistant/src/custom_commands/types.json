@@ -1,0 +1,101 @@
+[
+    {
+        "name": "$Comparison",
+        "entities": [
+            {
+                "key": "GREATER",
+                "synonyms": [
+                    "greater than",
+                    "great than",
+                    "more than"
+                ]
+            },
+            {
+                "key": "LESS",
+                "synonyms": [
+                    "less than",
+                    "lesser than",
+                    "more than"
+                ]
+            },
+            {
+                "key": "EQUAL",
+                "synonyms": [
+                    "equal to",
+                    "equaling",
+                    "equals",
+                    "equal"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Objects",
+        "entities": [
+            {
+                "key": "DER",
+                "synonyms": [
+                    "DERs",
+                    "DER"
+                ]
+            },
+            {
+                "key": "TRANSFORMER",
+                "synonyms": [
+                    "Transformers",
+                    "Transformer"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Integer",
+        "entities": [
+            {
+                "key": "INTEGER",
+                "synonyms": [
+                    "\\d+"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Voltage",
+        "entities": [
+            {
+                "key": "PER_UNIT",
+                "synonyms": [
+                    "\\d+\\.\\d+ p\\.?u\\.?"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Request",
+        "entities": [
+            {
+                "key": "REQUEST",
+                "synonyms": [
+                    "What is",
+                    "Get",
+                    "Show"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Request_count",
+        "entities": [
+            {
+                "key": "REQUEST_COUNT",
+                "synonyms": [
+                    "How many",
+                    "Many",
+                    "Number of",
+                    "Number",
+                    "Total"
+                ]
+            }
+        ]
+    }
+]

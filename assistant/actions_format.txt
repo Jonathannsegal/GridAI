@@ -1,0 +1,71 @@
+// Note: the actions.json file is structured such that it abides (for the most part) to the custom command
+//  format specified for using with Google Assistant.
+//  Many of the fields in this file go unused for the purposes of our custom Assistant
+// View the following URL for Google Assistant's custom command instructions:
+//  https://developers.google.com/assistant/sdk/guides/service/python/extend/custom-actions
+
+{
+    "manifest": {
+        // This manifest is not used for anything yet, but it can be used to store metadata about this actions.json file
+    }
+    "actions": [
+        // List of actions to support
+        {
+            "name": // unique actions name
+            "availability": { // not used yet }
+            "intent": {
+                // describes with query formats to match with
+                "name": unique intents name
+                "parameters": [
+                    // list the types to be search for within the queries
+                    {
+                        "name": // variable name to use in the queries (only use a variable once per response format)
+                        "type": // the type of the variable to match as describes in the "types" list of this json file.
+                                //  Note that this type should not include the prefix '$'
+                    }
+                ]
+                "trigger": {
+                    "queryPatterns": [
+                        // List of semi-regex strings to match.
+                        // Insert variables to look for via inserting a $[type_name]:[variable_name]
+                        //  Optional variables can be made by surrounding a variable statment with '(...)?'
+                    ]
+                }
+            }
+            "fulfillment": {
+                // Describes how to handle a successful match between the query and this actions
+                //  Note: many of the fields here are redundant without more advanced handling being implemented
+                "staticFulfillment": {
+                    "templatedResponse": {
+                        "items": [
+                            "deviceExecution": {
+                                "command": // unique command name used for selecting the correct command handler
+                                "params": {
+                                    // JSON object which maps parameter variables to handler variables
+                                    //  Can be used to only select to subset of parameters to input the handler  
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        }
+    ]
+    "types": [
+        {
+            "name": // The type name prefixed with '$'; e.g. $Integer
+            "entities": [
+                // List of subtypes; e.g. GREATER THAN, LESS THAN, EQUAL TO
+                {
+                    "key": // subtype name; e.g. GREATER_THAN,
+                    "synonyms": [
+                        // list of regex strings to match this (sub)type with
+                    ]
+                }
+            ]
+        }
+    ]
+    "stop_words": [
+        // list of words to strip from all queries and actions
+    ]
+}
