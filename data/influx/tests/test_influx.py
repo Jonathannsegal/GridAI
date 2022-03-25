@@ -46,10 +46,21 @@ def test_write_voltage_with_id(client):
     assert response.status_code == 200
     assert response.data.decode('utf-8') == 'Created bus 1, voltage 2 successfully'
 
+# def test_upload_csv(client):
+#     """Test write to bucket"""
+#     response = client.post('/uploadCsv?url=http://test.com')
+#     assert response.status_code == 200
+#     assert response.data.decode('utf-8') == 'Uploaded data from http://test.com successfully'
 
 def test_get_voltage_by_id(client):
     """test read from bucket"""
     response = client.get('/getVoltageById?busId=1')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == '[]\n'
+
+def test_get_all_voltage(client):
+    """test read from bucket"""
+    response = client.get('/getAllCurrentVoltage')
     assert response.status_code == 200
     assert response.data.decode('utf-8') == '[]\n'
 

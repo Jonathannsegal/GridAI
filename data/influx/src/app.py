@@ -2,12 +2,15 @@
 """Imports"""
 import os
 
+# import datetime
+
 import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
 from flask import Flask, request, jsonify
 from decouple import config
 
 import pandas as pd
+
 
 app = Flask(__name__)
 
@@ -42,7 +45,7 @@ def write_influx():
 
 
 @app.route('/getVoltageById', methods=['GET'])
-def read_influx():
+def get_current_voltage():
     """read from bucket"""
     bus_name = request.args["busId"]
     query_api = client.query_api()
@@ -58,19 +61,54 @@ def read_influx():
     return jsonify(results)
 
 
+@app.route('/getAllCurrentVoltage', methods=['GET'])
+def get_all_current_voltage():
+    """read from bucket"""
+    query_api = client.query_api()
+    query = f""" from(bucket:"{bucket}")\
+    |> range(start: -30d)\
+    |> last()"""
+    result = query_api.query(org=org, query=query)
+    results = []
+    for table in result:
+        for record in table.records:
+            results.append((record.get_time(), record.get_measurement(), record.get_value()))
+    return jsonify(results)
+
+
 @app.route("/uploadCsv", methods=['POST'])
 def upload_csv():
     """Uploads csv to influx db"""
     csv_url = request.args["url"]
-    data = pd.read_csv(csv_url)  #
+    data = pd.read_csv(csv_url)
     for i in range(data.shape[0]):
         # pylint: disable=maybe-no-member
         point = influxdb_client.Point(data.iat[i, 0]) \
             .field('voltage', data.at[i, 'kw']) \
             .time(data.at[i, 'date'])
         write_api = client.write_api(write_options=SYNCHRONOUS)
-        write_api.write(bucket=bucket, org=org, record=point)  #
+        write_api.write(bucket=bucket, org=org, record=point)
     return f"Uploaded data from {csv_url} successfully"
+
+# @app.route("/uploadTestCsv", methods=['POST'])
+# def upload_test_csv():
+#     """Uploads Test csv to influx db"""
+#     csv_url = "https://firebasestorage.googleapis.com/
+# v0/b/influx-csv.appspot.com/o/updated.csv?alt=media&token=9cf9d70e-d5c2-4629-b259-a65f533cf0b2"
+#     data = pd.read_csv(csv_url)
+#     for i in range(data.shape[0]):
+#         # pylint: disable=maybe-no-member
+#         relative_time = datetime.strptime(data.at[i, 'date'], "")
+#         date = datetime.today()
+#         date.hour = relative_time.hour
+#         date.minute = relative_time.minute
+#         date.second = relative_time.second
+#         point = influxdb_client.Point(data.iat[i, 0]) \
+#             .field('voltage', data.at[i, 'kw']) \
+#             .time(str(date))
+#         write_api = client.write_api(write_options=SYNCHRONOUS)
+#         write_api.write(bucket=bucket, org=org, record=point)  #
+#     return "Uploaded test data successfully"
 
 
 @app.route("/ping")
