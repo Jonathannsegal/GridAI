@@ -21,9 +21,12 @@ htmlcov/
 
 # Virtual Environment
 /venv/
+/env/
 
 # pytest files
 .pytest_cache/
 
 # mypy files
 .mypy_cache/
+
+.env
