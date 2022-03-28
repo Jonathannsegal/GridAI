@@ -4,6 +4,7 @@ import os
 from flask import Flask, jsonify, request
 
 from assistant.src.assistant_service import AssistantService
+from assistant.src.speech_to_text import speech_text
 
 app = Flask(__name__)
 
@@ -21,9 +22,9 @@ def process_text_query(text_query):
 def voice_to_text(voice_file):
     """Converts voice file to a text string"""
 
-    # TODO # pylint: disable=fixme
+    response = speech_text(voice_file, True)
 
-    return f"Grid AI: ASSISTANT, PLACEHOLDER: {str(voice_file)}"
+    return response
 
 
 @app.route("/text", methods=["POST"])
