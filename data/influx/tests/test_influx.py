@@ -39,6 +39,12 @@ def test_root(client):
     assert response.status_code == 200
     assert b'Hello, GridAI Influx' in response.data
 
+def test_comparison(client):
+    """Test comparison"""
+    response = client.get('/comparison?comparison_type=1&comp_val=0')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == '[]\n'
+
 
 def test_write_voltage_with_id(client):
     """Test write to bucket"""
