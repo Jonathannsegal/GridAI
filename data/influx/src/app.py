@@ -39,7 +39,7 @@ def write_influx():
     bus_name = request.args["bus"]
     voltage = request.args["voltage"]
     write_api = client.write_api(write_options=SYNCHRONOUS)
-    point = influxdb_client.Point(bus_name).field("voltage", voltage)
+    point = influxdb_client.Point(bus_name).field("voltage", int(voltage))
     write_api.write(bucket=bucket, org=org, record=point)
     return f"Created bus {bus_name}, voltage {voltage} successfully"
 
@@ -53,6 +53,35 @@ def get_current_voltage():
     |> range(start: -30d)
     |> filter(fn:(r) => r._measurement == "{bus_name}" )\
     |> last()"""
+    result = query_api.query(org=org, query=query)
+    results = []
+    for table in result:
+        for record in table.records:
+            results.append((record.get_time(), record.get_measurement(), record.get_value()))
+    return jsonify(results)
+
+
+@app.route('/comparison', methods=['GET'])
+def comparison():
+    """compare with given values"""
+    query = f""" from(bucket:"{bucket}")\n\
+    |> range(start: -30d)\n"""
+    if "busId" in request.args:
+        bus_name = request.args["busId"]
+        query += f"""|> filter(fn:(r) => r._measurement == "{bus_name}" )\n"""
+    field = "voltage"
+    if "curr_flg" in request.args:
+        query += """|> last()\n"""
+    if "power_type" in request.args:
+        field = request.args["power_type"]
+    comp_str = "=="
+    if request.args["comparison_type"] == "1":
+        comp_str = "<"
+    elif request.args["comparison_type"] == "2":
+        comp_str = ">"
+    comp_val = request.args["comp_val"]
+    query_api = client.query_api()
+    query += f"""|> filter(fn:(r) => r._field == "{field}" and r._value """ + comp_str + " " + comp_val + """ )\n"""
     result = query_api.query(org=org, query=query)
     results = []
     for table in result:

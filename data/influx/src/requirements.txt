@@ -12,3 +12,4 @@ influxdb-client==1.25.0
 functions-framework==3.0.0
 pytest-mock==3.7.0
 pandas==1.4.0
+werkzeug==2.0.3
