@@ -8,7 +8,7 @@ WORKDIR $APP_HOME
 COPY src/requirements.txt ./
 
 # Set up google credentials
-COPY client_secret/speechtotext-331119-820cdd23000d.json /tmp/keys/
+COPY ./client_secret/speechtotext-331119-820cdd23000d.json /tmp/keys/
 ENV GOOGLE_APPLICATION_CREDENTIALS "/tmp/keys/speechtotext-331119-820cdd23000d.json"
 
 # Set the module name
