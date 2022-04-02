@@ -1,0 +1,64 @@
+{
+    "name": "com.assistant.actions.Extrema",
+    "availability": {
+        "deviceClasses": [
+            {
+                "assistantSdkDevice": {}
+            }
+        ]
+    },
+    "intent": {
+        "name": "com.assistant.intents.Extrema",
+        "parameters": [
+            {
+                "name": "request",
+                "type": "Request"
+            },
+            {
+                "name": "extrema_type",
+                "type": "Extrema"
+            },
+            {
+                "name": "count",
+                "type": "Integer"
+            },
+            {
+                "name": "feature_type",
+                "type": "Feature"
+            },
+            {
+                "name": "object_type",
+                "type": "Objects"
+            }
+        ],
+        "trigger": {
+            "queryPatterns": [
+                "(?:$Request:request )?$Extrema:extrema_type(?: $Integer:count)?(?: $Feature:feature_type)?(?: $Objects:object_type)?"
+            ]
+        }
+    },
+    "fulfillment": {
+        "staticFulfillment": {
+            "templatedResponse": {
+                "items": [
+                    {
+                        "simpleResponse": {
+                            "textToSpeech": "The $extrema_type $count of $object_type are X."
+                        }
+                    },
+                    {
+                        "deviceExecution": {
+                            "command": "com.assistant.commands.Extrema",
+                            "params": {
+                                "extrema_type": "$extrema_type",
+                                "object_type": "$object_type",
+                                "feature_type": "$feature_type",
+                                "count": "$count"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

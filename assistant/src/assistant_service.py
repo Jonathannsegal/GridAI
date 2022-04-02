@@ -3,8 +3,6 @@ import json
 import os
 import re
 
-from assistant.src.command_handler import CommandHandler
-
 
 class AssistantService():
     """AssistantService"""
@@ -18,7 +16,7 @@ class AssistantService():
 
     def process_query(self, query: str):
         """Processes the text query"""
-        query = query.lower()
+        query = query.lower().lstrip().rstrip()
         for stop_word in self.actions["stop_words"]:
             query = query.replace(f' {stop_word} ', " ")
 
@@ -36,9 +34,9 @@ class AssistantService():
                                 param: res[response_item[key]["params"][param][1:]]
                                 for param in response_item[key]["params"]
                             }
-                            return self.send_to_handler(handler, input_args)
+                            return (handler, input_args)
 
-        return None
+        return (None, None)
 
     def check_action_for_query(self, action_intent, query):
         """Checks the query to see if its structure matches with the given action."""
@@ -77,21 +75,22 @@ class AssistantService():
         param_str_positions = sorted(param_str_positions, key=lambda param: param["start"])
         for i in reversed(range(len(param_str_positions))):
             param = param_str_positions[i]
+            if param["start"] < 0:
+                continue
 
             param_regex_str = self.construct_param_regex_str(param)
 
             start = param["start"]
             end = param["end"]
-            # Create capture group around nonoptional arguments
-            # (Note that optional arguments already are within a capture group. Ex: (...)? )
-            if end + 1 >= len(pattern) or pattern[end:end+2] != ")?":
-                param_regex_str = f'({param_regex_str})'
+            # Create major capture group for this feature
+            param_regex_str = f'({param_regex_str})'
 
             # Note: does not support the use of identical parameter variables
             # If needed, handle this enforcement logic in custom command handler
             pattern = pattern[:start] + param_regex_str + pattern[end:]
 
         pattern = pattern.lower()
+        # pattern.replace(" ", "\w?")
         return re.compile(pattern), param_str_positions
 
     def construct_param_regex_str(self, param):
@@ -121,12 +120,18 @@ class AssistantService():
                 "value": None
             } for param in parameters
         }
+        missing_params = {
+            param["name"] for param in param_positions if param["start"] < 0
+        }
+
         group_ind = 1
         for param in param_positions:
             param_res = param_results[param["name"]]
             param_type = self.types[f'${param["type"]}']
+            if param["name"] in missing_params:
+                continue
             if match.group(group_ind):
-                param_res["value"] = match.group(group_ind)
+                param_res["value"] = match.group(group_ind).lstrip(' ').rstrip(' ')
                 group_ind += 1
                 for entity_ind in range(len(param_type["entities"])):
                     entity = param_type["entities"][entity_ind]
@@ -139,8 +144,3 @@ class AssistantService():
                 group_ind += len(param_type["entities"])
 
         return param_results
-
-    @staticmethod
-    def send_to_handler(command, input_args):
-        """Send the processes query to the handler."""
-        return CommandHandler().handle_command(command, input_args)

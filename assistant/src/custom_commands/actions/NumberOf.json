@@ -21,7 +21,7 @@
         ],
         "trigger": {
             "queryPatterns": [
-                "($Request_count:request_count)? $Objects:object_type"
+                "(?:$Request_count:request_count )?$Objects:object_type"
             ]
         }
     },

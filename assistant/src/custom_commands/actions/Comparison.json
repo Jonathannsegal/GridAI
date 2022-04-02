@@ -1,0 +1,70 @@
+{
+    "name": "com.assistant.actions.Comparison",
+    "availability": {
+        "deviceClasses": [
+            {
+                "assistantSdkDevice": {}
+            }
+        ]
+    },
+    "intent": {
+        "name": "com.assistant.intents.Comparison",
+        "parameters": [
+            {
+                "name": "feeder_num",
+                "type": "Integer"
+            },
+            {
+                "name": "request",
+                "type": "Request"
+            },
+            {
+                "name": "feature_type",
+                "type": "Feature"
+            },
+            {
+                "name": "comparison_value",
+                "type": "Number"
+            },
+            {
+                "name": "unit",
+                "type": "Unit"
+            },
+            {
+                "name": "comparison_type",
+                "type": "Comparison"
+            }
+        ],
+        "trigger": {
+            "queryPatterns": [
+                "(?:$Request:request)? $Feature:feature_type $Comparison:comparison_type $Number:comparison_value(?: $Unit:unit)? feeder $Integer:feeder_num",
+                "(?:$Request:request)? $Feature:feature_type $Comparison:comparison_type $Number:comparison_value(?: $Unit:unit)?"
+            ]
+        }
+    },
+    "fulfillment": {
+        "staticFulfillment": {
+            "templatedResponse": {
+                "items": [
+                    {
+                        "simpleResponse": {
+                            "textToSpeech": "Showing $feature_type $comparison_type $comparison_value $unit for Feeder $feeder_num"
+                        }
+                    },
+                    {
+                        "deviceExecution": {
+                            "command": "com.assistant.commands.Comparison",
+                            "params": {
+                                "feeder_num": "$feeder_num",
+                                "feature_type": "$feature_type",
+                                "comparison_type": "$comparison_type",
+                                "comparison_value": "$comparison_value",
+                                "unit": "$unit"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
