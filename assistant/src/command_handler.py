@@ -1,4 +1,10 @@
 """Imports"""
+import requests
+
+
+def default(val, default_value):
+    """Replaces val if it is None"""
+    return default_value if val is None else val
 
 
 class CommandHandler():
@@ -6,10 +12,14 @@ class CommandHandler():
 
     def __init__(self):
         self.commands = {
-            "com.assistant.commands.VoltagePeakSpecific":
-                CommandHandler.voltage_peak_specific,
-            "com.assistant.commands.VoltageComparisonSpecific":
-                CommandHandler.voltage_comparison_specific,
+            "com.assistant.commands.PeakSpecific":
+                CommandHandler.peak_specific,
+            "com.assistant.commands.Comparison":
+                CommandHandler.comparison,
+            "com.assistant.commands.Extrema":
+                CommandHandler.extrema,
+            "com.assistant.commands.RateOfChange":
+                CommandHandler.rate_of_change,
             "com.assistant.commands.NumberOf":
                 CommandHandler.number_of,
         }
@@ -19,16 +29,55 @@ class CommandHandler():
         return self.commands[command](input_args)
 
     @staticmethod
-    def voltage_peak_specific(input_args: dict):
-        """Retrieves highest voltage for feeder_num."""
+    def peak_specific(input_args: dict):
+        """Retrieves highest feature value for feeder_num."""
         feeder_num = input_args["feeder_num"]["value"]
-        return feeder_num
+        feature_type = default(input_args["feature_type"]["key"], "DEFAULT")
+        return feeder_num, feature_type
 
     @staticmethod
-    def voltage_comparison_specific(input_args: dict):
+    def comparison(input_args: dict):
         """Retrieves the voltage for feeder_num which are within the specified range"""
-        feeder_num = input_args["voltage"]["value"]
-        return feeder_num
+        comparison_type = input_args["comparison_type"]["key"]
+        comparison_value = input_args["comparison_value"]["value"]
+
+        unit = default(input_args["unit"]["key"], "DEFAULT")
+        feature_type = default(input_args["feature_type"]["key"], "DEFAULT")
+        feeder_num = default(input_args["feeder_num"]["value"], None)
+
+        return requests.get(
+            url="https://data-influx-kxcfw5balq-uc.a.run.app/comparison",
+            params={
+                "comparison_type":
+                    1 if comparison_type == "LESS" else
+                    2 if comparison_type == "GREATER" else
+                    3,
+                "comp_val": comparison_value,
+                "power_type": feature_type,
+                "busId": feeder_num,
+                "unit": unit,
+            }
+        )
+        # return comparison_type, comparison_value, units, feature_type, feeder_num
+
+    @staticmethod
+    def extrema(input_args: dict):
+        """Retrieves the top or lowest values of a feature for objects of object_type"""
+        extrema_type = input_args["extrema_type"]["key"]
+        count = default(input_args["count"]["value"], 0)
+
+        object_type = default(input_args["object_type"]["key"], "DEFAULT")
+        feature_type = default(input_args["feature_type"]["key"], "DEFAULT")
+
+        return extrema_type, count, object_type, feature_type
+
+    @staticmethod
+    def rate_of_change(input_args: dict):
+        """Calculates the rate of change in a feature for target objects"""
+        object_type = default(input_args["object_type"]["key"], "DEFAULT")
+        feature_type = default(input_args["feature_type"]["key"], "DEFAULT")
+
+        return object_type, feature_type
 
     @staticmethod
     def number_of(input_args: dict):

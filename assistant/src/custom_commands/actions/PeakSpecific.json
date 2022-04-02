@@ -1,5 +1,5 @@
 {
-    "name": "com.assistant.actions.VoltageComparisonSpecific",
+    "name": "com.assistant.actions.PeakSpecific",
     "availability": {
         "deviceClasses": [
             {
@@ -8,28 +8,25 @@
         ]
     },
     "intent": {
-        "name": "com.assistant.intents.VoltageComparisonSpecific",
+        "name": "com.assistant.intents.PeakSpecific",
         "parameters": [
             {
                 "name": "feeder_num",
                 "type": "Integer"
             },
             {
+                "name": "feature_type",
+                "type": "Feature"
+            },
+            {
                 "name": "request",
                 "type": "Request"
-            },
-            {
-                "name": "voltage",
-                "type": "Voltage"
-            },
-            {
-                "name": "comparison",
-                "type": "Comparison"
             }
         ],
         "trigger": {
             "queryPatterns": [
-                "($Request:request)? voltages $Comparison:comparison $Voltage:voltage feeder $Integer:feeder_num"
+                "(?:$Request:request )?(?:$Feature:feature_type )?peak feeder $Integer:feeder_num",
+                "Feeder $Integer:feeder_num(?: $Request:request)?(?: $Feature:feature_type)? peak"
             ]
         }
     },
@@ -39,16 +36,15 @@
                 "items": [
                     {
                         "simpleResponse": {
-                            "textToSpeech": "Showing voltages $comparison $voltage for Feeder $feeder_num"
+                            "textToSpeech": "The $feature_type peak for Feeder $feeder_num"
                         }
                     },
                     {
                         "deviceExecution": {
-                            "command": "com.assistant.commands.VoltageComparisonSpecific",
+                            "command": "com.assistant.commands.PeakSpecific",
                             "params": {
-                                "feeder_num": "$feeder_num",
-                                "comparison": "$comparison",
-                                "voltage": "$voltage"
+                                "feature_type": "$feature_type",
+                                "feeder_num": "$feeder_num"
                             }
                         }
                     }

@@ -1,0 +1,35 @@
+Measurements for support
+Rate of change for any measurement
+Max values (get the 10 max values for these buses)
+Min values
+Show to top 10 
+
+MAX: [
+	top,
+	max,
+	maximum,
+	highest,
+	high
+]
+MIN: [
+	min,
+	minimum,
+	low,
+	lowest,
+]
+
+on data bus
+Voltage
+Active power injection/consumption
+Reactive power injection
+
+on lines (bus1, bus2)
+Current
+Active power
+Reactive power
+
+DERs
+    (capacity, active power, reactive power, apparent power)
+    (active or not active)
+    (modes of operation [typically 5 for each DER])
+    (who are the DER who are in [active power] mode)

@@ -95,7 +95,7 @@ mypy:assistant:
   - python --version
   - pip install -r assistant/src/requirements.txt
  script:
-  - python -m mypy assistant/src/app.py
+  - python -m mypy --install-types --non-interactive assistant/src/app.py
  only:
   changes:
    - assistant/**/*

@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 
 from assistant.src.assistant_service import AssistantService
+from assistant.src.command_handler import CommandHandler
 from assistant.src.speech_to_text import speech_text
 
 VOICE_UPLOAD_FOLDER = '/tmp/voicefiles'
@@ -18,8 +19,10 @@ def process_text_query(text_query):
     """Process the text query and return an appropriate response"""
 
     service = AssistantService()
+    handler, input_args = service.process_query(text_query)
 
-    response = service.process_query(text_query)
+    response = None if handler is None else \
+        CommandHandler().handle_command(handler, input_args)
 
     return jsonify(response)
 
