@@ -31,5 +31,5 @@ def speech_text(input_audio_file, gcs):
 
     for result in response.results:
         return_str += result.alternatives[0].transcript
-    print(f"Transcript: {return_str}")
+    # print(f"Transcript: {return_str}")
     return return_str

@@ -2,11 +2,16 @@
 import os
 
 from flask import Flask, jsonify, request
+from werkzeug.utils import secure_filename
 
 from assistant.src.assistant_service import AssistantService
 from assistant.src.speech_to_text import speech_text
 
+VOICE_UPLOAD_FOLDER = '/tmp/voicefiles'
+ALLOWED_EXTENSIONS = {'wav', 'mp3', 'flac', 'raw'}  # add file formats as needed
+
 app = Flask(__name__)
+app.config['VOICE_UPLOAD_FOLDER'] = VOICE_UPLOAD_FOLDER
 
 
 def process_text_query(text_query):
@@ -22,28 +27,81 @@ def process_text_query(text_query):
 def voice_to_text(voice_file):
     """Converts voice file to a text string"""
 
-    response = speech_text(voice_file, True)
+    response = speech_text(voice_file, False)
 
     return response
+
+
+def allowed_file(filename):
+    """Limits to whitelisted file extensions"""
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
 @app.route("/text", methods=["POST"])
 def text_request():
     """Text Request Endpoint"""
 
-    text_query = request.json['text']
+    request_json = request.get_json()
 
-    return process_text_query(text_query)
+    t_request = request_json['text']
+
+    return process_text_query(t_request)
 
 
 @app.route("/voice", methods=["POST"])
 def voice_request():
     """Voice Request Endpoint"""
-
     voice_query = request.files.get('voice')
-    text_query = voice_to_text(voice_query)
+    tmpdir = False
+    if not os.path.isdir(app.config['VOICE_UPLOAD_FOLDER']):
+        os.mkdir(app.config['VOICE_UPLOAD_FOLDER'])
+        tmpdir = True
+    if voice_query.name == '':
+        return 'No File'
+    if voice_query and allowed_file(voice_query.filename):
+        file_path = os.path.join(app.config['VOICE_UPLOAD_FOLDER'],
+                                 secure_filename(voice_query.filename))
+        voice_query.save(file_path)
+        text_query = voice_to_text(file_path)
+        # remove temporary file
+        os.remove(file_path)
+        return process_text_query(text_query)
+    if tmpdir:
+        os.rmdir(app.config['VOICE_UPLOAD_FOLDER'])
 
-    return process_text_query(text_query)
+    return 'File extension not allowed'
+
+
+@app.route("/transcript", methods=["POST"])
+def transcript():
+    """transcript Endpoint"""
+    voice_query = request.files.get('voice')
+    tmpdir = False
+    if not os.path.isdir(app.config['VOICE_UPLOAD_FOLDER']):
+        os.mkdir(app.config['VOICE_UPLOAD_FOLDER'])
+        tmpdir = True
+    if voice_query.name == '':
+        return 'No File'
+    if voice_query and allowed_file(voice_query.filename):
+        file_path = os.path.join(app.config['VOICE_UPLOAD_FOLDER'],
+                                 secure_filename(voice_query.filename))
+        voice_query.save(file_path)
+        text_query = voice_to_text(file_path)
+        # remove temporary file
+        os.remove(file_path)
+        return text_query
+    # remove temporary directory
+    if tmpdir:
+        os.rmdir(app.config['VOICE_UPLOAD_FOLDER'])
+
+    return 'File extension not allowed'
+
+
+@app.route("/ping")
+def ping_pong():
+    """Ping Pong"""
+    return 'pong'
 
 
 if __name__ == "__main__":
