@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -89,6 +91,7 @@ func main() {
 	//firebase
 	//TODO
 
+	router.HandleFunc("/getALl/{busid}", getAll).Methods("GET")
 	router.HandleFunc("/getCurrentVoltage/{busid}", getCurrentVoltage).Methods("GET")
 	router.HandleFunc("/getCoordinates/{busid}", getCoordinates).Methods("GET")
 	router.HandleFunc("/getAllCoordinates", getAllCoordinates).Methods("GET")
@@ -195,6 +198,49 @@ func prepareResponse() []Bus {
 	bus.Coords.Lat = -93.8679897
 	Buses = append(Buses, bus)
 	return Buses
+}
+
+func getAll(w http.ResponseWriter, r *http.Request) {
+	response, err := http.Get("https://data-neo4j-kxcfw5balq-uc.a.run.app/getCoords")
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var lines []string
+	sc := bufio.NewScanner(strings.NewReader(string(responseData)))
+	for sc.Scan() {
+		lines = append(lines, sc.Text())
+	}
+	fmt.Print(lines)
+
+	var Nodes []Node
+
+	for _, i := range lines {
+		words := strings.Fields(i)
+		var node Node
+		node.Node = words[1]
+		if s, err := strconv.ParseFloat(words[2], 64); err == nil {
+			node.Position[0] = s
+		}
+		if s, err := strconv.ParseFloat(words[3], 64); err == nil {
+			node.Position[1] = s
+		}
+		Nodes = append(Nodes, node)
+	}
+	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("ACAO"))
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	jsonResponse, err := json.Marshal(Nodes)
+	if err != nil {
+		return
+	}
+	w.Write(jsonResponse)
 }
 
 func getCurrentVoltage(w http.ResponseWriter, r *http.Request) {
@@ -316,15 +362,38 @@ func getCurrentAnomalies(w http.ResponseWriter, r *http.Request) {
 }
 
 func sendTextRequest(w http.ResponseWriter, r *http.Request) {
-	var response Voltage
-	buses := prepareResponse()
-	response = buses[1].Voltage
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+	responseBody := bytes.NewBuffer(body)
+
+	response, err := http.Post("https://assistant-kxcfw5balq-uc.a.run.app/text", "application/json", responseBody)
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("ACAO"))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	jsonResponse, err := json.Marshal(response)
+
+	jsonResponse, err := json.Marshal(responseData)
 	if err != nil {
 		return
 	}
-	w.Write(jsonResponse)
+	var input = string(jsonResponse)
+	input = input[1 : len(input)-1]
+
+	rawDecodedText, err := base64.StdEncoding.DecodeString(input)
+	if err != nil {
+		panic(err)
+	}
+
+	w.Write(rawDecodedText)
 }
