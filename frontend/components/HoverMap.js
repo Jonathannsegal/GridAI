@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/prop-types */
 /* eslint-disable max-len */
 /* eslint-disable no-console */

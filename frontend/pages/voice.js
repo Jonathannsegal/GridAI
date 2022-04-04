@@ -5,6 +5,7 @@
 import * as React from 'react';
 // import Launcher from 'react-chat-window';
 import { useEffect } from 'react';
+import { Widget, addResponseMessage } from 'react-chat-widget';
 import ChatWidget from '../components/ChatWidget';
 import Metatags from '../components/Metatags';
 import { sendTextRequest } from '../lib/calls';
@@ -17,8 +18,9 @@ export default function Voice() {
   const handleNewUserMessage = async (newMessage) => {
     const responce = await sendTextRequest(newMessage);
     // eslint-disable-next-line no-console
-    console.log(`New message incoming! ${responce}`);
+    console.log(`New message incoming!  ${responce}`);
     // Now send the message throught the backend API
+    addResponseMessage(`${responce}`);
   };
 
   return (
@@ -27,7 +29,7 @@ export default function Voice() {
 
       <p>welcome to voice</p>
 
-      <ChatWidget
+      <Widget
         handleNewUserMessage={handleNewUserMessage}
         title="GridAI"
         subtitle=""
