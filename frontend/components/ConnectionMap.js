@@ -5,7 +5,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import DeckGL from '@deck.gl/react';
 import { useState } from 'react';
-import { LineLayer } from '@deck.gl/layers';
+import { LineLayerComp } from 'LineLayer';
 import MapGL from 'react-map-gl';
 import {
   getConnections,
@@ -30,7 +30,6 @@ function ConnectionMap() {
     pitch: 0,
   });
 
-  const data = getConnections();
   /**
    * Data format:
    * [
@@ -48,15 +47,7 @@ function ConnectionMap() {
    *   ...
    * ]
    */
-  const layer = new LineLayer({
-    id: 'line-layer',
-    data,
-    pickable: true,
-    getWidth: 1,
-    getSourcePosition: (d) => d.first,
-    getTargetPosition: (d) => d.second,
-    getColor: (d) => [d.type, 100, 100],
-  });
+  const layer = LineLayerComp();
 
   return (
     <DeckGL
