@@ -18,10 +18,14 @@ def speech_text(input_audio_file, gcs):
             content = audio_file.read()
         audio = speech.RecognitionAudio(content=content)
 
+    # More likly to recognize numerical values
+    speech_context = speech.SpeechContext(phrases=["$OPERAND"])
+
     config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=16000,
         language_code="en-US",
+        speech_contexts=[speech_context],
     )
 
     # Detects speech in the audio file
