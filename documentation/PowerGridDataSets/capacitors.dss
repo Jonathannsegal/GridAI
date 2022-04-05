@@ -1,0 +1,4 @@
+New Capacitor.CS457048 Bus1=CSW943857.1.2.3 Phases=3 kVAr=1200.0 kV=12.47 Conn=wye Basefreq=60 states=0 !cap 2
+New Capacitor.CS659779 Bus1=CSW943985.1.2.3 Phases=3 kVAr=1200.0 kV=12.47 Conn=wye Basefreq=60 states=0  !cap 4
+New Capacitor.CS659770 Bus1=CSW944075.1.2.3 Phases=3 kVAr=1200.0 kV=12.47 Conn=wye Basefreq=60 states=0		!cap 3
+New Capacitor.CS457017 Bus1=CSW943914.1.2.3 Phases=3 kVAr=1200.0 kV=12.47 Conn=wye Basefreq=60 states=0 !cap 1

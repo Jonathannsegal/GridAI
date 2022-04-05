@@ -33,3 +33,6 @@ yarn-error.log*
 
 coverage
 junit.xml
+
+#eslint
+.eslintrc.js

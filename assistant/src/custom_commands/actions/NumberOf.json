@@ -1,0 +1,49 @@
+{
+    "name": "com.assistant.actions.NumberOf",
+    "availability": {
+        "deviceClasses": [
+            {
+                "assistantSdkDevice": {}
+            }
+        ]
+    },
+    "intent": {
+        "name": "com.assistant.intents.NumberOf",
+        "parameters": [
+            {
+                "name": "request_count",
+                "type": "Request_count"
+            },
+            {
+                "name": "object_type",
+                "type": "Objects"
+            }
+        ],
+        "trigger": {
+            "queryPatterns": [
+                "(?:$Request_count:request_count )?$Objects:object_type"
+            ]
+        }
+    },
+    "fulfillment": {
+        "staticFulfillment": {
+            "templatedResponse": {
+                "items": [
+                    {
+                        "simpleResponse": {
+                            "textToSpeech": "There are X $object_type in the system."
+                        }
+                    },
+                    {
+                        "deviceExecution": {
+                            "command": "com.assistant.commands.NumberOf",
+                            "params": {
+                                "object_type": "$object_type"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

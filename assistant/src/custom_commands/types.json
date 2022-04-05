@@ -1,0 +1,220 @@
+[
+    {
+        "name": "$Comparison",
+        "entities": [
+            {
+                "key": "GREATER",
+                "synonyms": [
+                    "greater than",
+                    "great than",
+                    "more than"
+                ]
+            },
+            {
+                "key": "LESS",
+                "synonyms": [
+                    "less than",
+                    "lesser than",
+                    "more than"
+                ]
+            },
+            {
+                "key": "EQUAL",
+                "synonyms": [
+                    "equal to",
+                    "equaling",
+                    "equals",
+                    "equal"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Extrema",
+        "entities": [
+            {
+                "key": "MIN",
+                "synonyms": [
+                    "min",
+                    "minimum",
+                    "low",
+                    "lowest"
+                ]
+            },
+            {
+                "key": "MAX",
+                "synonyms": [
+                    "top",
+                    "max",
+                    "maximum",
+                    "highest",
+                    "high"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Objects",
+        "entities": [
+            {
+                "key": "DEFAULT",
+                "synonyms": [
+                    "line",
+                    "lines",
+                    "bus",
+                    "buses",
+                    "feeder",
+                    "feeders"
+                ]
+            },
+            {
+                "key": "DER",
+                "synonyms": [
+                    "DERs",
+                    "DER"
+                ]
+            },
+            {
+                "key": "TRANSFORMER",
+                "synonyms": [
+                    "Transformers",
+                    "Transformer"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Time",
+        "entities": [
+            {
+                "key": "DEFAULT",
+                "synonyms": [
+                    "current"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Feature",
+        "entities": [
+            {
+                "key": "DEFAULT",
+                "synonyms": [
+                    "value",
+                    "values"
+                ]
+            },
+            {
+                "key": "VOLTAGE",
+                "synonyms": [
+                    "voltage",
+                    "voltages"
+                ]
+            },
+            {
+                "key": "ACTIVE_POWER",
+                "synonyms": [
+                    "active power",
+                    "active power injection",
+                    "active power consumption"
+                ]
+            },
+            {
+                "key": "REACTIVE_POWER",
+                "synonyms": [
+                    "reactive power",
+                    "reactive power injection",
+                    "reactive power consumption"
+                ]
+            },
+            {
+                "key": "CAPACITY",
+                "synonyms": [
+                    "capacity",
+                    "capacities"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$RateOfChange",
+        "entities": [
+            {
+                "key": "RATE_OF_CHANGE",
+                "synonyms": [
+                    "rate of change",
+                    "change",
+                    "changing rate",
+                    "rate"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Integer",
+        "entities": [
+            {
+                "key": "INTEGER",
+                "synonyms": [
+                    "\\d+"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Number",
+        "entities": [
+            {
+                "key": "FLOAT",
+                "synonyms": [
+                    "\\d+\\.\\d+"
+                ]
+            },
+            {
+                "key": "INTEGER",
+                "synonyms": [
+                    "\\d+"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Unit",
+        "entities": [
+            {
+                "key": "PER_UNIT",
+                "synonyms": [
+                    "p\\.?u\\.?"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Request",
+        "entities": [
+            {
+                "key": "REQUEST",
+                "synonyms": [
+                    "What is",
+                    "Get",
+                    "Show"
+                ]
+            }
+        ]
+    },
+    {
+        "name": "$Request_count",
+        "entities": [
+            {
+                "key": "REQUEST_COUNT",
+                "synonyms": [
+                    "How many",
+                    "Many",
+                    "Number of",
+                    "Number",
+                    "Total"
+                ]
+            }
+        ]
+    }
+]

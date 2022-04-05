@@ -1,21 +1,68 @@
+# type: ignore
+# pylint: disable=line-too-long
 """Imports"""
 import os
+from py2neo import Graph
+from flask import Flask, request
+from decouple import config
 
-from flask import Flask
 
 app = Flask(__name__)
-
-
-def func(value):
-    """Add 2 to value"""
-    return value + 2
+user = config('DATABASE_USERNAME', default='username')
+password = config('DATABASE_PASSWORD', default='password')
+url = config('DATABASE_URL', default='url')
+graph = Graph(url, auth=(user, password))
 
 
 @app.route("/")
-def hello_world():
-    """Hello World Endpoint"""
-    name = os.environ.get("NAME", "World")
-    return f"Grid AI: NEO4J, Hello {name}!"
+def index():
+    """Root Directory"""
+    return "Hello, GridAI Neo4j"
+
+
+@app.route("/ping")
+def ping():
+    """Ping the server"""
+    return "pong"
+
+
+@app.route('/addNode', methods=['POST'])
+def add_node():
+    """Create node"""
+    name = request.args['name']
+    query = ("CREATE (p1:Node { name: $node_name })")
+    graph.run(query, node_name=name)
+    return f"Created node {name} successfully"
+
+
+@app.route('/getNodes', methods=['GET'])
+def get_nodes():
+    """Get all nodes"""
+    query = ("MATCH (n:Node) RETURN n.NodeId")
+    result = ""
+    for record in graph.run(query):
+        result += "Node: " + record["n.NodeId"] + "\n"
+    return result
+
+
+@app.route('/getCoords', methods=['GET'])
+def get_all_coordinates():
+    """Get all node coordinates"""
+    query = ("MATCH (n:Node) RETURN n.NodeId,n.latitude,n.longitude")
+    result = ""
+    for record in graph.run(query):
+        result += "Node: " + record["n.NodeId"] + " " + record["n.longitude"] + " " + record["n.latitude"] + "\n"
+    return result
+
+
+@app.route('/uploadFile', methods=['POST'])
+def upload_file():
+    """upload a csv file to import data"""
+    csv_url = request.args['url']
+    query = ("""LOAD CSV WITH HEADERS FROM $url_name AS row MERGE
+    (n:Node {NodeId: row.busID, longitude: row.longitude, latitude: row.latitude})""")
+    graph.run(query, url_name=csv_url)
+    return "success"
 
 
 if __name__ == "__main__":

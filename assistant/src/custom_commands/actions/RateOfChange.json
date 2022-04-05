@@ -1,0 +1,60 @@
+{
+    "name": "com.assistant.actions.RateOfChange",
+    "availability": {
+        "deviceClasses": [
+            {
+                "assistantSdkDevice": {}
+            }
+        ]
+    },
+    "intent": {
+        "name": "com.assistant.intents.RateOfChange",
+        "parameters": [
+            {
+                "name": "request",
+                "type": "Request"
+            },
+            {
+                "name": "rate_of_change",
+                "type": "RateOfChange"
+            },
+            {
+                "name": "feature_type",
+                "type": "Feature"
+            },
+            {
+                "name": "object_type",
+                "type": "Objects"
+            }
+        ],
+        "trigger": {
+            "queryPatterns": [
+                "(?:$Request:request )?$RateOfChange:rate_of_change(?: $Feature:feature_type)?(?: $Objects:object_type)?",
+                "(?:$Request:request )?(?:$Feature:feature_type )?$RateOfChange:rate_of_change(?: $Objects:object_type)?"
+            ]
+        }
+    },
+    "fulfillment": {
+        "staticFulfillment": {
+            "templatedResponse": {
+                "items": [
+                    {
+                        "simpleResponse": {
+                            "textToSpeech": "The $feature_type $rate_of_change of $object_type are X."
+                        }
+                    },
+                    {
+                        "deviceExecution": {
+                            "command": "com.assistant.commands.RateOfChange",
+                            "params": {
+                                "rate_of_change": "$rate_of_change",
+                                "object_type": "$object_type",
+                                "feature_type": "$feature_type"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}

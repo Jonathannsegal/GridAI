@@ -1,0 +1,55 @@
+{
+    "name": "com.assistant.actions.PeakSpecific",
+    "availability": {
+        "deviceClasses": [
+            {
+                "assistantSdkDevice": {}
+            }
+        ]
+    },
+    "intent": {
+        "name": "com.assistant.intents.PeakSpecific",
+        "parameters": [
+            {
+                "name": "feeder_num",
+                "type": "Integer"
+            },
+            {
+                "name": "feature_type",
+                "type": "Feature"
+            },
+            {
+                "name": "request",
+                "type": "Request"
+            }
+        ],
+        "trigger": {
+            "queryPatterns": [
+                "(?:$Request:request )?(?:$Feature:feature_type )?peak feeder $Integer:feeder_num",
+                "Feeder $Integer:feeder_num(?: $Request:request)?(?: $Feature:feature_type)? peak"
+            ]
+        }
+    },
+    "fulfillment": {
+        "staticFulfillment": {
+            "templatedResponse": {
+                "items": [
+                    {
+                        "simpleResponse": {
+                            "textToSpeech": "The $feature_type peak for Feeder $feeder_num"
+                        }
+                    },
+                    {
+                        "deviceExecution": {
+                            "command": "com.assistant.commands.PeakSpecific",
+                            "params": {
+                                "feature_type": "$feature_type",
+                                "feeder_num": "$feeder_num"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+    }
+}
