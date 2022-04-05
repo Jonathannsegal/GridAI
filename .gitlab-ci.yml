@@ -20,16 +20,16 @@ stages:
   - test
   - deploy
 
-# build:next:
-#  stage: build
-#  needs: []
-#  image: node:latest
-#  script:
-#   - cd frontend/
-#   - yarn
-#  only:
-#   changes:
-#    - frontend/**/*
+build:next:
+ stage: build
+ needs: []
+ image: node:latest
+ script:
+  - cd frontend/
+  - yarn
+ only:
+  changes:
+   - frontend/**/*
 #  cache:
 #   paths:
 #    - frontend/node_modules/
