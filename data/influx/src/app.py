@@ -39,7 +39,7 @@ def write_influx():
     bus_name = request.args["bus"]
     voltage = request.args["voltage"]
     write_api = client.write_api(write_options=SYNCHRONOUS)
-    point = influxdb_client.Point(bus_name).field("voltage", int(voltage))
+    point = influxdb_client.Point(bus_name).field("voltage", float(voltage))
     write_api.write(bucket=bucket, org=org, record=point)
     return f"Created bus {bus_name}, voltage {voltage} successfully"
 
@@ -112,23 +112,31 @@ def upload_csv():
     data = pd.read_csv(csv_url)
     for i in range(data.shape[0]):
         # pylint: disable=maybe-no-member
-        point = influxdb_client.Point(data.iat[i, 0]) \
-            .field('voltage', data.at[i, 'kw']) \
-            .time(data.at[i, 'date'])
+        point = influxdb_client.Point(data.iat[i, 0])\
+            .field('voltage', data.at[i, 'kw']).time(data.at[i, 'date'])
         write_api = client.write_api(write_options=SYNCHRONOUS)
         write_api.write(bucket=bucket, org=org, record=point)
     return f"Uploaded data from {csv_url} successfully"
 
 
+@app.route("/deleteAll", methods=['Delete'])
+def delete_all():
+    """Delete all"""
+    delete_api = client.delete_api()
+    delete_api.delete(datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S"),
+                      datetime.strptime("2030-01-01 00:00:00", "%Y-%m-%d %H:%M:%S"), "", bucket, org)
+    return "All Data Deleted"
+
+
 @app.route("/uploadTestCsv", methods=['POST'])
 def upload_test_csv():
     """Uploads Test csv to influx db"""
-    csv_url = """https://firebasestorage.googleapis.com/v0/b/influx-csv.appspot.com
-    /o/updated.csv?alt=media&token=9cf9d70e-d5c2-4629-b259-a65f533cf0b2"""
+    csv_url = "https://firebasestorage.googleapis.com/v0/b/influx-csv.appspot.com/o/smallCsv.csv?alt"
+    csv_url += "=media&token=29161b1a-3dd3-41af-9d0a-eb7e5f9a6bee"
     data = pd.read_csv(csv_url)
     for i in range(data.shape[0]):
         # pylint: disable=maybe-no-member
-        relative_time = datetime.strptime(data.at[i, 'date'], "%Y-%m-%d %H:%M:%S")
+        relative_time = datetime.strptime(data.at[i, 'date'], "%d/%m/%Y %H:%M")
         date = datetime.today().replace(hour=relative_time.hour,
                                         minute=relative_time.minute, second=relative_time.second, microsecond=0)
         point = influxdb_client.Point(data.iat[i, 0]) \
