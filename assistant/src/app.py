@@ -54,8 +54,10 @@ def text_request():
 
 @app.route("/voice", methods=["POST"])
 def voice_request():
-    """Voice Request Endpoint"""
+    """Voice Request Endpoint set paramater "transcipt to any
+    value to return a transcript of the speech"""
     voice_query = request.files.get('voice')
+    transcript_mode = request.args.get("transcript", default=False, type=bool)
     tmpdir = False
     if not os.path.isdir(app.config['VOICE_UPLOAD_FOLDER']):
         os.mkdir(app.config['VOICE_UPLOAD_FOLDER'])
@@ -69,6 +71,8 @@ def voice_request():
         text_query = voice_to_text(file_path)
         # remove temporary file
         os.remove(file_path)
+        if transcript_mode:
+            return text_query
         return process_text_query(text_query)
     if tmpdir:
         os.rmdir(app.config['VOICE_UPLOAD_FOLDER'])
@@ -76,29 +80,12 @@ def voice_request():
     return 'File extension not allowed'
 
 
-@app.route("/transcript", methods=["POST"])
-def transcript():
-    """transcript Endpoint"""
-    voice_query = request.files.get('voice')
-    tmpdir = False
-    if not os.path.isdir(app.config['VOICE_UPLOAD_FOLDER']):
-        os.mkdir(app.config['VOICE_UPLOAD_FOLDER'])
-        tmpdir = True
-    if voice_query.name == '':
-        return 'No File'
-    if voice_query and allowed_file(voice_query.filename):
-        file_path = os.path.join(app.config['VOICE_UPLOAD_FOLDER'],
-                                 secure_filename(voice_query.filename))
-        voice_query.save(file_path)
-        text_query = voice_to_text(file_path)
-        # remove temporary file
-        os.remove(file_path)
-        return text_query
-    # remove temporary directory
-    if tmpdir:
-        os.rmdir(app.config['VOICE_UPLOAD_FOLDER'])
-
-    return 'File extension not allowed'
+@app.route("/setCred")
+def set_cred():
+    """sets google application crednentials. for debug use only"""
+    os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.getcwd() + \
+        "/assistant/client_secret/speechtotext-331119-820cdd23000d.json"
+    return os.environ['GOOGLE_APPLICATION_CREDENTIALS']
 
 
 @app.route("/ping")
