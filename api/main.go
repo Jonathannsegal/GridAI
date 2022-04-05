@@ -47,12 +47,47 @@ type Anomalies struct {
 	Ids []int `json:"anomalies"`
 }
 
-type Health struct {
-	id         int
-	Neo4j      string `json:"neo4j"`
-	Influx     string `json:"influx"`
-	Anomoly    string `json:"anomoly"`
-	Prediction string `json:"prediction"`
+type ServiceId int
+const (
+    Influx ServiceId = iota
+    Neo4j
+    Anomoly
+    Prediction
+	NUM_SERVICES
+)
+
+type Service struct {
+	id      ServiceId
+	name    string
+	baseurl string
+}
+
+services := []Service {
+	Service {
+		id:      Influx
+		name:    "influx"
+		baseurl: "https://data-influx-kxcfw5balq-uc.a.run.app"
+	}
+	Service {
+		id:      Neo4j
+		name:    "neo4j"
+		baseurl: "https://data-neo4j-kxcfw5balq-uc.a.run.app"
+	}
+	Service {
+		id:      Anomoly
+		name:    "anomoly"
+		baseurl: "https://ml-anomaly-kxcfw5balq-uc.a.run.app"
+	}
+	Service {
+		id:      Prediction
+		name:    "prediction"
+		baseurl: "https://ml-prediction-kxcfw5balq-uc.a.run.app"
+	}
+	Service {
+		id:      Assistant
+		name:    "assistant"
+		baseurl: "https://assistant-kxcfw5balq-uc.a.run.app"
+	}
 }
 
 func main() {
@@ -109,7 +144,7 @@ func main() {
 func GetNodes(w http.ResponseWriter, r *http.Request) {
 	log.Println("Calling neo4j service ")
 	w.WriteHeader(http.StatusOK)
-	response, err := http.Get("https://neo4j-kxcfw5balq-uc.a.run.app/getNodes")
+	response, err := http.Get(services[Neo4j].baseurl + "/getNodes")
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -127,42 +162,28 @@ func GetNodes(w http.ResponseWriter, r *http.Request) {
 }
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	var response Health
-	influx_response, err := http.Get("https://influx-kxcfw5balq-uc.a.run.app/ping")
-	neo4j_response, err := http.Get("https://neo4j-kxcfw5balq-uc.a.run.app/ping")
-	prediction_response, err := http.Get("https://prediction-kxcfw5balq-uc.a.run.app/ping")
-	anomoly_response, err := http.Get("https://anomaly-kxcfw5balq-uc.a.run.app/ping")
-	if err != nil {
-		fmt.Print(err.Error())
-		os.Exit(1)
+	var response := make(map[string]string, len(services))
+
+	for i, service := range services {
+		pingurl := service.baseurl + "/ping"
+
+		response, err := http.Get(pingurl)
+		if err != nil {
+			fmt.Print(err.Error())
+			os.Exit(1)
+		}
+
+		responseData, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if strings.Contains(string(responseData), "pong") {
+			response[service.name] = "Live"
+		} else {
+			response[service.name] = "Down"
+		}
 	}
-	influx_responseData, err := ioutil.ReadAll(influx_response.Body)
-	neo4j_responseData, err := ioutil.ReadAll(neo4j_response.Body)
-	prediction_responseData, err := ioutil.ReadAll(prediction_response.Body)
-	anomoly_responseData, err := ioutil.ReadAll(anomoly_response.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if strings.Contains(string(influx_responseData), "pong") {
-		response.Influx = "Live"
-	} else {
-		response.Influx = "Down"
-	}
-	if strings.Contains(string(neo4j_responseData), "pong") {
-		response.Neo4j = "Live"
-	} else {
-		response.Neo4j = "Down"
-	}
-	if strings.Contains(string(prediction_responseData), "pong") {
-		response.Anomoly = "Live"
-	} else {
-		response.Anomoly = "Down"
-	}
-	if strings.Contains(string(anomoly_responseData), "pong") {
-		response.Prediction = "Live"
-	} else {
-		response.Prediction = "Down"
-	}
+
 	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("ACAO"))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
@@ -201,7 +222,7 @@ func prepareResponse() []Bus {
 }
 
 func getAll(w http.ResponseWriter, r *http.Request) {
-	response, err := http.Get("https://data-neo4j-kxcfw5balq-uc.a.run.app/getCoords")
+	response, err := http.Get(services[Neo4j].baseurl + "/getCoords")
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
@@ -285,7 +306,7 @@ func getCoordinates(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllCoordinates(w http.ResponseWriter, r *http.Request) {
-	response, err := http.Get("https://data-neo4j-kxcfw5balq-uc.a.run.app/getCoords")
+	response, err := http.Get(services[Neo4j].baseurl + "/getCoords")
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
@@ -368,7 +389,7 @@ func sendTextRequest(w http.ResponseWriter, r *http.Request) {
 	}
 	responseBody := bytes.NewBuffer(body)
 
-	response, err := http.Post("https://assistant-kxcfw5balq-uc.a.run.app/text", "application/json", responseBody)
+	response, err := http.Post(services[Assistant].baseurl + "/text", "application/json", responseBody)
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
