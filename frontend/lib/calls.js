@@ -5,8 +5,8 @@
 /* eslint-disable no-console */
 /* eslint-disable no-return-assign */
 
-// const url = process.env.NEXT_PUBLIC_API_URL;
-const url = process.env.NEXT_PUBLIC_API_URL_LOCAL;
+const url = process.env.NEXT_PUBLIC_API_URL;
+// const url = process.env.NEXT_PUBLIC_API_URL_LOCAL;
 
 // From Influx
 export async function getCurrentVoltage() {
