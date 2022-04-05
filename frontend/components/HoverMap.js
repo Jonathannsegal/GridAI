@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable linebreak-style */
 /* eslint-disable react/prop-types */
 /* eslint-disable max-len */
 /* eslint-disable no-console */
@@ -20,8 +21,8 @@ function Map() {
 
   // Viewport settings
   const INITIAL_VIEW_STATE = {
-    longitude: -93.6422,
-    latitude: 42.0281,
+    longitude: -112.337088,
+    latitude: 33.75363564,
     zoom: 12,
     pitch: 0,
     bearing: 0,
@@ -59,7 +60,7 @@ function Map() {
     sizeScale: 15,
     getPosition: (d) => d.coordinates,
     // getSize: (d) => 5,
-    getColor: (d) => [Math.sqrt(d.exits), 140, 0],
+    getColor: () => [140, 140, 0],
     onHover: (d) => setHoverInfo(d),
   });
 
@@ -92,7 +93,7 @@ function Map() {
             <div>
               <h2 className="text-gray-800 text-3xl font-semibold">
                 Node id:
-                { hoverInfo.object.node }
+                { hoverInfo.object.nodeid }
               </h2>
             </div>
           </div>
