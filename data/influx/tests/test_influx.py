@@ -52,6 +52,12 @@ def test_write_voltage_with_id(client):
     assert response.status_code == 200
     assert response.data.decode('utf-8') == 'Created bus 1, voltage 2 successfully'
 
+def delete_all(client):
+    """Test delete all"""
+    response = client.delete('/deleteAll')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == 'All Data Deleted'
+
 # def test_upload_csv(client):
 #     """Test write to bucket"""
 #     response = client.post('/uploadCsv?url=http://test.com')
