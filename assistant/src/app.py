@@ -89,9 +89,9 @@ def set_cred():
 
 
 @app.route("/ping")
-def ping_pong():
-    """Ping Pong"""
-    return 'pong'
+def ping():
+    """Ping the server"""
+    return "pong"
 
 
 if __name__ == "__main__":
