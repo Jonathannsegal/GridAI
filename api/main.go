@@ -164,7 +164,7 @@ func GetNodes(w http.ResponseWriter, r *http.Request) {
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
 	var statusMap = make(map[string]string, len(services))
 
-	for i, service := range services {
+	for _, service := range services {
 		pingurl := service.baseurl + "/ping"
 
 		response, err := http.Get(pingurl)
