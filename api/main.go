@@ -62,7 +62,7 @@ type Service struct {
 	baseurl string
 }
 
-services := []Service {
+const services = []Service {
 	Service {
 		id:      Influx
 		name:    "influx"
@@ -162,7 +162,7 @@ func GetNodes(w http.ResponseWriter, r *http.Request) {
 }
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	var response := make(map[string]string, len(services))
+	var response = make(map[string]string, len(services))
 
 	for i, service := range services {
 		pingurl := service.baseurl + "/ping"
