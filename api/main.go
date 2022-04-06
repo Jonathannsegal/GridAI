@@ -64,30 +64,30 @@ type Service struct {
 
 const services = []Service {
 	Service {
-		id:      Influx
-		name:    "influx"
-		baseurl: "https://data-influx-kxcfw5balq-uc.a.run.app"
-	}
+		id:      Influx,
+		name:    "influx",
+		baseurl: "https://data-influx-kxcfw5balq-uc.a.run.app",
+	},
 	Service {
-		id:      Neo4j
-		name:    "neo4j"
-		baseurl: "https://data-neo4j-kxcfw5balq-uc.a.run.app"
-	}
+		id:      Neo4j,
+		name:    "neo4j",
+		baseurl: "https://data-neo4j-kxcfw5balq-uc.a.run.app",
+	},
 	Service {
-		id:      Anomoly
-		name:    "anomoly"
-		baseurl: "https://ml-anomaly-kxcfw5balq-uc.a.run.app"
-	}
+		id:      Anomoly,
+		name:    "anomoly",
+		baseurl: "https://ml-anomaly-kxcfw5balq-uc.a.run.app",
+	},
 	Service {
-		id:      Prediction
-		name:    "prediction"
-		baseurl: "https://ml-prediction-kxcfw5balq-uc.a.run.app"
-	}
+		id:      Prediction,
+		name:    "prediction",
+		baseurl: "https://ml-prediction-kxcfw5balq-uc.a.run.app",
+	},
 	Service {
-		id:      Assistant
-		name:    "assistant"
-		baseurl: "https://assistant-kxcfw5balq-uc.a.run.app"
-	}
+		id:      Assistant,
+		name:    "assistant",
+		baseurl: "https://assistant-kxcfw5balq-uc.a.run.app",
+	},
 }
 
 func main() {
