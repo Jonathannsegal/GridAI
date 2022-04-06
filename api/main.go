@@ -53,7 +53,7 @@ const (
     Neo4j
     Anomoly
     Prediction
-	NUM_SERVICES
+	Assistant
 )
 
 type Service struct {
@@ -62,7 +62,7 @@ type Service struct {
 	baseurl string
 }
 
-const services = []Service {
+var services = [...]Service {
 	Service {
 		id:      Influx,
 		name:    "influx",
@@ -162,7 +162,7 @@ func GetNodes(w http.ResponseWriter, r *http.Request) {
 }
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	var response = make(map[string]string, len(services))
+	var statusMap = make(map[string]string, len(services))
 
 	for i, service := range services {
 		pingurl := service.baseurl + "/ping"
@@ -178,16 +178,16 @@ func HealthCheck(w http.ResponseWriter, r *http.Request) {
 			log.Fatal(err)
 		}
 		if strings.Contains(string(responseData), "pong") {
-			response[service.name] = "Live"
+			statusMap[service.name] = "Live"
 		} else {
-			response[service.name] = "Down"
+			statusMap[service.name] = "Down"
 		}
 	}
 
 	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("ACAO"))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	jsonResponse, err := json.Marshal(response)
+	jsonResponse, err := json.Marshal(statusMap)
 	if err != nil {
 		return
 	}
