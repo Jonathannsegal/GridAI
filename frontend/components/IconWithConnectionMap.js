@@ -51,7 +51,7 @@ function IconWithConnectionMap() {
    */
   const lineLayer = getLineLayer();
 
-  const iconLayer = getIconLayer();
+  const [hoverInfo, iconLayer] = getIconLayer();
 
   const layers = [
     iconLayer, lineLayer,
@@ -72,6 +72,22 @@ function IconWithConnectionMap() {
         onViewportChange={setViewport}
         mapboxApiAccessToken={MAPBOX_TOKEN}
       />
+      {hoverInfo.object && (
+        // <div style={{position: 'absolute', zIndex: 1, pointerEvents: 'none', left: hoverInfo.x, top: hoverInfo.y}}>
+        <div style={{
+          position: 'absolute', zIndex: 1, pointerEvents: 'none', left: 0, top: 0,
+        }}
+        >
+          <div className="max-w-md py-4 px-8 bg-white shadow-lg rounded-lg my-20">
+            <div>
+              <h2 className="text-gray-800 text-3xl font-semibold">
+                Node id:
+                { hoverInfo.object.nodeid }
+              </h2>
+            </div>
+          </div>
+        </div>
+      )}
     </DeckGL>
   );
 }

@@ -47,6 +47,7 @@ function Map() {
     bearing: 0,
     pitch: 0,
   });
+
   const iconlayer = new IconLayer({
     id: 'icon-layer',
     data,
@@ -55,12 +56,12 @@ function Map() {
     // getIcon: return a string
     iconAtlas: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png',
     iconMapping: ICON_MAPPING,
-    // getIcon: (d) => 'marker',
+    getIcon: () => 'marker',
 
-    sizeScale: 15,
+    sizeScale: 5,
     getPosition: (d) => d.coordinates,
-    // getSize: (d) => 5,
-    getColor: () => [140, 140, 0],
+    getSize: () => 1,
+    getColor: () => [200, 100, 0],
     onHover: (d) => setHoverInfo(d),
   });
 

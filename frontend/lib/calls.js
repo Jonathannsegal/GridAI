@@ -5,7 +5,9 @@
 /* eslint-disable max-len */
 /* eslint-disable no-console */
 /* eslint-disable no-return-assign */
+/* eslint-disable no-unused-vars */
 import { LineLayer, IconLayer } from '@deck.gl/layers';
+import { useState } from 'react';
 // const url = process.env.NEXT_PUBLIC_API_URL;
 const url = process.env.NEXT_PUBLIC_API_URL;
 
@@ -77,8 +79,15 @@ export async function sendTextRequest(text) {
 //   return layer;
 // }
 
+export function getUseState() {
+  const def = [{ nodeid: 0, coordinates: [0, 0] }];
+  return useState(def);
+}
+
 export function getIconLayer() {
   const data = getCoordinates();
+  const def = [{ node: 0, coordinates: [0, 0] }];
+  const [hoverInfo, setHoverInfo] = useState(def);
 
   const ICON_MAPPING = {
     marker: {
@@ -96,12 +105,13 @@ export function getIconLayer() {
     iconMapping: ICON_MAPPING,
     getIcon: () => 'marker',
 
-    sizeScale: 1,
+    sizeScale: 5,
     getPosition: (d) => d.coordinates,
-    getSize: () => 5,
+    getSize: () => 1,
     getColor: (d) => [Math.sqrt(d.exits), 140, 0],
+    onHover: (d) => setHoverInfo(d),
   });
-  return iconlayer;
+  return [hoverInfo, iconlayer];
 }
 
 // content type needs to be application/json
