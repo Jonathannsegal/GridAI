@@ -91,6 +91,15 @@
                 "synonyms": [
                     "current"
                 ]
+                
+            },
+
+            {
+                "key": "PAST",
+                "synonyms": [
+                    "past"
+                ]
+                
             }
         ]
     },

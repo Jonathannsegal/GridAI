@@ -29,6 +29,10 @@
             {
                 "name": "object_type",
                 "type": "Objects"
+            },
+            {
+                "name": "time",
+                "type": "Time"
             }
         ],
         "trigger": {
