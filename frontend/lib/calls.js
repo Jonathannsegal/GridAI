@@ -84,6 +84,31 @@ export function getUseState() {
   return useState(def);
 }
 
+function getIconColor(d) {
+  if (d.nodeid.charAt(1) === 'W') {
+    // red switch
+    return [155, 0, 0];
+  }
+  if (d.nodeid.charAt(0) === 'S') {
+    // orange sep
+    return [255, 140, 0];
+  }
+  if (d.nodeid.charAt(0) === 'J') {
+    // black junction
+    return [75, 75, 75];
+  }
+  if (d.nodeid.charAt(0) === 'C') {
+    // dark green CSW
+    return [100, 140, 0];
+  }
+  if (d.nodeid.charAt(0) === 'X') {
+    // bright green XFR
+    return [0, 255, 0];
+  }
+  //bright blue
+  return [50, 255, 255];
+}
+
 export function getIconLayer() {
   const data = getCoordinates();
   const def = [{ node: 0, coordinates: [0, 0] }];
@@ -105,17 +130,16 @@ export function getIconLayer() {
     iconMapping: ICON_MAPPING,
     getIcon: () => 'marker',
 
-    sizeScale: 5,
+    sizeScale: 10,
     getPosition: (d) => d.coordinates,
-    getSize: () => 1,
-    getColor: (d) => [Math.sqrt(d.exits), 140, 0],
+    getSize: () => 2,
+    getColor: (d) => getIconColor(d),
     onHover: (d) => setHoverInfo(d),
   });
   return [hoverInfo, iconlayer];
 }
 
 // content type needs to be application/json
-
 //    longitude: -112.337088,
 //    latitude: 33.75363564,
 export function getConnections() {
