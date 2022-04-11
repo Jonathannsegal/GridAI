@@ -19,7 +19,6 @@ class AssistantService():
         query = query.lower().lstrip().rstrip()
         for stop_word in self.actions["stop_words"]:
             query = query.replace(f' {stop_word} ', " ")
-
         for action in self.actions["actions"]:
             res = self.check_action_for_query(action["intent"], query)
             if res:
@@ -42,10 +41,12 @@ class AssistantService():
         """Checks the query to see if its structure matches with the given action."""
         parameters = action_intent["parameters"]
         patterns = action_intent["trigger"]["queryPatterns"]
-
         for pattern in patterns:
             regex, param_positions = self.create_pattern_regex(pattern, parameters)
             match = regex.match(query)
+            if action_intent["name"] == "com.assistant.intents.Extrema":
+                print(pattern)
+                print(parameters)
 
             if match:
                 param_results = self.format_match_results(match, param_positions, parameters)

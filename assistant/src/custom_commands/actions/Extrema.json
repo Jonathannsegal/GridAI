@@ -31,13 +31,13 @@
                 "type": "Objects"
             },
             {
-                "name": "time",
+                "name": "time_value",
                 "type": "Time"
             }
         ],
         "trigger": {
             "queryPatterns": [
-                "(?:$Request:request )?$Extrema:extrema_type(?: $Integer:count)?(?: $Feature:feature_type)?(?: $Objects:object_type)?"
+                "(?:$Request:request )?$Extrema:extrema_type(?:$Integer:count )?(?:$Feature:feature_type )?(?:$Objects:object_type )?(?:$Time:time_value )?"
             ]
         }
     },
@@ -57,7 +57,8 @@
                                 "extrema_type": "$extrema_type",
                                 "object_type": "$object_type",
                                 "feature_type": "$feature_type",
-                                "count": "$count"
+                                "count": "$count",
+                                "time_value": "$time_value"
                             }
                         }
                     }

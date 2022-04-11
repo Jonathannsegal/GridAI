@@ -69,7 +69,9 @@ class CommandHandler():
         object_type = default(input_args["object_type"]["key"], "DEFAULT")
         feature_type = default(input_args["feature_type"]["key"], "DEFAULT")
 
-        return extrema_type, count, object_type, feature_type
+        time_value = default(input_args["time_value"]["key"], "DEFAULT")
+
+        return extrema_type, count, object_type, feature_type, time_value
 
     @staticmethod
     def rate_of_change(input_args: dict):

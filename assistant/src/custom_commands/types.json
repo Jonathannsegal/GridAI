@@ -89,15 +89,39 @@
             {
                 "key": "DEFAULT",
                 "synonyms": [
-                    "current"
+                    "current",
+                    "all time"
                 ]
                 
             },
-
             {
-                "key": "PAST",
+                "key": "TODAY",
                 "synonyms": [
-                    "past"
+                    "today"
+                ]
+                
+            },
+            {
+                "key": "WEEK",
+                "synonyms": [
+                    "week",
+                    "this week"
+                ]
+                
+            },
+            {
+                "key": "MONTH",
+                "synonyms": [
+                    "month",
+                    "this month"
+                ]
+                
+            },
+            {
+                "key": "YEAR",
+                "synonyms": [
+                    "year",
+                    "this year"
                 ]
                 
             }
