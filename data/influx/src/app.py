@@ -119,13 +119,39 @@ def upload_csv():
     return f"Uploaded data from {csv_url} successfully"
 
 
-@app.route("/deleteAll", methods=['Delete'])
+@app.route("/deleteAll", methods=['DELETE'])
 def delete_all():
     """Delete all"""
     delete_api = client.delete_api()
     delete_api.delete(datetime.strptime("2000-01-01 00:00:00", "%Y-%m-%d %H:%M:%S"),
                       datetime.strptime("2030-01-01 00:00:00", "%Y-%m-%d %H:%M:%S"), "", bucket, org)
     return "All Data Deleted"
+
+
+@app.route("/getExtreme", methods=['GET'])
+def get_extreme():
+    """Get extremes"""
+    query = f""" from(bucket:"{bucket}")\n\
+    |> range(start: -30d)\n"""
+    field = "voltage"
+    if "power_type" in request.args:
+        field = request.args["power_type"]
+    query += f"""|> filter(fn:(r) => r._field == "{field}")\n"""
+    query += "|> group()\n"
+    if request.args["extrema_type"] == "MAX":
+        query += f"""|> top(n:{request.args["count"]})"""
+    elif request.args["extrema_type"] == "MIN":
+        query += f"""|> bottom(n:{request.args["count"]})"""
+    else:
+        raise Exception()
+    print(query)
+    query_api = client.query_api()
+    result = query_api.query(org=org, query=query)
+    results = []
+    for table in result:
+        for record in table.records:
+            results.append((record.get_time(), record.get_measurement(), record.get_value()))
+    return jsonify(results)
 
 
 @app.route("/uploadTestCsv", methods=['POST'])
@@ -143,7 +169,7 @@ def upload_test_csv():
             .field('voltage', data.at[i, 'kw']) \
             .time(str(date))
         write_api = client.write_api(write_options=SYNCHRONOUS)
-        write_api.write(bucket=bucket, org=org, record=point)  #
+        write_api.write(bucket=bucket, org=org, record=point)
     return "Uploaded test data successfully"
 
 
