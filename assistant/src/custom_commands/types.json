@@ -35,20 +35,29 @@
             {
                 "key": "MIN",
                 "synonyms": [
-                    "min",
                     "minimum",
+                    "min",
+                    "lowest",
                     "low",
-                    "lowest"
+                    "smallest",
+                    "small",
+                    "bottommost",
+                    "bottom",
+                    "least"
                 ]
             },
             {
                 "key": "MAX",
                 "synonyms": [
-                    "top",
-                    "max",
                     "maximum",
+                    "max",
                     "highest",
-                    "high"
+                    "high",
+                    "largest",
+                    "large",
+                    "topmost",
+                    "top",
+                    "most"
                 ]
             }
         ]

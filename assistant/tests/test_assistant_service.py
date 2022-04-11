@@ -37,6 +37,18 @@ def test_process_query():
             'feature_type': {'key': 'VOLTAGE', 'value': 'voltage'},
             'count': {'key': 'INTEGER', 'value': '10'}
         })),
+        ("Get the maximum 10 voltages", ('com.assistant.commands.Extrema', {
+            'extrema_type': {'key': 'MAX', 'value': 'maximum'},
+            'object_type': {'key': None, 'value': None},
+            'feature_type': {'key': 'VOLTAGE', 'value': 'voltage'},
+            'count': {'key': 'INTEGER', 'value': '10'}
+        })),
+        ("Show the lowest 10 voltages", ('com.assistant.commands.Extrema', {
+            'extrema_type': {'key': 'MIN', 'value': 'lowest'},
+            'object_type': {'key': None, 'value': None},
+            'feature_type': {'key': 'VOLTAGE', 'value': 'voltage'},
+            'count': {'key': 'INTEGER', 'value': '10'}
+        })),
         ("Get the rate of change for voltages", ('com.assistant.commands.RateOfChange', {
             'rate_of_change': {'key': 'RATE_OF_CHANGE', 'value': 'rate of change'},
             'object_type': {'key': None, 'value': None},
@@ -46,5 +58,6 @@ def test_process_query():
     ]
     for command, expected_return in queries:
         ret = service.process_query(command)
+        print(ret)
         assert ret[0] == expected_return[0]
         assert ret[1] == expected_return[1]
