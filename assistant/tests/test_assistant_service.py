@@ -18,6 +18,13 @@ def test_process_query():
             'comparison_value': {'key': 'FLOAT', 'value': '1.03'},
             'unit': {'key': 'PER_UNIT', 'value': 'p.u.'}
         })),
+        ("Show voltages less than 100", ('com.assistant.commands.Comparison', {
+            'feeder_num': {'key': None, 'value': None},
+            'feature_type': {'key': 'VOLTAGE', 'value': 'voltages'},
+            'comparison_type': {'key': 'LESS', 'value': 'less than'},
+            'comparison_value': {'key': 'INTEGER', 'value': '100'},
+            'unit': {'key': None, 'value': None}
+        })),
         ("Get the top 10 values", ('com.assistant.commands.Extrema', {
             'extrema_type': {'key': 'MAX', 'value': 'top'},
             'object_type': {'key': None, 'value': None},
