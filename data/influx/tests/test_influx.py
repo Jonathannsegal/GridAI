@@ -70,6 +70,12 @@ def test_get_voltage_by_id(client):
     assert response.status_code == 200
     assert response.data.decode('utf-8') == '[]\n'
 
+def test_get_extreme(client):
+    """test extreme"""
+    response = client.get('/getExtreme?extrema_type=MAX&count=10')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == '[]\n'
+
 def test_get_all_voltage(client):
     """test read from bucket"""
     response = client.get('/getAllCurrentVoltage')
