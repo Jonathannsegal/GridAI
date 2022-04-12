@@ -42,18 +42,18 @@ class AssistantService():
         parameters = action_intent["parameters"]
         patterns = action_intent["trigger"]["queryPatterns"]
         for pattern in patterns:
-            regex, param_positions = self.create_pattern_regex(pattern, parameters)
+            regex, param_positions = self.create_pattern_regex(pattern, parameters, action_intent["name"])
             match = regex.match(query)
             if action_intent["name"] == "com.assistant.intents.Extrema":
-                print(pattern)
-                print(parameters)
+            #     print(str(regex))
+                print(query)
 
             if match:
                 param_results = self.format_match_results(match, param_positions, parameters)
                 return param_results
         return None
 
-    def create_pattern_regex(self, pattern, parameters):
+    def create_pattern_regex(self, pattern, parameters, query):
         """Creates a regex string to check for this pattern"""
         pattern = str(pattern)
         param_str_positions = [
@@ -92,6 +92,8 @@ class AssistantService():
 
         pattern = pattern.lower()
         # pattern.replace(" ", "\w?")
+        if query == "com.assistant.intents.Extrema":
+            print(pattern)
         return re.compile(pattern), param_str_positions
 
     def construct_param_regex_str(self, param):
