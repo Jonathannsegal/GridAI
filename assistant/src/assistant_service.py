@@ -14,9 +14,10 @@ class AssistantService():
             self.actions = json.load(f)
         self.types = {action_type["name"]: action_type for action_type in self.actions["types"]}
 
+
     def process_query(self, query: str):
         """Processes the text query"""
-        query = query.lower().lstrip().rstrip()
+        query = query.lower().lstrip().rstrip() + " "
         for stop_word in self.actions["stop_words"]:
             query = query.replace(f' {stop_word} ', " ")
         for action in self.actions["actions"]:
@@ -33,6 +34,7 @@ class AssistantService():
                                 param: res[response_item[key]["params"][param][1:]]
                                 for param in response_item[key]["params"]
                             }
+                            # print(input_args)
                             return (handler, input_args)
 
         return (None, None)
@@ -44,9 +46,9 @@ class AssistantService():
         for pattern in patterns:
             regex, param_positions = self.create_pattern_regex(pattern, parameters, action_intent["name"])
             match = regex.match(query)
-            if action_intent["name"] == "com.assistant.intents.Extrema":
-            #     print(str(regex))
-                print(query)
+            # if action_intent["name"] == "com.assistant.intents.Extrema":
+            #    print(str(param_positions) + "\n")
+            #    print(match)
 
             if match:
                 param_results = self.format_match_results(match, param_positions, parameters)
@@ -92,8 +94,8 @@ class AssistantService():
 
         pattern = pattern.lower()
         # pattern.replace(" ", "\w?")
-        if query == "com.assistant.intents.Extrema":
-            print(pattern)
+        #if query == "com.assistant.intents.Extrema":
+        #     print(pattern)
         return re.compile(pattern), param_str_positions
 
     def construct_param_regex_str(self, param):
@@ -123,9 +125,12 @@ class AssistantService():
                 "value": None
             } for param in parameters
         }
+        print(str(param_results) + "\n")
         missing_params = {
             param["name"] for param in param_positions if param["start"] < 0
         }
+        
+        print(match.groups())
 
         group_ind = 1
         for param in param_positions:
@@ -134,6 +139,8 @@ class AssistantService():
             if param["name"] in missing_params:
                 continue
             if match.group(group_ind):
+                print(match.group(group_ind))
+                print(group_ind)
                 param_res["value"] = match.group(group_ind).lstrip(' ').rstrip(' ')
                 group_ind += 1
                 for entity_ind in range(len(param_type["entities"])):

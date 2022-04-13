@@ -37,7 +37,7 @@
         ],
         "trigger": {
             "queryPatterns": [
-                "(?:$Request:request )?$Extrema:extrema_type(?:$Integer:count )?(?:$Feature:feature_type )?(?:$Objects:object_type )?(?:$Time:time_value )?"
+                "(?:$Request:request )?$Extrema:extrema_type (?:$Integer:count )?(?:$Feature:feature_type )?(?:$Objects:object_type )?(?:$Time:time_value )?"
             ]
         }
     },
