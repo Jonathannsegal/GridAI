@@ -3,14 +3,14 @@
 /* eslint-disable max-len */
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable react/jsx-boolean-value */
 import React from 'react';
-import { render } from 'react-dom';
 import { StaticMap } from 'react-map-gl';
 import { AmbientLight, PointLight, LightingEffect } from '@deck.gl/core';
 import { HexagonLayer } from '@deck.gl/aggregation-layers';
 import DeckGL from '@deck.gl/react';
 import {
-  getCoordinates, 
+  getCoordinates,
 } from '../lib/calls';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFyaXNzYWciLCJhIjoiY2t6aXZ5M2FkNGZiNTJ3bmZ1Ymx4cXEzaSJ9.oxEaAW-mjM0Cc9NDNfDQPg'; // Set your mapbox token here
@@ -77,25 +77,25 @@ function getTooltip1({ object }) {
     ${count} Buses`;
 }
 
-function getTooltip2({ object }) {
-  if (!object) {
-    return null;
-  }else{
-    console.log(object);
-  }
-  // const lat = object.position[1];
-  // const lng = object.position[0];
-  // if(object.nodeid.charAt(0) === 'S'){
-  //   const count = 1;
-  // }else{
-  //   const count = 0;
-  // }
+// function getTooltip2({ object }) {
+//   if (!object) {
+//     return null;
+//   }else{
+//     console.log(object);
+//   }
+//   const lat = object.position[1];
+//   const lng = object.position[0];
+//   if(object.nodeid.charAt(0) === 'S'){
+//     const count = 1;
+//   }else{
+//     const count = 0;
+//   }
 
-  // return `\
-  //   latitude: ${Number.isFinite(lat) ? lat.toFixed(6) : ''}
-  //   longitude: ${Number.isFinite(lng) ? lng.toFixed(6) : ''}
-  //   ${count} Buses`;
-}
+//   return `\
+//     latitude: ${Number.isFinite(lat) ? lat.toFixed(6) : ''}
+//     longitude: ${Number.isFinite(lng) ? lng.toFixed(6) : ''}
+//     ${count} Buses`;
+// }
 
 // Inspo: https://deck.gl/examples/hexagon-layer/
 // Control panel: https://deck.gl/gallery/hexagon-layer
@@ -106,8 +106,8 @@ export default function HexagonMap({
   upperPercentile = 100,
   coverage = 1,
 }) {
-  let data = getCoordinates();
-  //console.log(data)
+  const data = getCoordinates();
+  // console.log(data)
   const layers = [
     new HexagonLayer({
       id: 'heatmap',
@@ -115,7 +115,7 @@ export default function HexagonMap({
       coverage,
       data,
       elevationRange: [0, 50],
-      //elevationScale: data && data.length ? 50 : 0,
+      // elevationScale: data && data.length ? 50 : 0,
       elevationScale: 50,
       extruded: true,
       getPosition: (d) => d.coordinates,

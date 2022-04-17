@@ -9,7 +9,7 @@ import { useState } from 'react';
 import MapGL from 'react-map-gl';
 import DeckGL from '@deck.gl/react';
 import {
-  getCoordinates, getIconLayer,
+  getIconLayer,
 } from '../lib/calls';
 
 // Reference from : https://github.com/visgl/deck.gl/blob/master/docs/api-reference/layers/icon-layer.md

@@ -6,8 +6,8 @@
 /* eslint-disable no-console */
 /* eslint-disable no-return-assign */
 /* eslint-disable no-unused-vars */
-import { LineLayer, IconLayer }from '@deck.gl/layers';
-import { useState }from 'react';
+import { LineLayer, IconLayer } from '@deck.gl/layers';
+import { useState } from 'react';
 // const url = process.env.NEXT_PUBLIC_API_URL;
 const url = process.env.NEXT_PUBLIC_API_URL;
 
@@ -27,9 +27,9 @@ export async function getCoordinates() {
   await fetch(`http://${process.env.NEXT_PUBLIC_API_URL}/getAllCoordinates`)
     .then((response) => response.json())
     .then((data) => response1 = data);
-    return response1;
+  return response1;
   // This is [long, lat] dummy
-    //console.log(response1);
+  // console.log(response1);
   // console.log([{ coordinates: [-93.651024,42.027241]}, {coordinates: [-93.7,42.027241]}, {coordinates: [-93.651024,42.03]}])
   // return response;
   // return [{coordinates: [-93.651024,42.027241]}, {coordinates: [-93.7,42.027241]}, {coordinates: [-93.651024,42.03]}];
@@ -37,7 +37,7 @@ export async function getCoordinates() {
 
 // From Prediction
 export function getNextHourVoltage() {
-  fetch(`${ url}/getNextHourVoltage/45`)
+  fetch(`${url}/getNextHourVoltage/45`)
     .then((response) => response.json())
     .then((data) => console.log(data));
 }
@@ -81,7 +81,6 @@ export function getUseState() {
 }
 
 function getIconColor(d) {
-
   const colorRange = [
     [153, 221, 200],
     [149, 191, 116],
@@ -110,9 +109,9 @@ function getIconColor(d) {
     // gray XFR
     return colorRange[4];
   }
-  //bright blue
-  //return [50, 255, 255];
-  //red
+  // bright blue
+  // return [50, 255, 255];
+  // red
   return colorRange[5];
 }
 
@@ -151,56 +150,56 @@ export function getIconLayer() {
 //    latitude: 33.75363564,
 export function getConnections() {
   // const toReturn = [
-  //   { 
+  //   {
   //     inbound: 72633,
   //     outbound: 74735,
   //     first: [-112.325841, 33.7497868],
   //     second: [-112.3259517, 33.7500028],
   //     type: 100,
   //   },
-  //   { 
+  //   {
   //     inbound: 72633,
   //     outbound: 74735,
   //     first: [-112.3316777, 33.7471236],
   //     second: [-112.3316613, 33.747122],
   //     type: 200,
   //   },
-  //   { 
+  //   {
   //     inbound: 72633,
   //     outbound: 74735,
   //     first: [-112.3358684, 33.7500646],
   //     second: [-112.3358577, 33.7500842],
   //     type: 100,
   //   },
-  //   { 
+  //   {
   //     inbound: 72633,
   //     outbound: 74735,
   //     first: [-112.3434271, 33.7446055],
   //     second: [-112.3434389, 33.744596],
   //     type: 200,
   //   },
-  //   { 
+  //   {
   //     inbound: 72633,
   //     outbound: 74735,
   //     first: [-112.3372049, 33.748082],
   //     second: [-112.3372088, 33.7480896],
   //     type: 100,
   //   },
-  //   { 
+  //   {
   //     inbound: 72633,
   //     outbound: 74735,
   //     first: [-112.3372049, 33.748082],
   //     second: [-112.3373965, 33.748108],
   //     type: 200,
   //   },
-  //   { 
+  //   {
   //     inbound: 72633,
   //     outbound: 74735,
   //     first: [-112.3337315, 33.748643],
   //     second: [-112.3336478, 33.7481112],
   //     type: 100,
   //   },
-  //   { 
+  //   {
   //     inbound: 72633,
   //     outbound: 74735,
   //     first: [-112.3337315, 33.748643],

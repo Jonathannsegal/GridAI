@@ -7,9 +7,6 @@ import DeckGL from '@deck.gl/react';
 import { useState } from 'react';
 import { LineLayerComp } from 'LineLayer';
 import MapGL from 'react-map-gl';
-import {
-  getConnections,
-} from '../lib/calls';
 
 function ConnectionMap() {
   const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFyaXNzYWciLCJhIjoiY2t6aXZ5M2FkNGZiNTJ3bmZ1Ymx4cXEzaSJ9.oxEaAW-mjM0Cc9NDNfDQPg'; // Set your mapbox token here
