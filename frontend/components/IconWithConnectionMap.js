@@ -29,9 +29,7 @@ function IconWithConnectionMap() {
     pitch: 0,
   });
 
-  const data = getConnections();
-
-  //const data = getConnections();
+  // const data = getConnections();
   /**
    * Data format:
    * [
@@ -58,6 +56,7 @@ function IconWithConnectionMap() {
   ];
 
   return (
+    <div>
     <DeckGL
       initialViewState={INITIAL_VIEW_STATE}
       controller
@@ -89,6 +88,8 @@ function IconWithConnectionMap() {
         </div>
       )}
     </DeckGL>
+    <p>Hey Besties</p>
+    </div>
   );
 }
 
