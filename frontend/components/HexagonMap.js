@@ -55,15 +55,15 @@ const INITIAL_VIEW_STATE = {
 const MAP_STYLE = 'https://basemaps.cartocdn.com/gl/voyager-gl-style/style.json';
 
 export const colorRange = [
-  [1, 152, 189],
-  [73, 227, 206],
-  [216, 254, 181],
-  [254, 237, 177],
-  [254, 173, 84],
-  [209, 55, 78],
+  [153, 221, 200],
+  [149, 191, 116],
+  [101, 155, 94],
+  [85, 111, 68],
+  [40, 63, 59],
+  [243, 247, 240],
 ];
 
-function getTooltip({ object }) {
+function getTooltip1({ object }) {
   if (!object) {
     return null;
   }
@@ -77,7 +77,28 @@ function getTooltip({ object }) {
     ${count} Buses`;
 }
 
+function getTooltip2({ object }) {
+  if (!object) {
+    return null;
+  }else{
+    console.log(object);
+  }
+  // const lat = object.position[1];
+  // const lng = object.position[0];
+  // if(object.nodeid.charAt(0) === 'S'){
+  //   const count = 1;
+  // }else{
+  //   const count = 0;
+  // }
+
+  // return `\
+  //   latitude: ${Number.isFinite(lat) ? lat.toFixed(6) : ''}
+  //   longitude: ${Number.isFinite(lng) ? lng.toFixed(6) : ''}
+  //   ${count} Buses`;
+}
+
 // Inspo: https://deck.gl/examples/hexagon-layer/
+// Control panel: https://deck.gl/gallery/hexagon-layer
 /* eslint-disable react/no-deprecated */
 export default function HexagonMap({
   mapStyle = MAP_STYLE,
@@ -104,7 +125,7 @@ export default function HexagonMap({
       material,
 
       transitions: {
-        elevationScale: 3000,
+        elevationScale: 50,
       },
     }),
   ];
@@ -115,17 +136,8 @@ export default function HexagonMap({
       effects={[lightingEffect]}
       initialViewState={INITIAL_VIEW_STATE}
       controller={true}
-      getTooltip={getTooltip}
+      getTooltip={getTooltip1}
     >
-      {/* <MapGL
-        className="rounded-lg"
-        {...viewport}
-        width="100%"
-        height="30em"
-        mapStyle="mapbox://styles/mapbox/light-v10"
-        onViewportChange={setViewport}
-        mapboxApiAccessToken={MAPBOX_TOKEN}
-      /> */}
       <StaticMap reuseMaps mapStyle={mapStyle} preventStyleDiffing={true} mapboxApiAccessToken={MAPBOX_TOKEN} />
     </DeckGL>
   );
