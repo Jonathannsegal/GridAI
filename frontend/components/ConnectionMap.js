@@ -1,20 +1,14 @@
 /* eslint-disable linebreak-style */
-/* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable max-len */
 /* eslint-disable react/prop-types */
 /* eslint-disable max-len */
 /* eslint-disable no-console */
-import * as React from 'react';
-import { useState } from 'react';
-import MapGL from 'react-map-gl';
+/* eslint-disable import/no-extraneous-dependencies */
 import DeckGL from '@deck.gl/react';
-import {
-  getIconLayer,
-} from '../lib/calls';
+import { useState } from 'react';
+import { LineLayerComp } from 'LineLayer';
+import MapGL from 'react-map-gl';
 
-// Reference from : https://github.com/visgl/deck.gl/blob/master/docs/api-reference/layers/icon-layer.md
-// Reference from : https://deck.gl/docs/developer-guide/interactivity
-function Map() {
+function ConnectionMap() {
   const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFyaXNzYWciLCJhIjoiY2t6aXZ5M2FkNGZiNTJ3bmZ1Ymx4cXEzaSJ9.oxEaAW-mjM0Cc9NDNfDQPg'; // Set your mapbox token here
 
   // Viewport settings
@@ -25,7 +19,6 @@ function Map() {
     pitch: 0,
     bearing: 0,
   };
-
   const [viewport, setViewport] = useState({
     latitude: 42.0281,
     longitude: -93.6422,
@@ -33,17 +26,31 @@ function Map() {
     bearing: 0,
     pitch: 0,
   });
-  const iconlayer = getIconLayer();
 
-  const layers = [
-    iconlayer,
-  ];
+  /**
+   * Data format:
+   * [
+   *   {
+   *     inbound: 72633,
+   *     outbound: 74735,
+   *     from: {
+   *       name: '19th St. Oakland (19TH)',
+   *       coordinates: [-122.269029, 37.80787]
+   *     },
+   *     to: {
+   *       name: '12th St. Oakland City Center (12TH)',
+   *       coordinates: [-122.271604, 37.803664]
+   *   },
+   *   ...
+   * ]
+   */
+  const layer = LineLayerComp();
 
   return (
     <DeckGL
       initialViewState={INITIAL_VIEW_STATE}
       controller
-      layers={layers}
+      layers={layer}
     >
       <MapGL
         className="rounded-lg"
@@ -58,4 +65,4 @@ function Map() {
   );
 }
 
-export default Map;
+export default ConnectionMap;
