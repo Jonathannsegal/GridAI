@@ -27,7 +27,7 @@ export async function getCoordinates() {
   await fetch(`http://${process.env.NEXT_PUBLIC_API_URL}/getAllCoordinates`)
     .then((response) => response.json())
     .then((data) => response1 = data);
-  return response1;
+    return response1;
   // This is [long, lat] dummy
   // console.log(response1);
   // console.log([{ coordinates: [-93.651024,42.027241]}, {coordinates: [-93.7,42.027241]}, {coordinates: [-93.651024,42.03]}])
