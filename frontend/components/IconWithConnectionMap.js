@@ -7,7 +7,7 @@ import DeckGL from '@deck.gl/react';
 import { useState } from 'react';
 import MapGL from 'react-map-gl';
 import {
-  getConnections, getLineLayer, getIconLayer,
+  getLineLayer, getIconLayer,
 } from '../lib/calls';
 
 function IconWithConnectionMap() {
@@ -56,7 +56,6 @@ function IconWithConnectionMap() {
   ];
 
   return (
-    <div>
     <DeckGL
       initialViewState={INITIAL_VIEW_STATE}
       controller
@@ -88,8 +87,6 @@ function IconWithConnectionMap() {
         </div>
       )}
     </DeckGL>
-    <p>Hey Besties</p>
-    </div>
   );
 }
 
