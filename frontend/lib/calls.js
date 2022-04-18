@@ -49,14 +49,18 @@ export function getCurrentAnomalies() {
     .then((data) => console.log(data));
 }
 
-// To Voice Assistant
-// TODO: this needs to be fixed
-// also need to add a body to send post data not use the url
-export function sendTextRequest() {
-  fetch(`${url}/sendTextRequest`, { method: 'POST', mode: 'no-cors' })
-    .then((response) => console.log(response));
-  // .then((response) => response.json())
-  // .then((data) => console.log(data));
+export async function sendTextRequest(text) {
+  let response1;
+  const body = {
+    // eslint-disable-next-line comma-dangle
+    // eslint-disable-next-line quote-props
+    'text': text,
+  };
+  // let url1 = "https://frontend-next-kxcfw5balq-uc.a.run.app/";
+  await fetch(`http://${process.env.NEXT_PUBLIC_API_URL}/sendTextRequest`, { method: 'POST', mode: 'cors', body: JSON.stringify(body) })
+    .then((response) => response.json())
+    .then((data) => response1 = data);
+  return response1;
 }
 
 // export function getLineLayer() {
