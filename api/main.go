@@ -2,6 +2,8 @@ package main
 
 import (
 	"bufio"
+	"bytes"
+	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -45,12 +47,47 @@ type Anomalies struct {
 	Ids []int `json:"anomalies"`
 }
 
-type Health struct {
-	id         int
-	Neo4j      string `json:"neo4j"`
-	Influx     string `json:"influx"`
-	Anomoly    string `json:"anomoly"`
-	Prediction string `json:"prediction"`
+type ServiceId int
+const (
+    Influx ServiceId = iota
+    Neo4j
+    Anomoly
+    Prediction
+	Assistant
+)
+
+type Service struct {
+	id      ServiceId
+	name    string
+	baseurl string
+}
+
+var services = [...]Service {
+	Service {
+		id:      Influx,
+		name:    "influx",
+		baseurl: "https://data-influx-kxcfw5balq-uc.a.run.app",
+	},
+	Service {
+		id:      Neo4j,
+		name:    "neo4j",
+		baseurl: "https://data-neo4j-kxcfw5balq-uc.a.run.app",
+	},
+	Service {
+		id:      Anomoly,
+		name:    "anomoly",
+		baseurl: "https://ml-anomaly-kxcfw5balq-uc.a.run.app",
+	},
+	Service {
+		id:      Prediction,
+		name:    "prediction",
+		baseurl: "https://ml-prediction-kxcfw5balq-uc.a.run.app",
+	},
+	Service {
+		id:      Assistant,
+		name:    "assistant",
+		baseurl: "https://assistant-kxcfw5balq-uc.a.run.app",
+	},
 }
 
 func main() {
@@ -89,6 +126,7 @@ func main() {
 	//firebase
 	//TODO
 
+	router.HandleFunc("/getALl/{busid}", getAll).Methods("GET")
 	router.HandleFunc("/getCurrentVoltage/{busid}", getCurrentVoltage).Methods("GET")
 	router.HandleFunc("/getCoordinates/{busid}", getCoordinates).Methods("GET")
 	router.HandleFunc("/getAllCoordinates", getAllCoordinates).Methods("GET")
@@ -106,7 +144,7 @@ func main() {
 func GetNodes(w http.ResponseWriter, r *http.Request) {
 	log.Println("Calling neo4j service ")
 	w.WriteHeader(http.StatusOK)
-	response, err := http.Get("https://neo4j-kxcfw5balq-uc.a.run.app/getNodes")
+	response, err := http.Get(services[Neo4j].baseurl + "/getNodes")
 
 	if err != nil {
 		fmt.Print(err.Error())
@@ -124,46 +162,32 @@ func GetNodes(w http.ResponseWriter, r *http.Request) {
 }
 
 func HealthCheck(w http.ResponseWriter, r *http.Request) {
-	var response Health
-	influx_response, err := http.Get("https://influx-kxcfw5balq-uc.a.run.app/ping")
-	neo4j_response, err := http.Get("https://neo4j-kxcfw5balq-uc.a.run.app/ping")
-	prediction_response, err := http.Get("https://prediction-kxcfw5balq-uc.a.run.app/ping")
-	anomoly_response, err := http.Get("https://anomaly-kxcfw5balq-uc.a.run.app/ping")
-	if err != nil {
-		fmt.Print(err.Error())
-		os.Exit(1)
+	var statusMap = make(map[string]string, len(services))
+
+	for _, service := range services {
+		pingurl := service.baseurl + "/ping"
+
+		response, err := http.Get(pingurl)
+		if err != nil {
+			fmt.Print(err.Error())
+			os.Exit(1)
+		}
+
+		responseData, err := ioutil.ReadAll(response.Body)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if strings.Contains(string(responseData), "pong") {
+			statusMap[service.name] = "Live"
+		} else {
+			statusMap[service.name] = "Down"
+		}
 	}
-	influx_responseData, err := ioutil.ReadAll(influx_response.Body)
-	neo4j_responseData, err := ioutil.ReadAll(neo4j_response.Body)
-	prediction_responseData, err := ioutil.ReadAll(prediction_response.Body)
-	anomoly_responseData, err := ioutil.ReadAll(anomoly_response.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if strings.Contains(string(influx_responseData), "pong") {
-		response.Influx = "Live"
-	} else {
-		response.Influx = "Down"
-	}
-	if strings.Contains(string(neo4j_responseData), "pong") {
-		response.Neo4j = "Live"
-	} else {
-		response.Neo4j = "Down"
-	}
-	if strings.Contains(string(prediction_responseData), "pong") {
-		response.Anomoly = "Live"
-	} else {
-		response.Anomoly = "Down"
-	}
-	if strings.Contains(string(anomoly_responseData), "pong") {
-		response.Prediction = "Live"
-	} else {
-		response.Prediction = "Down"
-	}
+
 	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("ACAO"))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	jsonResponse, err := json.Marshal(response)
+	jsonResponse, err := json.Marshal(statusMap)
 	if err != nil {
 		return
 	}
@@ -195,6 +219,49 @@ func prepareResponse() []Bus {
 	bus.Coords.Lat = -93.8679897
 	Buses = append(Buses, bus)
 	return Buses
+}
+
+func getAll(w http.ResponseWriter, r *http.Request) {
+	response, err := http.Get(services[Neo4j].baseurl + "/getCoords")
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var lines []string
+	sc := bufio.NewScanner(strings.NewReader(string(responseData)))
+	for sc.Scan() {
+		lines = append(lines, sc.Text())
+	}
+	fmt.Print(lines)
+
+	var Nodes []Node
+
+	for _, i := range lines {
+		words := strings.Fields(i)
+		var node Node
+		node.Node = words[1]
+		if s, err := strconv.ParseFloat(words[2], 64); err == nil {
+			node.Position[0] = s
+		}
+		if s, err := strconv.ParseFloat(words[3], 64); err == nil {
+			node.Position[1] = s
+		}
+		Nodes = append(Nodes, node)
+	}
+	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("ACAO"))
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	jsonResponse, err := json.Marshal(Nodes)
+	if err != nil {
+		return
+	}
+	w.Write(jsonResponse)
 }
 
 func getCurrentVoltage(w http.ResponseWriter, r *http.Request) {
@@ -239,7 +306,7 @@ func getCoordinates(w http.ResponseWriter, r *http.Request) {
 }
 
 func getAllCoordinates(w http.ResponseWriter, r *http.Request) {
-	response, err := http.Get("https://data-neo4j-kxcfw5balq-uc.a.run.app/getCoords")
+	response, err := http.Get(services[Neo4j].baseurl + "/getCoords")
 	if err != nil {
 		fmt.Print(err.Error())
 		os.Exit(1)
@@ -316,15 +383,38 @@ func getCurrentAnomalies(w http.ResponseWriter, r *http.Request) {
 }
 
 func sendTextRequest(w http.ResponseWriter, r *http.Request) {
-	var response Voltage
-	buses := prepareResponse()
-	response = buses[1].Voltage
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		panic(err)
+	}
+	responseBody := bytes.NewBuffer(body)
+
+	response, err := http.Post(services[Assistant].baseurl + "/text", "application/json", responseBody)
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	w.Header().Set("Access-Control-Allow-Origin", os.Getenv("ACAO"))
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	jsonResponse, err := json.Marshal(response)
+
+	jsonResponse, err := json.Marshal(responseData)
 	if err != nil {
 		return
 	}
-	w.Write(jsonResponse)
+	var input = string(jsonResponse)
+	input = input[1 : len(input)-1]
+
+	rawDecodedText, err := base64.StdEncoding.DecodeString(input)
+	if err != nil {
+		panic(err)
+	}
+
+	w.Write(rawDecodedText)
 }

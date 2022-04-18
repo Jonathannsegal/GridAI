@@ -18,6 +18,13 @@ def test_comparison():
         'comparison_value': {'key': 'FLOAT', 'value': '1.03'},
         'unit': {'key': 'PER_UNIT', 'value': 'p.u.'}
     })
+    ret = handler.comparison({
+        'feeder_num': {'key': None, 'value': None},
+        'feature_type': {'key': 'VOLTAGE', 'value': 'voltages'},
+        'comparison_type': {'key': 'LESS', 'value': 'less than'},
+        'comparison_value': {'key': 'INTEGER', 'value': '100'},
+        'unit': {'key': None, 'value': None}
+    })
 
 def test_extrema():
     """Test the Extrema command"""

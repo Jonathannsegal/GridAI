@@ -1,6 +1,8 @@
 """Imports"""
 import requests
 
+INFLUX_URL = "https://data-influx-kxcfw5balq-uc.a.run.app"
+
 
 def default(val, default_value):
     """Replaces val if it is None"""
@@ -45,8 +47,8 @@ class CommandHandler():
         feature_type = default(input_args["feature_type"]["key"], "DEFAULT")
         feeder_num = default(input_args["feeder_num"]["value"], None)
 
-        return requests.get(
-            url="https://data-influx-kxcfw5balq-uc.a.run.app/comparison",
+        response = requests.get(
+            url=INFLUX_URL+"/comparison",
             params={
                 "comparison_type":
                     1 if comparison_type == "LESS" else
@@ -58,7 +60,7 @@ class CommandHandler():
                 "unit": unit,
             }
         )
-        # return comparison_type, comparison_value, units, feature_type, feeder_num
+        return response.json()
 
     @staticmethod
     def extrema(input_args: dict):
@@ -69,7 +71,16 @@ class CommandHandler():
         object_type = default(input_args["object_type"]["key"], "DEFAULT")
         feature_type = default(input_args["feature_type"]["key"], "DEFAULT")
 
-        return extrema_type, count, object_type, feature_type
+        response = requests.get(
+            url=INFLUX_URL+"/getExtreme",
+            params={
+                "extrema_type": extrema_type,
+                "count": count,
+                "object_type": object_type,
+                "feature_type": feature_type,
+            }
+        )
+        return response.json()
 
     @staticmethod
     def rate_of_change(input_args: dict):

@@ -18,6 +18,13 @@ def test_process_query():
             'comparison_value': {'key': 'FLOAT', 'value': '1.03'},
             'unit': {'key': 'PER_UNIT', 'value': 'p.u.'}
         })),
+        ("Show voltages less than 100", ('com.assistant.commands.Comparison', {
+            'feeder_num': {'key': None, 'value': None},
+            'feature_type': {'key': 'VOLTAGE', 'value': 'voltages'},
+            'comparison_type': {'key': 'LESS', 'value': 'less than'},
+            'comparison_value': {'key': 'INTEGER', 'value': '100'},
+            'unit': {'key': None, 'value': None}
+        })),
         ("Get the top 10 values", ('com.assistant.commands.Extrema', {
             'extrema_type': {'key': 'MAX', 'value': 'top'},
             'object_type': {'key': None, 'value': None},
@@ -26,6 +33,18 @@ def test_process_query():
         })),
         ("Get the top 10 voltages", ('com.assistant.commands.Extrema', {
             'extrema_type': {'key': 'MAX', 'value': 'top'},
+            'object_type': {'key': None, 'value': None},
+            'feature_type': {'key': 'VOLTAGE', 'value': 'voltage'},
+            'count': {'key': 'INTEGER', 'value': '10'}
+        })),
+        ("Get the maximum 10 voltages", ('com.assistant.commands.Extrema', {
+            'extrema_type': {'key': 'MAX', 'value': 'maximum'},
+            'object_type': {'key': None, 'value': None},
+            'feature_type': {'key': 'VOLTAGE', 'value': 'voltage'},
+            'count': {'key': 'INTEGER', 'value': '10'}
+        })),
+        ("Show the lowest 10 voltages", ('com.assistant.commands.Extrema', {
+            'extrema_type': {'key': 'MIN', 'value': 'lowest'},
             'object_type': {'key': None, 'value': None},
             'feature_type': {'key': 'VOLTAGE', 'value': 'voltage'},
             'count': {'key': 'INTEGER', 'value': '10'}
@@ -39,5 +58,6 @@ def test_process_query():
     ]
     for command, expected_return in queries:
         ret = service.process_query(command)
+        print(ret)
         assert ret[0] == expected_return[0]
         assert ret[1] == expected_return[1]

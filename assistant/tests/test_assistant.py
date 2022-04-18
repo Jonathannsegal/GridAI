@@ -1,8 +1,15 @@
 import os
 from assistant.src.app import *
 from assistant.src.speech_to_text import *
+from assistant.src.app import app
+import pytest
 
 
+@pytest.fixture
+def client():
+    """Pytest client fixture"""
+    with app.test_client() as client:
+        yield client
 
 def test_speech():
     """speech to text test"""
@@ -13,8 +20,15 @@ def test_speech():
     assert speech_text(os.getcwd() + "/assistant/test_voice_files/house/0a7c2a8d_nohash_0.wav",
                        False) == "house"
 
-def test_text_request():
+def test_text_request(client):
     """Tests a text request sent to the Assistant"""
+    ret = client.post(
+        '/text',
+        json={
+            "text": "Show voltages less than 100",
+        }
+    )
+    assert ret.status_code == 200
 
 def test_app_speech():
     """Test voice_to_text in app"""
