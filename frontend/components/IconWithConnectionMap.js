@@ -1,22 +1,16 @@
 /* eslint-disable linebreak-style */
-/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/prop-types */
 /* eslint-disable max-len */
 /* eslint-disable no-console */
-import * as React from 'react';
+/* eslint-disable import/no-extraneous-dependencies */
+import DeckGL from '@deck.gl/react';
 import { useState } from 'react';
 import MapGL from 'react-map-gl';
-import DeckGL from '@deck.gl/react';
-import { IconLayer } from '@deck.gl/layers';
 import {
-  getCoordinates,
+  getLineLayer, getIconLayer,
 } from '../lib/calls';
 
-// Reference from : https://github.com/visgl/deck.gl/blob/master/docs/api-reference/layers/icon-layer.md
-// Reference from : https://deck.gl/docs/developer-guide/interactivity
-function Map() {
-  const def = [{ node: 0, coordinates: [0, 0] }];
-  const [hoverInfo, setHoverInfo] = useState(def);
+function IconWithConnectionMap() {
   const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFyaXNzYWciLCJhIjoiY2t6aXZ5M2FkNGZiNTJ3bmZ1Ymx4cXEzaSJ9.oxEaAW-mjM0Cc9NDNfDQPg'; // Set your mapbox token here
 
   // Viewport settings
@@ -27,19 +21,6 @@ function Map() {
     pitch: 0,
     bearing: 0,
   };
-
-  const ICON_MAPPING = {
-    marker: {
-      x: 0, y: 0, width: 128, height: 128, mask: true,
-    },
-  };
-  // Data to be used by the LineLayer
-  // 42.027241, -93.651024
-  // const data =[{coordinates: [-93.651024,42.027241]}, {coordinates: [-93.7,42.027241]}, {coordinates: [-93.651024,42.03]}]
-  // console.log(data);
-  const data = getCoordinates();
-  console.log(data);
-
   const [viewport, setViewport] = useState({
     latitude: 42.0281,
     longitude: -93.6422,
@@ -48,25 +29,30 @@ function Map() {
     pitch: 0,
   });
 
-  const iconlayer = new IconLayer({
-    id: 'icon-layer',
-    data,
-    pickable: true,
-    // iconAtlas and iconMapping are required
-    // getIcon: return a string
-    iconAtlas: 'https://raw.githubusercontent.com/visgl/deck.gl-data/master/website/icon-atlas.png',
-    iconMapping: ICON_MAPPING,
-    getIcon: () => 'marker',
+  // const data = getConnections();
+  /**
+   * Data format:
+   * [
+   *   {
+   *     inbound: 72633,
+   *     outbound: 74735,
+   *     from: {
+   *       name: '19th St. Oakland (19TH)',
+   *       coordinates: [-122.269029, 37.80787]
+   *     },
+   *     to: {
+   *       name: '12th St. Oakland City Center (12TH)',
+   *       coordinates: [-122.271604, 37.803664]
+   *   },
+   *   ...
+   * ]
+   */
+  const lineLayer = getLineLayer();
 
-    sizeScale: 5,
-    getPosition: (d) => d.coordinates,
-    getSize: () => 1,
-    getColor: () => [200, 100, 0],
-    onHover: (d) => setHoverInfo(d),
-  });
+  const [hoverInfo, iconLayer] = getIconLayer();
 
   const layers = [
-    iconlayer,
+    iconLayer, lineLayer,
   ];
 
   return (
@@ -104,4 +90,4 @@ function Map() {
   );
 }
 
-export default Map;
+export default IconWithConnectionMap;
