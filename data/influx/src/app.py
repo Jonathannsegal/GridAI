@@ -157,19 +157,20 @@ def get_extreme():
 @app.route("/uploadTestCsv", methods=['POST'])
 def upload_test_csv():
     """Uploads Test csv to influx db"""
-    csv_url = "https://firebasestorage.googleapis.com/v0/b/influx-csv.appspot.com/o/smallCsv.csv?alt"
-    csv_url += "=media&token=29161b1a-3dd3-41af-9d0a-eb7e5f9a6bee"
+    csv_url = "https://firebasestorage.googleapis.com/v0/b/influx-csv.appspot.com/o/"
+    csv_url = "updated.csv?alt=media&token=ad661c9a-2d91-4be5-a37f-776e12ba193b"
     data = pd.read_csv(csv_url)
-    for i in range(data.shape[0]):
-        # pylint: disable=maybe-no-member
-        relative_time = datetime.strptime(data.at[i, 'date'], "%d/%m/%Y %H:%M")
-        date = datetime.today().replace(hour=relative_time.hour,
-                                        minute=relative_time.minute, second=relative_time.second, microsecond=0)
-        point = influxdb_client.Point(data.iat[i, 0]) \
-            .field('voltage', data.at[i, 'kw']) \
-            .time(str(date))
-        write_api = client.write_api(write_options=SYNCHRONOUS)
-        write_api.write(bucket=bucket, org=org, record=point)
+    data['_time'] = pd.to_datetime(data['_time'], format="%m/%d/%Y %H:%M")
+    today = datetime.today()
+    data['_time'] = data['_time'].apply(lambda dt: dt.replace(day=today.day, month=today.month, year=today.year))
+    new_data = data.set_index('_time', inplace=False)
+    write_api = client.write_api()
+    dfs = dict(tuple(new_data.groupby('_measurement')))
+
+    for measurements in dfs:
+        result = dfs[measurements].drop('_measurement', 1)
+        write_api.write(bucket, org, record=result, data_frame_measurement_name=measurements)
+
     return "Uploaded test data successfully"
 
 
