@@ -158,7 +158,7 @@ def get_extreme():
 def upload_test_csv():
     """Uploads Test csv to influx db"""
     csv_url = "https://firebasestorage.googleapis.com/v0/b/influx-csv.appspot.com/o/"
-    csv_url = "updated.csv?alt=media&token=ad661c9a-2d91-4be5-a37f-776e12ba193b"
+    csv_url += "updated.csv?alt=media&token=ad661c9a-2d91-4be5-a37f-776e12ba193b"
     data = pd.read_csv(csv_url)
     data['_time'] = pd.to_datetime(data['_time'], format="%m/%d/%Y %H:%M")
     today = datetime.today()
