@@ -11,7 +11,7 @@ import { LineLayer, IconLayer } from '@deck.gl/layers';
 import { useState } from 'react';
 // const url = process.env.NEXT_PUBLIC_API_URL;
 // const url = process.env.NEXT_PUBLIC_API_URL;
-const url = "https://api-kxcfw5balq-uc.a.run.app";
+const url = 'https://api-kxcfw5balq-uc.a.run.app';
 
 // From Influx
 export async function getCurrentVoltage() {
