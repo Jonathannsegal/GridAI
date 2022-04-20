@@ -10,7 +10,8 @@
 import { LineLayer, IconLayer } from '@deck.gl/layers';
 import { useState } from 'react';
 // const url = process.env.NEXT_PUBLIC_API_URL;
-const url = process.env.NEXT_PUBLIC_API_URL;
+// const url = process.env.NEXT_PUBLIC_API_URL;
+const url = 'https://api-kxcfw5balq-uc.a.run.app';
 
 // From Influx
 export async function getCurrentVoltage() {
@@ -25,7 +26,7 @@ export async function getCurrentVoltage() {
 // From Neo4j
 export async function getCoordinates() {
   let response1;
-  await fetch(`http://${process.env.NEXT_PUBLIC_API_URL}/getAllCoordinates`)
+  await fetch(`${url}/getAllCoordinates`)
     .then((response) => response.json())
     .then((data) => response1 = data);
     return response1;
