@@ -132,7 +132,7 @@ flake8:influx:
   - python --version
   - pip install -r data/influx/src/requirements.txt
  script:
-  - flake8 --max-line-length=120 --max-complexity 8 data/influx/src/*.py
+  - flake8 --max-line-length=120 --max-complexity 12 data/influx/src/*.py
  only:
   changes:
    - data/influx/**/*

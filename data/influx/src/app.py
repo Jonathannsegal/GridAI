@@ -64,12 +64,18 @@ def get_current_voltage():
 @app.route('/comparison', methods=['GET'])
 def comparison():
     """compare with given values"""
+    start = "-30d"
+    stop = "0d"
+    if "start" in request.args:
+        start = request.args["start"]
+    if "stop" in request.args:
+        stop = request.args["stop"]
     query = f""" from(bucket:"{bucket}")\n\
-    |> range(start: -30d)\n"""
+    |> range(start: {start}, stop: {stop})\n"""
     if "busId" in request.args:
         bus_name = request.args["busId"]
         query += f"""|> filter(fn:(r) => r._measurement == "{bus_name}" )\n"""
-    field = "voltage"
+    field = "activePower"
     if "curr_flg" in request.args:
         query += """|> last()\n"""
     if "power_type" in request.args:
@@ -81,7 +87,7 @@ def comparison():
         comp_str = ">"
     comp_val = request.args["comp_val"]
     query_api = client.query_api()
-    query += f"""|> filter(fn:(r) => r._field == "{field}" and r._value """ + comp_str + " " + comp_val + """ )\n"""
+    query += f"""|> filter(fn:(r) => r._field == "{field}" and r._value {comp_str}  {comp_val} )\n"""
     result = query_api.query(org=org, query=query)
     results = []
     for table in result:
@@ -116,7 +122,7 @@ def upload_csv():
     for i in range(data.shape[0]):
         # pylint: disable=maybe-no-member
         point = influxdb_client.Point(data.iat[i, 0])\
-            .field('voltage', data.at[i, 'kw']).time(data.at[i, 'date'])
+            .field('activePower', data.at[i, 'kw']).time(data.at[i, 'date'])
         write_api = client.write_api(write_options=SYNCHRONOUS)
         write_api.write(bucket=bucket, org=org, record=point)
     return f"Uploaded data from {csv_url} successfully"
@@ -134,9 +140,15 @@ def delete_all():
 @app.route("/getExtreme", methods=['GET'])
 def get_extreme():
     """Get extremes"""
+    start = "-30d"
+    stop = "0d"
+    if "start" in request.args:
+        start = request.args["start"]
+    if "stop" in request.args:
+        stop = request.args["stop"]
     query = f""" from(bucket:"{bucket}")\n\
-    |> range(start: -30d)\n"""
-    field = "voltage"
+    |> range(start: {start}, stop: {stop})\n"""
+    field = "activePower"
     if "power_type" in request.args:
         field = request.args["power_type"]
     query += f"""|> filter(fn:(r) => r._field == "{field}")\n"""
@@ -147,7 +159,6 @@ def get_extreme():
         query += f"""|> bottom(n:{request.args["count"]})"""
     else:
         raise Exception()
-    print(query)
     query_api = client.query_api()
     result = query_api.query(org=org, query=query)
     results = []
