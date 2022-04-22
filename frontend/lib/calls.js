@@ -26,9 +26,10 @@ export async function getCurrentVoltage() {
 // From Neo4j
 export async function getCoordinates() {
   let response1;
-  await fetch(`${url}/getAllCoordinates`, { mode: 'no-cors' })
+  await fetch(`${url}/getAllCoordinates`)
     .then((response) => response.json())
     .then((data) => response1 = data);
+    console.log(response1);
     return response1;
   // This is [long, lat] dummy
   // console.log(response1);
@@ -123,6 +124,7 @@ function getIconColor(d) {
 
 export function getIconLayer() {
   const data = getCoordinates();
+  // console.log(data)
   const def = [{ node: 0, coordinates: [0, 0] }];
   const [hoverInfo, setHoverInfo] = useState(def);
 
