@@ -26,7 +26,8 @@ export async function getCurrentVoltage() {
 // From Neo4j
 export async function getCoordinates() {
   let response1;
-  await fetch(`${url}/getAllCoordinates`)
+  await fetch(`${url}/getAllCoordinates`, {
+    mode: 'no-cors' })
     .then((response) => response.json())
     .then((data) => response1 = data);
     return response1;
