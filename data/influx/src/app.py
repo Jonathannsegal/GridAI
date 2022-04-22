@@ -96,12 +96,15 @@ def get_all_current_voltage():
     query_api = client.query_api()
     query = f""" from(bucket:"{bucket}")\
     |> range(start: -30d)\
-    |> last()"""
+    |> last()\
+    |> pivot(rowKey: ["_time","_measurement"], columnKey: ["_field"], valueColumn: "_value")"""
     result = query_api.query(org=org, query=query)
     results = []
     for table in result:
         for record in table.records:
-            results.append((record.get_time(), record.get_measurement(), record.get_value()))
+            results.append((record.get_time(), record.get_measurement(),
+                            record["activePower"], record["reactivePower"]))
+
     return jsonify(results)
 
 
@@ -158,11 +161,11 @@ def get_extreme():
 def upload_test_csv():
     """Uploads Test csv to influx db"""
     csv_url = "https://firebasestorage.googleapis.com/v0/b/influx-csv.appspot.com/o/"
-    csv_url += "updated.csv?alt=media&token=ad661c9a-2d91-4be5-a37f-776e12ba193b"
+    csv_url += "out.csv?alt=media&token=aa6015a9-a582-47d7-81f3-0f8018378842"
     data = pd.read_csv(csv_url)
-    data['_time'] = pd.to_datetime(data['_time'], format="%m/%d/%Y %H:%M")
+    data['_time'] = pd.to_datetime(data['_time'], format="%Y-%m-%d %H:%M")
     today = datetime.today()
-    data['_time'] = data['_time'].apply(lambda dt: dt.replace(day=today.day, month=today.month, year=today.year))
+    data['_time'] = data['_time'].apply(lambda dt: dt.replace(day=today.day - 1, month=today.month, year=today.year))
     new_data = data.set_index('_time', inplace=False)
     write_api = client.write_api()
     dfs = dict(tuple(new_data.groupby('_measurement')))
