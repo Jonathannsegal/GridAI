@@ -94,5 +94,14 @@ def ping_pong():
     return 'pong'
 
 
+@app.route("/:res", methods=["POST"])
+def gen_response():
+    """generate response"""
+
+    request_json = request.get_json()
+    return jsonify("Hello world")
+
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
