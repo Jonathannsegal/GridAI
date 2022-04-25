@@ -97,20 +97,7 @@ def ping():
 @app.route("/assist", methods=["POST"])
 def gen_response():
     """generate response from assistant"""
-    gen_res = {
-      "candidates": [
-        {
-          "first_simple": {
-            "variants": [
-              {
-                "speech": "Hello World"
-              }
-            ]
-          }
-        }
-      ]
-    }
-    return gen_res
+    return request.get_json()
 
 
 if __name__ == "__main__":
