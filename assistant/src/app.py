@@ -94,12 +94,11 @@ def ping_pong():
     return 'pong'
 
 
-@app.route("/:res", methods=["POST"])
+@app.route("/res", methods=["POST"])
 def gen_response():
     """generate response"""
-
     request_json = request.get_json()
-    return jsonify("Hello world")
+    return jsonify(request_json)
 
 
 
