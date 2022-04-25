@@ -94,5 +94,24 @@ def ping():
     return "pong"
 
 
+@app.route("/assist", methods=["POST"])
+def gen_response():
+    """generate response from assistant"""
+    gen_res = {
+      "candidates": [
+        {
+          "first_simple": {
+            "variants": [
+              {
+                "speech": "Hello World"
+              }
+            ]
+          }
+        }
+      ]
+    }
+    return gen_res
+
+
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
