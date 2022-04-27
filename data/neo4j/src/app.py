@@ -4,7 +4,7 @@
 import os
 import re
 from py2neo import Graph
-from flask import Flask, request
+from flask import Flask, request, jsonify
 from decouple import config
 
 
@@ -40,20 +40,26 @@ def add_node():
 def get_nodes():
     """Get all nodes"""
     query = ("MATCH (n:Node) RETURN n.NodeId")
-    result = ""
+    result = []
     for record in graph.run(query):
-        result += "Node: " + record["n.NodeId"] + "\n"
-    return result
+        result += [
+            {"id": record["n.NodeId"]}
+        ]
+    return jsonify(result)
 
 
 @app.route('/getCoords', methods=['GET'])
 def get_all_coordinates():
     """Get all node coordinates"""
     query = ("MATCH (n:Node) RETURN n.NodeId,n.latitude,n.longitude")
-    result = ""
+    result = []
     for record in graph.run(query):
-        result += "Node: " + record["n.NodeId"] + " " + record["n.longitude"] + " " + record["n.latitude"] + "\n"
-    return result
+        result += [{
+            "id": record["n.NodeId"],
+            "longitude": record["n.longitude"],
+            "latitude": record["n.latitude"],
+        }]
+    return jsonify(result)
 
 
 @app.route('/uploadFile', methods=['POST'])
@@ -88,11 +94,15 @@ def upload_connections():
 def get_connections():
     """get connections between nodes"""
     query = ("MATCH p=(n:Node)-->(m:Node) RETURN n.latitude,n.longitude,m.latitude,m.longitude")
-    result = ""
+    result = []
     for record in graph.run(query):
-        result += record["n.longitude"] + "," + record["n.latitude"] + "_"
-        result += record["m.longitude"] + "," + record["m.latitude"] + "\n"
-    return result
+        connection = {
+            "first": [record["n.longitude"], record["n.latitude"]],
+            "second": [record["m.longitude"], record["m.latitude"]],
+            "type": None,
+        }
+        result += [connection]
+    return jsonify(result)
 
 
 @app.route('/addTypes', methods=['POST'])
@@ -114,38 +124,41 @@ def add_types():
 def get_node_by_type():
     """get all nodes of a certain type"""
     query = ("MATCH (n:Node {type: $nodeType}) RETURN n.NodeId,n.latitude,n.longitude,n.type")
-    result = ""
     node_type = request.args['type'].upper()
+    result = [
+        ["ID", "Longitude", "Latitude", "Type"]
+    ]
     for record in graph.run(query, nodeType=node_type):
-        result += record['n.NodeId'] + "," + record["n.longitude"] + "," + record["n.latitude"] + ","
-        result += record["n.type"] + "\n"
-    return result
+        result += [
+            [record['n.NodeId'], record["n.longitude"], record["n.latitude"], record["n.type"]]
+        ]
+    return jsonify(result)
 
 
 @app.route('/getAllNodeTypes', methods=['GET'])
 def get_all_node_types():
     """get all node types"""
     query = ("MATCH (n:Node) RETURN n.type")
-    result = []
-    result_str = ""
+    result = set()
     for record in graph.run(query):
-        result.append(record['n.type'])
-    result_set = set(result)
-    for my_str in result_set:
-        result_str += str(my_str) + "\n"
-    return result_str
+        result.add(record['n.type'])
+
+    return jsonify(list(result))
 
 
 @app.route('/getNodesConnectedByID', methods=['GET'])
 def get_connected_by_id():
     """get all nodes connected to a node by node id"""
     query = ("MATCH ({NodeId: $nodeId})-[]-(r) RETURN r.NodeId,r.latitude,r.longitude,r.type")
-    result = ""
     node_id = request.args['id']
+    result = [
+        ["ID", "Longitude", "Latitude", "Type"]
+    ]
     for record in graph.run(query, nodeId=node_id):
-        result += record["r.NodeId"] + "," + record["r.longitude"] + "," + record["r.latitude"]
-        result += "," + record["r.type"] + "\n"
-    return result
+        result += [
+            [record['r.NodeId'], record["r.longitude"], record["r.latitude"], record["r.type"]]
+        ]
+    return jsonify(result)
 
 
 if __name__ == "__main__":
