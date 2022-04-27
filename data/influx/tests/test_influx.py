@@ -82,7 +82,7 @@ def test_generic(client):
     req += 'stop=2022-04-25T12:00:00Z&highest_value=3&extrema_type=MAX&count=2'
     response = client.get(req)
     assert response.status_code == 200
-    assert response.data.decode('utf-8') == '[]\n'
+    assert response.data.decode('utf-8') == '[["Time","Bus","Active Power"]]\n'
 
 def test_get_all_voltage(client):
     """test read from bucket"""
