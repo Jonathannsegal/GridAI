@@ -8,6 +8,7 @@ import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
 from flask import Flask, request, jsonify
 from decouple import config
+from numpy import Infinity
 
 import pandas as pd
 
@@ -88,6 +89,46 @@ def comparison():
     comp_val = request.args["comp_val"]
     query_api = client.query_api()
     query += f"""|> filter(fn:(r) => r._field == "{field}" and r._value {comp_str}  {comp_val} )\n"""
+    result = query_api.query(org=org, query=query)
+    results = []
+    for table in result:
+        for record in table.records:
+            results.append((record.get_time(), record.get_measurement(), record.get_value()))
+    return jsonify(results)
+
+
+@app.route('/generic', methods=['GET'])
+def generic():
+    """generic query for voice assistant"""
+    start = "-30d"
+    stop = "0d"
+    if "start" in request.args:
+        start = request.args["start"]
+    if "stop" in request.args:
+        stop = request.args["stop"]
+    query = f""" from(bucket:"{bucket}")\n\
+    |> range(start: {start}, stop: {stop})\n"""
+    if "busId" in request.args:
+        bus_name = request.args["busId"]
+        query += f"""|> filter(fn:(r) => r._measurement == "{bus_name}" )\n"""
+    field = "activePower"
+    if "power_type" in request.args:
+        field = request.args["power_type"]
+    lowest_value = 0
+    highest_value = Infinity
+    if "lowest_value" in request.args:
+        lowest_value = request.args["lowest_value"]
+    if "highest_value" in request.args:
+        highest_value = request.args["highest_value"]
+    query += f"""|> filter(fn:(r) => r._field == "{field}" and r._value > {lowest_value} """
+    if float(highest_value) < Infinity:
+        query += f""" and r._value < {highest_value}"""
+    query += ")\n|> group()\n"
+    if request.args["extrema_type"] == "MAX":
+        query += f"""|> top(n:{request.args["count"]})"""
+    elif request.args["extrema_type"] == "MIN":
+        query += f"""|> bottom(n:{request.args["count"]})"""
+    query_api = client.query_api()
     result = query_api.query(org=org, query=query)
     results = []
     for table in result:
