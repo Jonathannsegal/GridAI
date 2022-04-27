@@ -126,10 +126,12 @@ def generic():
     if float(highest_value) < Infinity:
         query += f""" and r._value < {highest_value}"""
     query += ")\n|> group()\n"
-    if request.args["extrema_type"] == "MAX":
-        query += f"""|> top(n:{request.args["count"]})"""
-    elif request.args["extrema_type"] == "MIN":
-        query += f"""|> bottom(n:{request.args["count"]})"""
+    if "extrema_type" in request.args:
+        count = 20 if "count" not in request.args else request.args["count"]
+        if request.args["extrema_type"] == "MAX":
+            query += f"""|> top(n:{count})"""
+        elif request.args["extrema_type"] == "MIN":
+            query += f"""|> bottom(n:{count})"""
     query_api = client.query_api()
     result = query_api.query(org=org, query=query)
     results = []

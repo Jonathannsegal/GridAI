@@ -17,3 +17,4 @@ tenacity==5.0.4
 pathlib2>=2.3.0,<3
 click>=7.1.2
 werkzeug==2.0.3
+dialogflow-fulfillment==0.4.4

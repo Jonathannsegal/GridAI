@@ -33,14 +33,39 @@ def test_add_node(client):
 def test_get_nodes(client):
     response = client.get('/getNodes')
     assert response.status_code == 200
-    assert response.data.decode('utf-8') == 'Node: 1\nNode: 2\n'
+    data = response.json()
+    expected = [
+        {
+            "id": 1,
+        },
+        {
+            "id": 2,
+        },
+    ]
+    for i in range(len(expected)):
+        for key in expected[i]:
+            assert expected[i][key] == data[i][key]
 
 
 def test_get_all_coordinates(client):
     response = client.get('/getCoords')
     assert response.status_code == 200
-    assert response.data.decode('utf-8') == 'Node: 1 1 1\nNode: 2 2 2\n'
-
+    data = response.json()
+    expected = [
+        {
+            "id": 1,
+            "longitude": 1,
+            "latitude": 1,
+        },
+        {
+            "id": 2,
+            "longitude": 2,
+            "latitude": 2,
+        },
+    ]
+    for i in range(len(expected)):
+        for key in expected[i]:
+            assert expected[i][key] == data[i][key]
 
 def test_upload_file(client):
     response = client.post('/uploadFile?url=1')

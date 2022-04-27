@@ -11,6 +11,103 @@ def client():
     with app.test_client() as client:
         yield client
 
+def test_webhook(client):
+    """Tests webhook"""
+    requestJson = {
+        "handler": {
+            "name": "generic_query"
+        },
+        "intent": {
+            "name": "Query_Generic",
+            "params": {
+            "feature": {
+                "original": "voltages",
+                "resolved": "VOLTAGE"
+            },
+            "count": {
+                "original": "10",
+                "resolved": 10
+            },
+            "time_comparator": {
+                "original": "",
+                "resolved": [
+                    "BEFORE",
+                    "AFTER"
+                ]
+            },
+            "times": {
+                "original": "",
+                "resolved": [
+                {
+                    "year": 2022,
+                    "day": 27,
+                    "month": 4
+                },
+                {
+                    "day": 20,
+                    "year": 2022,
+                    "month": 4
+                }
+                ]
+            },
+            "range_values": {
+                "original": "",
+                "resolved": [
+                "between 2 and 3"
+                ]
+            },
+            "extrema": {
+                "original": "top",
+                "resolved": "MAX"
+            }
+            },
+            "query": "Get the top 10 voltages between 2 and 3 volts before tomorrow and after yesterday"
+        },
+        "scene": {
+            "name": "mainScene",
+            "slotFillingStatus": "UNSPECIFIED",
+            "slots": {},
+            "next": {
+            "name": "mainScene"
+            }
+        },
+        "session": {
+            "id": "ABwppHFF8iGrW6HwSO10It2dVJIYI7ymYcbEKeJfcqTJfdtLeHkmXD3BvKlo5cY_mq5GJwKexLvBj-uc",
+            "params": {},
+            "typeOverrides": [],
+            "languageCode": ""
+        },
+        "user": {
+            "locale": "en-US",
+            "params": {},
+            "accountLinkingStatus": "ACCOUNT_LINKING_STATUS_UNSPECIFIED",
+            "verificationStatus": "VERIFIED",
+            "packageEntitlements": [],
+            "gaiamint": "",
+            "permissions": [],
+            "lastSeenTime": "2022-04-25T17:16:25Z"
+        },
+        "home": {
+            "params": {}
+        },
+        "device": {
+            "capabilities": [
+            "SPEECH",
+            "RICH_RESPONSE",
+            "LONG_FORM_AUDIO"
+            ],
+            "timeZone": {
+            "id": "America/Chicago",
+            "version": ""
+            }
+        }
+    }
+    res = client.post(
+        '/dialogflow_webhook',
+        json=requestJson
+    )
+    assert res.status_code == 200
+
 def test_speech():
     """speech to text test"""
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = \

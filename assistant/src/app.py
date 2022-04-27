@@ -15,6 +15,28 @@ app = Flask(__name__)
 app.config['VOICE_UPLOAD_FOLDER'] = VOICE_UPLOAD_FOLDER
 
 
+@app.route("/dialogflow_webhook", methods=["POST"])
+def dialogflow_webhook():
+    """Handle webhook requests from Dialogflow."""
+    # Get WebhookRequest object
+    request_json = request.get_json(force=True)
+
+    # Handle request)
+    prompt = CommandHandler.handle_webhook(request_json)
+
+    webhook_response = {
+        "prompt": prompt,
+    }
+
+    # Copy metadata from request to response
+    copy_list = ("session", "scene", "user")
+    for copy_name in copy_list:
+        if hasattr(request_json, copy_name):
+            webhook_response[copy_name] = request_json[copy_name]  # type: ignore
+
+    return jsonify(webhook_response)
+
+
 def process_text_query(text_query):
     """Process the text query and return an appropriate response"""
 
@@ -22,7 +44,7 @@ def process_text_query(text_query):
     handler, input_args = service.process_query(text_query)
 
     response = None if handler is None else \
-        CommandHandler().handle_command(handler, input_args)
+        CommandHandler.handle_command(handler, input_args)
 
     return jsonify(response)
 
