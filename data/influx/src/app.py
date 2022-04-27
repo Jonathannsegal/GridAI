@@ -4,6 +4,8 @@ import os
 
 from datetime import datetime
 
+import re
+
 import influxdb_client
 from influxdb_client.client.write_api import SYNCHRONOUS
 from flask import Flask, request, jsonify
@@ -131,6 +133,8 @@ def generic():
     query_api = client.query_api()
     result = query_api.query(org=org, query=query)
     results = []
+    results.append(("Time", "Bus",
+                    ' '.join(re.findall('[A-Z][^A-Z]*', field[0].upper() + field[1:]))))
     for table in result:
         for record in table.records:
             results.append((record.get_time(), record.get_measurement(), record.get_value()))
