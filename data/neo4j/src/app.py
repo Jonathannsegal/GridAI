@@ -1,7 +1,8 @@
 # type: ignore
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long, anomalous-backslash-in-string
 """Imports"""
 import os
+import re
 from py2neo import Graph
 from flask import Flask, request
 from decouple import config
@@ -91,6 +92,59 @@ def get_connections():
     for record in graph.run(query):
         result += record["n.longitude"] + "," + record["n.latitude"] + "_"
         result += record["m.longitude"] + "," + record["m.latitude"] + "\n"
+    return result
+
+
+@app.route('/addTypes', methods=['POST'])
+def add_types():
+    """add types to nodes"""
+    file = request.files['file']
+    lines = file.readlines()
+    query = ("MATCH (n:Node {NodeId : $nodeId}) SET n.type = $nodeType return n")
+    for line in lines:
+        my_str = line.decode('utf-8').split(",")
+        if my_str[0] == "busID":
+            continue
+        node_type = re.split('(\d.*)', my_str[0])  # noqa: W605
+        graph.run(query, nodeId=my_str[0], nodeType=node_type[0])
+    return "success"
+
+
+@app.route('/getNodesByType', methods=['GET'])
+def get_node_by_type():
+    """get all nodes of a certain type"""
+    query = ("MATCH (n:Node {type: $nodeType}) RETURN n.NodeId,n.latitude,n.longitude,n.type")
+    result = ""
+    node_type = request.args['type'].upper()
+    for record in graph.run(query, nodeType=node_type):
+        result += record['n.NodeId'] + "," + record["n.longitude"] + "," + record["n.latitude"] + ","
+        result += record["n.type"] + "\n"
+    return result
+
+
+@app.route('/getAllNodeTypes', methods=['GET'])
+def get_all_node_types():
+    """get all node types"""
+    query = ("MATCH (n:Node) RETURN n.type")
+    result = []
+    result_str = ""
+    for record in graph.run(query):
+        result.append(record['n.type'])
+    result_set = set(result)
+    for my_str in result_set:
+        result_str += str(my_str) + "\n"
+    return result_str
+
+
+@app.route('/getNodesConnectedByID', methods=['GET'])
+def get_connected_by_id():
+    """get all nodes connected to a node by node id"""
+    query = ("MATCH ({NodeId: $nodeId})-[]-(r) RETURN r.NodeId,r.latitude,r.longitude,r.type")
+    result = ""
+    node_id = request.args['id']
+    for record in graph.run(query, nodeId=node_id):
+        result += record["r.NodeId"] + "," + record["r.longitude"] + "," + record["r.latitude"]
+        result += "," + record["r.type"] + "\n"
     return result
 
 
