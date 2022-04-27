@@ -33,7 +33,7 @@ def test_add_node(client):
 def test_get_nodes(client):
     response = client.get('/getNodes')
     assert response.status_code == 200
-    data = response.json()
+    data = response.json
     expected = [
         {
             "id": 1,
@@ -44,13 +44,13 @@ def test_get_nodes(client):
     ]
     for i in range(len(expected)):
         for key in expected[i]:
-            assert expected[i][key] == data[i][key]
+            assert str(expected[i][key]) == str(data[i][key])
 
 
 def test_get_all_coordinates(client):
     response = client.get('/getCoords')
     assert response.status_code == 200
-    data = response.json()
+    data = response.json
     expected = [
         {
             "id": 1,
@@ -65,7 +65,7 @@ def test_get_all_coordinates(client):
     ]
     for i in range(len(expected)):
         for key in expected[i]:
-            assert expected[i][key] == data[i][key]
+            assert str(expected[i][key]) == str(data[i][key])
 
 def test_upload_file(client):
     response = client.post('/uploadFile?url=1')
