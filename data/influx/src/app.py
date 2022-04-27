@@ -100,7 +100,7 @@ def comparison():
 
 
 @app.route('/generic', methods=['GET'])
-def generic():
+def generic():  # noqa: C901
     """generic query for voice assistant"""
     start = "-30d"
     stop = "0d"
