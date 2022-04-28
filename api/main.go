@@ -35,14 +35,16 @@ type Node struct {
 	Node     string     `json:"nodeid"`
 	Position [2]float64 `json:"coordinates"`
 }
+type NodeCoord struct {
+	Id       string     `json:"id"`
+	Long     float64    `json:"longitude"`
+	Lat      float64    `json:"latitude"`
+}
 type Coords struct {
 	Long float32 `json:"long"`
 	Lat  float32 `json:"lat"`
 }
-type Position struct {
-	Longitude float64 `json:"lng"`
-	Latitude  float64 `json:"lat"`
-}
+
 type Anomalies struct {
 	Ids []int `json:"anomalies"`
 }
@@ -126,7 +128,7 @@ func main() {
 	//firebase
 	//TODO
 
-	router.HandleFunc("/getALl/{busid}", getAll).Methods("GET")
+	router.HandleFunc("/getAll/{busid}", getAll).Methods("GET")
 	router.HandleFunc("/getCurrentVoltage/{busid}", getCurrentVoltage).Methods("GET")
 	router.HandleFunc("/getCoordinates/{busid}", getCoordinates).Methods("GET")
 	router.HandleFunc("/getAllCoordinates", getAllCoordinates).Methods("GET")
@@ -317,25 +319,19 @@ func getAllCoordinates(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	var lines []string
-	sc := bufio.NewScanner(strings.NewReader(string(responseData)))
-	for sc.Scan() {
-		lines = append(lines, sc.Text())
+	coords := NodeCoord[]
+	jsonErr := json.Unmarshal(responseData, &coords)
+	if jsonErr != nil {
+		log.Fatal(jsonErr)
 	}
-	fmt.Print(lines)
 
 	var Nodes []Node
-
-	for _, i := range lines {
-		words := strings.Fields(i)
+	for _, coord := range coords {
 		var node Node
-		node.Node = words[1]
-		if s, err := strconv.ParseFloat(words[2], 64); err == nil {
-			node.Position[0] = s
-		}
-		if s, err := strconv.ParseFloat(words[3], 64); err == nil {
-			node.Position[1] = s
-		}
+		node.Node = coord.Id
+		node.Position[0] = coord.Long
+		node.Position[1] = coord.Lat
+
 		Nodes = append(Nodes, node)
 	}
 	w.Header().Set("Access-Control-Allow-Origin", "*")
