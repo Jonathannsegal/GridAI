@@ -1,4 +1,5 @@
 // TODO: rethink if scrapping the API at this point is a good idea
+// My opinion remains is that this overcomplicates things. At the very least, we should switch to python.
 
 package main
 
@@ -39,8 +40,8 @@ type Node struct {
 }
 type NodeCoord struct {
 	Id       string     `json:"id"`
-	Long     float64    `json:"longitude"`
-	Lat      float64    `json:"latitude"`
+	Long     string    `json:"longitude"`
+	Lat      string    `json:"latitude"`
 }
 type Coords struct {
 	Long float32 `json:"long"`
@@ -331,8 +332,12 @@ func getAllCoordinates(w http.ResponseWriter, r *http.Request) {
 	for _, coord := range coords {
 		var node Node
 		node.Node = coord.Id
-		node.Position[0] = coord.Long
-		node.Position[1] = coord.Lat
+		if val, err := strconv.ParseFloat(coord.Long, 64); err == nil {
+			node.Position[0] = val
+		}
+		if val, err := strconv.ParseFloat(coord.Lat, 64); err == nil {
+			node.Position[1] = val
+		}
 
 		Nodes = append(Nodes, node)
 	}
