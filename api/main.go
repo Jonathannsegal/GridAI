@@ -321,7 +321,7 @@ func getAllCoordinates(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	coords := []NodeCoord
+	var coords []NodeCoord
 	jsonErr := json.Unmarshal(responseData, &coords)
 	if jsonErr != nil {
 		log.Fatal(jsonErr)
