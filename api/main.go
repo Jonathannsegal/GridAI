@@ -1,3 +1,5 @@
+// TODO: rethink if scrapping the API at this point is a good idea
+
 package main
 
 import (
@@ -319,7 +321,7 @@ func getAllCoordinates(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 
-	coords := NodeCoord[]
+	coords := []NodeCoord
 	jsonErr := json.Unmarshal(responseData, &coords)
 	if jsonErr != nil {
 		log.Fatal(jsonErr)
