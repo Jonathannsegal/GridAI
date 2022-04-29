@@ -2,10 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
-/* @import "react-chat-widget/lib/styles.css"; */
-/* @import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400&display=swap'); */
+@import "react-chat-widget/lib/styles.css";
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,700;1,400&display=swap');
 
-/* :root {
+:root {
   --color-bg: #eef0f1;
   --color-text: #08090a;
   --color-blue: #3b49df;
@@ -243,4 +243,4 @@ input[type="file"] {
   text-align: center;
 }
 
-.hidden { display:  none; } */
+.hidden { display:  none; }

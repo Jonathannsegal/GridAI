@@ -19,7 +19,6 @@ export async function getCurrentVoltage() {
   await fetch(`${url}/getCurrentVoltage/1`)
     .then((response) => response.json())
     .then((data) => response1 = data);
-  console.log(response1);
   return response1;
 }
 
@@ -29,10 +28,8 @@ export async function getCoordinates() {
   await fetch(`${url}/getAllCoordinates`)
     .then((response) => response.json())
     .then((data) => response1 = data);
-    console.log(response1);
     return response1;
   // This is [long, lat] dummy
-  // console.log(response1);
   // console.log([{ coordinates: [-93.651024,42.027241]}, {coordinates: [-93.7,42.027241]}, {coordinates: [-93.651024,42.03]}])
   // return response;
   // return [{coordinates: [-93.651024,42.027241]}, {coordinates: [-93.7,42.027241]}, {coordinates: [-93.651024,42.03]}];
@@ -48,8 +45,7 @@ export function getNextHourVoltage() {
 // From Anomalies
 export function getCurrentAnomalies() {
   fetch(`${url}/getCurrentAnomalies`)
-    .then((response) => response.json())
-    .then((data) => console.log(data));
+    .then((response) => response.json());
 }
 
 export async function sendTextRequest(text) {
@@ -60,10 +56,10 @@ export async function sendTextRequest(text) {
     'text': text,
   };
   // let url1 = "https://frontend-next-kxcfw5balq-uc.a.run.app/";
-  await fetch(`http://${process.env.NEXT_PUBLIC_API_URL}/sendTextRequest`, { method: 'POST', mode: 'cors', body: JSON.stringify(body) })
+  await fetch(`${url}/sendTextRequest`, { method: 'POST', body: JSON.stringify(body) })
     .then((response) => response.json())
     .then((data) => response1 = data);
-  return response1;
+    return response1;
 }
 
 // export function getLineLayer() {
