@@ -183,6 +183,28 @@ def get_all_current_voltage_frontend():
     return jsonify(results)
 
 
+@app.route('/getAllCurrentVoltageFrontend', methods=['GET'])
+def get_all_current_voltage_frontend():
+    """read from bucket"""
+    query_api = client.query_api()
+    query = f""" from(bucket:"{bucket}")\
+    |> range(start: -30d)\
+    |> last()\
+    |> pivot(rowKey: ["_time","_measurement"], columnKey: ["_field"], valueColumn: "_value")"""
+    result = query_api.query(org=org, query=query)
+    results = []
+    for table in result:
+        for record in table.records:
+            results += [{
+                "date": record.get_time(),
+                "id": record.get_measurement(),
+                "active": record["activePower"],
+                "reactive": record["reactivePower"],
+                }]
+
+    return jsonify(results)
+
+
 @app.route("/uploadCsv", methods=['POST'])
 def upload_csv():
     """Uploads csv to influx db"""
