@@ -100,7 +100,7 @@ def comparison():
 
 
 @app.route('/generic', methods=['GET'])
-def generic():  # noqa: C901
+def generic():  # noqa: C901; pylint: disable=R0912
     """generic query for voice assistant"""
     start = "-30d"
     stop = "0d"
@@ -127,7 +127,9 @@ def generic():  # noqa: C901
         query += f""" and r._value < {highest_value}"""
     query += ")\n|> group()\n"
     if "extrema_type" in request.args:
-        count = 20 if "count" not in request.args else request.args["count"]
+        count = 20
+        if "count" in request.args:
+            count = request.args["count"]
         if request.args["extrema_type"] == "MAX":
             query += f"""|> top(n:{count})"""
         elif request.args["extrema_type"] == "MIN":
@@ -140,24 +142,6 @@ def generic():  # noqa: C901
     for table in result:
         for record in table.records:
             results.append((record.get_time(), record.get_measurement(), record.get_value()))
-    return jsonify(results)
-
-
-@app.route('/getAllCurrentVoltage', methods=['GET'])
-def get_all_current_voltage():
-    """read from bucket"""
-    query_api = client.query_api()
-    query = f""" from(bucket:"{bucket}")\
-    |> range(start: -30d)\
-    |> last()\
-    |> pivot(rowKey: ["_time","_measurement"], columnKey: ["_field"], valueColumn: "_value")"""
-    result = query_api.query(org=org, query=query)
-    results = []
-    for table in result:
-        for record in table.records:
-            results.append((record.get_time(), record.get_measurement(),
-                            record["activePower"], record["reactivePower"]))
-
     return jsonify(results)
 
 
@@ -188,12 +172,13 @@ def upload_csv():
     """Uploads csv to influx db"""
     csv_url = request.args["url"]
     data = pd.read_csv(csv_url)
-    for i in range(data.shape[0]):
-        # pylint: disable=maybe-no-member
-        point = influxdb_client.Point(data.iat[i, 0])\
-            .field('activePower', data.at[i, 'kw']).time(data.at[i, 'date'])
-        write_api = client.write_api(write_options=SYNCHRONOUS)
-        write_api.write(bucket=bucket, org=org, record=point)
+    new_data = data.set_index('_time', inplace=False)
+    write_api = client.write_api()
+    dfs = dict(tuple(new_data.groupby('_measurement')))
+
+    for measurements in dfs:
+        result = dfs[measurements].drop('_measurement', 1)
+        write_api.write(bucket, org, record=result, data_frame_measurement_name=measurements)
     return f"Uploaded data from {csv_url} successfully"
 
 
