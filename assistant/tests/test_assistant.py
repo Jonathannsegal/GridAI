@@ -103,7 +103,7 @@ def test_webhook(client):
         }
     }
     res = client.post(
-        '/dialogflow_webhook',
+        '/webhook',
         json=requestJson
     )
     assert res.status_code == 200

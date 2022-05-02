@@ -18,12 +18,12 @@ class CommandHandler():
     @staticmethod
     def handle_webhook(query_result: dict) -> dict:
         """Handles incoming commands
-        
         A dictionary object is be returned.
         This dictionary is formated as a "prompt" with the structure presented here:
         https://developers.google.com/assistant/conversational/webhooks#example-response.
 
-        For more prompt formats, look at https://developers.google.com/assistant/conversational/prompts.
+        For more prompt formats, look at
+        https://developers.google.com/assistant/conversational/prompts.
         """
         handler = query_result["handler"]["name"]
         return CommandHandler.commands[handler](query_result["intent"])
@@ -205,7 +205,7 @@ class CommandHandler():
         args = intent["params"]
         object_type = args["object_type"]["resolved"]
 
-        # TODO: Process the object_type to fit that which is stored in the database.
+        # TODO: Process the object_type to fit that which is stored in the database. # pylint: disable=W0511
         #        This could be done in Actions on Google.
 
         response = requests.get(

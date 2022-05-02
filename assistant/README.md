@@ -1,12 +1,12 @@
-# Assistant
+### Overview
 This Assistant service is used to accept user queries (after natural language processing (NLP)) and handle them accordingly.
 
 ---
 ### Running
-Regrettably, the Assistant can not yet be run in a straightforward way locally as there are
+Regrettably, the Assistant can not yet be run locally in a straightforward way as there are
 issues with python import paths. This may be an easy fix, but we did not dive into it.
 
-However, when launched using the Dockerfile, the project will be launched successfully.
+However, when launched using the Dockerfile, this service will be hosted successfully.
 
 Furthermore, the Actions on Google service should be enabled. While all code files are
 independent of Actions on Google, this Assistant service, so far, should only be used as a
@@ -46,3 +46,5 @@ natural language processing (NLP) of user queries. These features include the fo
 	- all functions aside from handle_webhook(), generic_query(), and number_of()
 
 Until the frontend has a working Google Assistant integration, retain these deprecated features.
+
+When removing these deprecated features, remember to remove the create_actions_json.py calls from the assistant/Dockerfile and .gitlab-ci.yml files.
