@@ -2,12 +2,17 @@
 import json
 import os
 import re
+from warnings import warn
 
 
 class AssistantService():
-    """AssistantService"""
+    """AssistantService is used to parse user text quieres, extract their arguments, and
+    executes the query accordingly"""
 
     def __init__(self):
+        warn(f"{self.__class__.__name__} is now deprecated. " \
+            "Please use the Actions on Google service.")
+
         self.actions = None
         filepath = os.path.join(os.path.dirname(__file__), "actions.json")
         with open(filepath, "r", encoding='utf-8') as f:
@@ -90,7 +95,6 @@ class AssistantService():
             pattern = pattern[:start] + param_regex_str + pattern[end:]
 
         pattern = pattern.lower()
-        # pattern.replace(" ", "\w?")
         return re.compile(pattern), param_str_positions
 
     def construct_param_regex_str(self, param):

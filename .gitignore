@@ -3,4 +3,4 @@
 .DS_Store
 /env/
 .pylintrc
-*/actions.json
+actions.json
