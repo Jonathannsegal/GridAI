@@ -10,8 +10,8 @@ class AssistantService():
     executes the query accordingly"""
 
     def __init__(self):
-        warn(f"{self.__class__.__name__} is now deprecated. " \
-            "Please use the Actions on Google service.")
+        warn(f"{self.__class__.__name__} is now deprecated. "
+             "Please use the Actions on Google service.")
 
         self.actions = None
         filepath = os.path.join(os.path.dirname(__file__), "actions.json")
