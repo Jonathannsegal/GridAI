@@ -1,12 +1,14 @@
 """Method for speech-to-text"""
 import io
-# import click
+from warnings import warn
 from google.cloud import speech
 
 
 def speech_text(input_audio_file, gcs):
     """Convert provided audio file into a text transcript
     if gcs = true use google cloud file, if gcs = false use local file"""
+
+    warn("speech_text function is now deprecated.")
 
     # Instantiates a client
     client = speech.SpeechClient()

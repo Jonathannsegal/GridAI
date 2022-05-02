@@ -1,5 +1,6 @@
 """Imports"""
 from datetime import datetime, timedelta, timezone
+from warnings import warn
 import requests
 
 INFLUX_URL = "https://data-influx-kxcfw5balq-uc.a.run.app"
@@ -16,13 +17,23 @@ class CommandHandler():
 
     @staticmethod
     def handle_webhook(query_result: dict) -> dict:
-        """Handles incoming commands"""
+        """Handles incoming commands
+        
+        A dictionary object is be returned.
+        This dictionary is formated as a "prompt" with the structure presented here:
+        https://developers.google.com/assistant/conversational/webhooks#example-response.
+
+        For more prompt formats, look at https://developers.google.com/assistant/conversational/prompts.
+        """
         handler = query_result["handler"]["name"]
         return CommandHandler.commands[handler](query_result["intent"])
 
     @staticmethod
     def generic_query(intent: dict) -> dict:  # noqa: C901; pylint: disable=R0914,R0912,R0915
-        """Handles incoming commands"""
+        """Execute a generic query.
+        Once example of such a query is as follows:
+        - Get the top 3 active powers above 3 and under 5 volts between April 25th and April 27th.
+        """
         args = intent["params"]
         params = {}
         response_str = "Showing"
@@ -194,6 +205,9 @@ class CommandHandler():
         args = intent["params"]
         object_type = args["object_type"]["resolved"]
 
+        # TODO: Process the object_type to fit that which is stored in the database.
+        #        This could be done in Actions on Google.
+
         response = requests.get(
             url=NEO4J_URL+"/getNodesByType",
             params={"type": object_type}
@@ -213,11 +227,15 @@ class CommandHandler():
     @staticmethod
     def handle_command(command, input_args):
         """Handles incoming commands"""
+        warn("handle_command function is now deprecated.")
+
         return CommandHandler.commands[command](input_args)
 
     @staticmethod
     def peak_specific(input_args: dict):
         """Retrieves highest feature value for feeder_num."""
+        warn("peak_specific function is now deprecated.")
+
         feeder_num = input_args["feeder_num"]["value"]
         feature_type = default(input_args["feature_type"]["key"], "DEFAULT")
         return feeder_num, feature_type
@@ -225,6 +243,8 @@ class CommandHandler():
     @staticmethod
     def comparison(input_args: dict):
         """Retrieves the voltage for feeder_num which are within the specified range"""
+        warn("comparison function is now deprecated.")
+
         comparison_type = input_args["comparison_type"]["key"]
         comparison_value = input_args["comparison_value"]["value"]
 
@@ -250,6 +270,8 @@ class CommandHandler():
     @staticmethod
     def extrema(input_args: dict):
         """Retrieves the top or lowest values of a feature for objects of object_type"""
+        warn("extrema function is now deprecated.")
+
         extrema_type = input_args["extrema_type"]["key"]
         count = default(input_args["count"]["value"], 0)
 
@@ -270,6 +292,8 @@ class CommandHandler():
     @staticmethod
     def rate_of_change(input_args: dict):
         """Calculates the rate of change in a feature for target objects"""
+        warn("rate_of_change function is now deprecated.")
+
         object_type = default(input_args["object_type"]["key"], "DEFAULT")
         feature_type = default(input_args["feature_type"]["key"], "DEFAULT")
 

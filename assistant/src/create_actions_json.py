@@ -1,10 +1,12 @@
 """Imports"""
 import json
 import os
+from warnings import warn
 
 
 def aggregate_jsons(path):
     """Generates a dictionary object using jsons objects using the descendants of a directory"""
+    warn("aggregate_jsons function is now deprecated.")
 
     commands_dict = {}
     files = os.listdir(path)
@@ -27,6 +29,8 @@ def aggregate_jsons(path):
 
 def create_actions_json():
     """Generates the action.json file"""
+    warn("create_actions_json function is now deprecated.")
+
     src_dir = os.path.dirname(os.path.realpath(__file__))
     commands_path = os.path.join(src_dir, "custom_commands")
     json_dict = aggregate_jsons(commands_path)

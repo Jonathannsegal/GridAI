@@ -1,6 +1,7 @@
 """Imports"""
 import os
 
+from warnings import warn
 from flask import Flask, jsonify, request
 from werkzeug.utils import secure_filename
 
@@ -15,8 +16,8 @@ app = Flask(__name__)
 app.config['VOICE_UPLOAD_FOLDER'] = VOICE_UPLOAD_FOLDER
 
 
-@app.route("/dialogflow_webhook", methods=["POST"])
-def dialogflow_webhook():
+@app.route("/webhook", methods=["POST"])
+def webhook():
     """Handle webhook requests from Dialogflow."""
     # Get WebhookRequest object
     request_json = request.get_json(force=True)
@@ -39,6 +40,7 @@ def dialogflow_webhook():
 
 def process_text_query(text_query):
     """Process the text query and return an appropriate response"""
+    warn("process_text_query function is now deprecated.")
 
     service = AssistantService()
     handler, input_args = service.process_query(text_query)
@@ -51,6 +53,7 @@ def process_text_query(text_query):
 
 def voice_to_text(voice_file):
     """Converts voice file to a text string"""
+    warn("voice_to_text function is now deprecated.")
 
     response = speech_text(voice_file, False)
 
@@ -66,6 +69,7 @@ def allowed_file(filename):
 @app.route("/text", methods=["POST"])
 def text_request():
     """Text Request Endpoint"""
+    warn("text_request function is now deprecated.")
 
     request_json = request.get_json()
 
@@ -78,6 +82,8 @@ def text_request():
 def voice_request():
     """Voice Request Endpoint set paramater "transcipt to any
     value to return a transcript of the speech"""
+    warn("voice_request function is now deprecated.")
+
     voice_query = request.files.get('voice')
     transcript_mode = request.args.get("transcript", default=False, type=bool)
     tmpdir = False
@@ -105,6 +111,8 @@ def voice_request():
 @app.route("/setCred")
 def set_cred():
     """sets google application crednentials. for debug use only"""
+    warn("set_cred function is now deprecated.")
+
     os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = os.getcwd() + \
         "/assistant/client_secret/speechtotext-331119-820cdd23000d.json"
     return os.environ['GOOGLE_APPLICATION_CREDENTIALS']
@@ -114,12 +122,6 @@ def set_cred():
 def ping():
     """Ping the server"""
     return "pong"
-
-
-@app.route("/assist", methods=["POST"])
-def gen_response():
-    """generate response from assistant"""
-    return request.get_json()
 
 
 if __name__ == "__main__":
