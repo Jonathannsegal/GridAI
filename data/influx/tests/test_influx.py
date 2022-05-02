@@ -58,12 +58,6 @@ def delete_all(client):
     assert response.status_code == 200
     assert response.data.decode('utf-8') == 'All Data Deleted'
 
-# def test_upload_csv(client):
-#     """Test write to bucket"""
-#     response = client.post('/uploadCsv?url=http://test.com')
-#     assert response.status_code == 200
-#     assert response.data.decode('utf-8') == 'Uploaded data from http://test.com successfully'
-
 def test_get_voltage_by_id(client):
     """test read from bucket"""
     response = client.get('/getVoltageById?busId=1')
@@ -86,7 +80,7 @@ def test_generic(client):
 
 def test_get_all_voltage(client):
     """test read from bucket"""
-    response = client.get('/getAllCurrentVoltage')
+    response = client.get('/getAllCurrentVoltageFrontend')
     assert response.status_code == 200
     assert response.data.decode('utf-8') == '[]\n'
 
