@@ -4,13 +4,15 @@
 /* eslint-disable no-console */
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable react/jsx-boolean-value */
+/* eslint-disable no-plusplus */
+/* eslint-disable prefer-destructuring */
 import React from 'react';
 import { StaticMap } from 'react-map-gl';
 import { AmbientLight, PointLight, LightingEffect } from '@deck.gl/core';
 import { HexagonLayer } from '@deck.gl/aggregation-layers';
 import DeckGL from '@deck.gl/react';
 import {
-  getCoordinates,
+  getCoordinatesHexagon,
 } from '../lib/calls';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFyaXNzYWciLCJhIjoiY2t6aXZ5M2FkNGZiNTJ3bmZ1Ymx4cXEzaSJ9.oxEaAW-mjM0Cc9NDNfDQPg'; // Set your mapbox token here
@@ -42,10 +44,10 @@ const material = {
 };
 
 const INITIAL_VIEW_STATE = {
-  longitude: -112.337088,
-  latitude: 33.75363564,
-  zoom: 12,
-  minZoom: 5,
+  longitude: -112.3373,
+  latitude: 33.745,
+  zoom: 13.5,
+  minZoom: 0,
   maxZoom: 15,
   pitch: 40.5,
   bearing: -27,
@@ -69,12 +71,22 @@ function getTooltip1({ object }) {
   }
   const lat = object.position[1];
   const lng = object.position[0];
-  const count = object.points.length;
-
+  let point = object.points[0];
+  for (let i = 1; i < object.points.length; i++) {
+    if (object.points[i].source.active > point.source.active) {
+      point = object.points[i];
+    }
+  }
+  const active = point.source.active;
+  const reactive = point.source.reactive;
+  const date = point.source.date;
+  const nodeid = point.source.nodeid;
   return `\
-    latitude: ${Number.isFinite(lat) ? lat.toFixed(6) : ''}
-    longitude: ${Number.isFinite(lng) ? lng.toFixed(6) : ''}
-    ${count} Buses`;
+    Node Id: ${nodeid};
+    Date: ${date};
+    Active Power: ${active};
+    Reactive Power: ${reactive};
+    Coordinates: ${lat}, ${lng}`;
 }
 
 // function getTooltip2({ object }) {
@@ -102,11 +114,11 @@ function getTooltip1({ object }) {
 /* eslint-disable react/no-deprecated */
 export default function HexagonMap({
   mapStyle = MAP_STYLE,
-  radius = 150,
+  radius = 2,
   upperPercentile = 100,
-  coverage = 1,
+  coverage = 5,
 }) {
-  const data = getCoordinates();
+  const data = getCoordinatesHexagon();
   // console.log(data)
   const layers = [
     new HexagonLayer({
@@ -116,9 +128,10 @@ export default function HexagonMap({
       data,
       elevationRange: [0, 50],
       // elevationScale: data && data.length ? 50 : 0,
-      elevationScale: 50,
+      elevationScale: 10,
       extruded: true,
       getPosition: (d) => d.coordinates,
+      getElevation: (d) => 10 * d.active,
       pickable: true,
       radius,
       upperPercentile,

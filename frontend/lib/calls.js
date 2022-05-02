@@ -35,6 +35,15 @@ export async function getCoordinates() {
   // return [{coordinates: [-93.651024,42.027241]}, {coordinates: [-93.7,42.027241]}, {coordinates: [-93.651024,42.03]}];
 }
 
+// From Neo4j: Includes voltage from influx
+export async function getCoordinatesHexagon() {
+  let response1;
+  await fetch(`${url}/getAllCoordinatesHexagon`)
+    .then((response) => response.json())
+    .then((data) => response1 = data);
+    return response1;
+}
+
 // From Prediction
 export function getNextHourVoltage() {
   fetch(`${url}/getNextHourVoltage/45`)

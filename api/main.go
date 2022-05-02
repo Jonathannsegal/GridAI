@@ -404,7 +404,7 @@ func getAllCoordinatesHexagon(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(jsonErr)
 	}
 
-	// Get voltage from influx
+	// Get voltage from Influx
 	response1, err := http.Get(services[Influx].baseurl + "/getAllCurrentVoltageFrontend")
 	if err != nil {
 		fmt.Print(err.Error())
@@ -425,6 +425,7 @@ func getAllCoordinatesHexagon(w http.ResponseWriter, r *http.Request) {
 	var Nodes []Node
 	for _, coord := range coords {
 		firstThree := coord.Id[0:3]
+		// ONLY get sep bc they have voltage data
 		if firstThree == "SEP" {
 			var node Node
 			node.Node = coord.Id
