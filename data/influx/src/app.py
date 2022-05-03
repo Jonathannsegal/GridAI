@@ -157,11 +157,35 @@ def get_all_current_voltage_frontend():
     results = []
     for table in result:
         for record in table.records:
+            print(record)
             results += [{
                 "date": record.get_time(),
                 "id": record.get_measurement(),
                 "active": record["activePower"],
-                "reactive": record["reactivePower"],
+                "reactive": record["reactivePower"]
+                }]
+
+    return jsonify(results)
+
+
+@app.route('/getAllCurrentGeneratedPower', methods=['GET'])
+def get_all_current_generated_power():
+    """read from bucket"""
+    query_api = client.query_api()
+    query = f""" from(bucket:"{bucket}")\
+    |> range(start: -30d)\
+    |> filter(fn:(r) => r._field == "activeGeneratedPower")\
+    |> last()\
+    |> pivot(rowKey: ["_time","_measurement"], columnKey: ["_field"], valueColumn: "_value")"""
+    result = query_api.query(org=org, query=query)
+    results = []
+    for table in result:
+        for record in table.records:
+            print(record)
+            results += [{
+                "date": record.get_time(),
+                "id": record.get_measurement(),
+                "generated": record["activeGeneratedPower"]
                 }]
 
     return jsonify(results)
@@ -225,19 +249,23 @@ def get_extreme():
 @app.route("/uploadTestCsv", methods=['POST'])
 def upload_test_csv():
     """Uploads Test csv to influx db"""
-    csv_url = "https://firebasestorage.googleapis.com/v0/b/influx-csv.appspot.com/o/"
-    csv_url += "out.csv?alt=media&token=aa6015a9-a582-47d7-81f3-0f8018378842"
-    data = pd.read_csv(csv_url)
-    data['_time'] = pd.to_datetime(data['_time'], format="%Y-%m-%d %H:%M")
+    csv_urls = ["", ""]
+    csv_urls[0] = "https://firebasestorage.googleapis.com/v0/b/influx-csv.appspot.com/o/"
+    csv_urls[0] += "out.csv?alt=media&token=aa6015a9-a582-47d7-81f3-0f8018378842"
+    csv_urls[1] = "https://firebasestorage.googleapis.com/v0/b/influx-csv.appspot.com/o/"
+    csv_urls[1] += "generatedPower.csv?alt=media&token=6fbf89cf-79a2-493e-94f2-a451e83af539"
     today = datetime.today()
-    data['_time'] = data['_time'].apply(lambda dt: dt.replace(day=today.day - 1, month=today.month, year=today.year))
-    new_data = data.set_index('_time', inplace=False)
-    write_api = client.write_api()
-    dfs = dict(tuple(new_data.groupby('_measurement')))
+    for csv_url in csv_urls:
+        data = pd.read_csv(csv_url)
+        data['_time'] = pd.to_datetime(data['_time'], format="%Y-%m-%d %H:%M")
+        data['_time'] = data['_time'].apply(lambda t: t.replace(day=today.day - 1, month=today.month, year=today.year))
+        new_data = data.set_index('_time', inplace=False)
+        write_api = client.write_api()
+        dfs = dict(tuple(new_data.groupby('_measurement')))
 
-    for measurements in dfs:
-        result = dfs[measurements].drop('_measurement', 1)
-        write_api.write(bucket, org, record=result, data_frame_measurement_name=measurements)
+        for measurements in dfs:
+            result = dfs[measurements].drop('_measurement', 1)
+            write_api.write(bucket, org, record=result, data_frame_measurement_name=measurements)
 
     return "Uploaded test data successfully"
 
