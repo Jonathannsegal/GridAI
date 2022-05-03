@@ -36,9 +36,18 @@ export async function getCoordinates() {
 }
 
 // From Neo4j: Includes voltage from influx
-export async function getCoordinatesHexagon() {
+export async function getCoordinatesConsumption() {
   let response1;
-  await fetch(`${url}/getAllCoordinatesHexagon`)
+  await fetch(`${url}/getAllCoordinatesConsumption`)
+    .then((response) => response.json())
+    .then((data) => response1 = data);
+    return response1;
+}
+
+// From Neo4j: Includes voltage from influx
+export async function getCoordinatesGeneration() {
+  let response1;
+  await fetch(`${url}/getAllCoordinatesGeneration`)
     .then((response) => response.json())
     .then((data) => response1 = data);
     return response1;
