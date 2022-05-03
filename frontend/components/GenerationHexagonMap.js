@@ -12,7 +12,7 @@ import { AmbientLight, PointLight, LightingEffect } from '@deck.gl/core';
 import { HexagonLayer } from '@deck.gl/aggregation-layers';
 import DeckGL from '@deck.gl/react';
 import {
-  getCoordinatesHexagon,
+  getCoordinatesGeneration,
 } from '../lib/calls';
 
 const MAPBOX_TOKEN = 'pk.eyJ1IjoibWFyaXNzYWciLCJhIjoiY2t6aXZ5M2FkNGZiNTJ3bmZ1Ymx4cXEzaSJ9.oxEaAW-mjM0Cc9NDNfDQPg'; // Set your mapbox token here
@@ -78,15 +78,13 @@ function getTooltip1({ object }) {
       point = object.points[i];
     }
   }
-  const active = point.source.active;
-  const reactive = point.source.reactive;
+  const generation = point.source.generated;
   const date = point.source.date;
   const nodeid = point.source.nodeid;
   return `\
     Node Id: ${nodeid};
     Date: ${date};
-    Active Power: ${active};
-    Reactive Power: ${reactive};
+    Power: ${generation};
     Coordinates: ${lat}, ${lng}`;
 }
 
@@ -117,9 +115,9 @@ export default function HexagonMap({
   mapStyle = MAP_STYLE,
   radius = 2,
   upperPercentile = 100,
-  coverage = 5,
+  coverage = 7,
 }) {
-  const data = getCoordinatesHexagon();
+  const data = getCoordinatesGeneration();
   // console.log(data)
   const layers = [
     new HexagonLayer({

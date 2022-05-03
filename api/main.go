@@ -41,6 +41,13 @@ type Node struct {
 	Reactive float64    `json:"reactive"`
 	Date     string     `json:"date"`
 }
+type NodeGenerated struct {
+	// id       int
+	Node     string     `json:"nodeid"`
+	Position [2]float64 `json:"coordinates"`
+	Generated   float64    `json:"generated"`
+	Date     string     `json:"date"`
+}
 type NodeCoord struct {
 	Id   string `json:"id"`
 	Long string `json:"longitude"`
@@ -51,6 +58,11 @@ type VoltageId struct {
 	Date     string  `json:"date"`
 	Id       string  `json:"id"`
 	Reactive float64 `json:"reactive"`
+}
+type VoltageIdGenerated struct {
+	Generated   float64 `json:"generated"`
+	Date     string  `json:"date"`
+	Id       string  `json:"id"`
 }
 type Coords struct {
 	Long float32 `json:"long"`
@@ -145,7 +157,8 @@ func main() {
 	router.HandleFunc("/getCurrentVoltage/{busid}", getCurrentVoltage).Methods("GET")
 	router.HandleFunc("/getCoordinates/{busid}", getCoordinates).Methods("GET")
 	router.HandleFunc("/getAllCoordinates", getAllCoordinates).Methods("GET")
-	router.HandleFunc("/getAllCoordinatesHexagon", getAllCoordinatesHexagon).Methods("GET")
+	router.HandleFunc("/getAllCoordinatesConsumption", getAllCoordinatesConsumption).Methods("GET")
+	router.HandleFunc("/getAllCoordinatesGeneration", getAllCoordinatesGeneration).Methods("GET")
 	router.HandleFunc("/getNextHourVoltage/{busid}", getNextHourVoltage).Methods("GET")
 	router.HandleFunc("/getCurrentAnomalies", getCurrentAnomalies).Methods("GET")
 	router.HandleFunc("/sendTextRequest", sendTextRequest).Methods("POST")
@@ -386,7 +399,7 @@ func getAllCoordinates(w http.ResponseWriter, r *http.Request) {
 	w.Write(jsonResponse)
 }
 
-func getAllCoordinatesHexagon(w http.ResponseWriter, r *http.Request) {
+func getAllCoordinatesConsumption(w http.ResponseWriter, r *http.Request) {
 	response, err := http.Get(services[Neo4j].baseurl + "/getCoords")
 	if err != nil {
 		fmt.Print(err.Error())
@@ -439,6 +452,74 @@ func getAllCoordinatesHexagon(w http.ResponseWriter, r *http.Request) {
 				if node.Node == v.Id {
 					node.Active = v.Active
 					node.Reactive = v.Reactive
+					node.Date = v.Date
+				}
+			}
+			Nodes = append(Nodes, node)
+		}
+	}
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	jsonResponse, err := json.Marshal(Nodes)
+	if err != nil {
+		return
+	}
+	w.Write(jsonResponse)
+}
+
+func getAllCoordinatesGeneration(w http.ResponseWriter, r *http.Request) {
+	response, err := http.Get(services[Neo4j].baseurl + "/getCoords")
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	responseData, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var coords []NodeCoord
+	jsonErr := json.Unmarshal(responseData, &coords)
+	if jsonErr != nil {
+		log.Fatal(jsonErr)
+	}
+
+	// Get voltage from Influx
+	response1, err := http.Get(services[Influx].baseurl + "/getAllCurrentGeneratedPower")
+	if err != nil {
+		fmt.Print(err.Error())
+		os.Exit(1)
+	}
+
+	responseData1, err := ioutil.ReadAll(response1.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var voltages []VoltageIdGenerated
+	jsonErr1 := json.Unmarshal(responseData1, &voltages)
+	if jsonErr1 != nil {
+		log.Fatal(jsonErr1)
+	}
+
+	var Nodes []NodeGenerated
+	for _, coord := range coords {
+		firstThree := coord.Id[0:3]
+		// ONLY get sep bc they have voltage data
+		if firstThree == "SEP" {
+			var node NodeGenerated
+			node.Node = coord.Id
+			if val, err := strconv.ParseFloat(coord.Long, 64); err == nil {
+				node.Position[0] = val
+			}
+			if val, err := strconv.ParseFloat(coord.Lat, 64); err == nil {
+				node.Position[1] = val
+			}
+			for _, v := range voltages {
+				if node.Node == v.Id {
+					node.Generated = v.Generated
 					node.Date = v.Date
 				}
 			}

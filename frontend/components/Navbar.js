@@ -20,8 +20,8 @@ export default function Navbar() {
   };
   const navigation = [
     { name: 'Home', href: '/' },
-    { name: 'About', href: '/' },
-    { name: 'Wiki', href: '/' },
+    { name: 'Generation Graph', href: '/generation' },
+    { name: 'Consumption Graph', href: '/consumption' },
     { name: 'Settings', href: '/' },
   ];
 
