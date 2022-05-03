@@ -84,6 +84,12 @@ def test_get_all_voltage(client):
     assert response.status_code == 200
     assert response.data.decode('utf-8') == '[]\n'
 
+def test_get_all_power(client):
+    """test read from bucket"""
+    response = client.get('/getAllCurrentGeneratedPower')
+    assert response.status_code == 200
+    assert response.data.decode('utf-8') == '[]\n'
+
 def test_ping_influx(client):
     """test ping"""
     response = client.get('/ping')
