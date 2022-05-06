@@ -65,7 +65,7 @@ function IconWithConnectionMap() {
         className="rounded-lg"
         {...viewport}
         width="100%"
-        height="30em"
+        height="100%"
         mapStyle="mapbox://styles/mapbox/light-v10"
         onViewportChange={setViewport}
         mapboxApiAccessToken={MAPBOX_TOKEN}
