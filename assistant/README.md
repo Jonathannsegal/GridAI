@@ -1,4 +1,4 @@
-### Overview
+### Overview 
 This Assistant service is used to accept user queries (after natural language processing (NLP)) and handle them accordingly.
 
 ---
