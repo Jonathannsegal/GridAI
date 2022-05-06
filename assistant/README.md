@@ -48,3 +48,95 @@ natural language processing (NLP) of user queries. These features include the fo
 Until the frontend has a working Google Assistant integration, retain these deprecated features.
 
 When removing these deprecated features, remember to remove the create_actions_json.py calls from the assistant/Dockerfile and .gitlab-ci.yml files.
+
+---
+### Endpoints
+- Webhook: Processes request JSON from google assistant
+	- Input: Request JSON (See sample JSON)
+- ping: responds with "pong" to verify server integrity
+- Text (deprecated): Processes text query
+	- Input: JSON with the text field set to the query
+- Voice (deprecated): Processes voice query
+	- Input: JSON with voice field set to the audio file (See accepted audio format).
+- setCred (deprecated): Sets google speech-to-text credentials for debug purposes
+
+---
+### Audio file format (deprecated)
+- A sampling rate of 16 kHz
+- 16-bit encoding
+- mono audio
+- wav, mp3, flac, or raw formats
+
+---
+### Sample Google Assistant Request JSON
+
+{
+  "requestJson": {
+    "handler": {
+      "name": "generic_query"
+    },
+    "intent": {
+      "name": "Query_Generic",
+      "params": {
+        "feature": {
+          "original": "voltages",
+          "resolved": "VOLTAGE"
+        },
+        "count": {
+          "original": "10",
+          "resolved": 10
+        },
+        "extrema": {
+          "original": "top",
+          "resolved": "MAX"
+        }
+      },
+      "query": "What are the top 10 voltages"
+    },
+    "scene": {
+      "name": "mainScene",
+      "slotFillingStatus": "UNSPECIFIED",
+      "slots": {},
+      "next": {
+        "name": "mainScene"
+      }
+    },
+    "session": {
+      "id": "ABwppHE91LJz808wg7DctQ2SnO1ktTmq4GIsQ8z7QottC1evFuTf0ExJxXFsw-zKyt97sbtUghHQmj-V",
+      "params": {},
+      "typeOverrides": [],
+      "languageCode": ""
+    },
+    "user": {
+      "locale": "en-US",
+      "params": {},
+      "accountLinkingStatus": "ACCOUNT_LINKING_STATUS_UNSPECIFIED",
+      "verificationStatus": "VERIFIED",
+      "packageEntitlements": [],
+      "gaiamint": "",
+      "permissions": [],
+      "lastSeenTime": "2022-05-02T16:45:45Z"
+    },
+    "home": {
+      "params": {}
+    },
+    "device": {
+      "capabilities": [
+        "SPEECH",
+        "RICH_RESPONSE",
+        "LONG_FORM_AUDIO"
+      ],
+      "timeZone": {
+        "id": "America/Chicago",
+        "version": ""
+      }
+    }
+  }
+}
+
+# CLient secret
+
+To use speech-to-text.py you must activate the speech-to-text api and add the authentication file here
+then uncomment the lines under google authenticcation in the dockerfile.
+
+See https://cloud.google.com/docs/authentication/getting-started for more info.
