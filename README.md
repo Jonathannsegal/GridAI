@@ -46,9 +46,10 @@ A Go service that acts as the interface between the data layers and the frontend
 
 1.  Clone the repository:
     ```bash
-    git clone https://git.ece.iastate.edu/sd/sdmay21-23.git
+    git clone https://github.com/Jonathannsegal/GridAI.git
+    cd GridAI
     ```
 2.  Create a feature branch: `git checkout -b my-new-feature`
 3.  Commit your changes: `git commit -am 'Add some feature'`
 4.  Push to the branch: `git push origin my-new-feature`
-5.  Open a Merge Request.
+5.  Open a pull request.
