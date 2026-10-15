@@ -15,7 +15,7 @@ function Button({
   full = false,
   ...newProps
 }) {
-  let finalClass = `${className} inline-block rounded-sm font-medium border border-solid cursor-pointer text-center transition-colors duration-200`;
+  let finalClass = `${className} inline-block rounded-xs font-medium border border-solid cursor-pointer text-center transition-colors duration-200`;
   if (size === 'xs') finalClass += ' text-xs py-1 px-2';
   else if (size === 'sm') finalClass += ' text-sm py-2 px-4';
   else if (size === 'base') finalClass += ' text-base py-3 px-6';

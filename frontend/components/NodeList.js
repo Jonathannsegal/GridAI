@@ -4,7 +4,7 @@ function NodeList() {
     <div className="bg-white p-8 rounded-md w-full">
       <div>
         <div className="-mx-4 sm:-mx-8 px-4 sm:px-8 py-4 overflow-x-auto">
-          <div className="inline-block min-w-full shadow rounded-lg overflow-hidden">
+          <div className="inline-block min-w-full shadow-sm rounded-lg overflow-hidden">
             <table className="min-w-full leading-normal">
               <thead>
                 <tr>
@@ -39,7 +39,7 @@ function NodeList() {
                 <tr>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 w-10 h-10">
+                      <div className="shrink-0 w-10 h-10">
                         <img
                           className="w-full h-full rounded-full"
                           src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
@@ -81,7 +81,7 @@ function NodeList() {
                 <tr>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 w-10 h-10">
+                      <div className="shrink-0 w-10 h-10">
                         <img
                           className="w-full h-full rounded-full"
                           src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
@@ -123,7 +123,7 @@ function NodeList() {
                 <tr>
                   <td className="px-5 py-5 border-b border-gray-200 bg-white text-sm">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 w-10 h-10">
+                      <div className="shrink-0 w-10 h-10">
                         <img
                           className="w-full h-full rounded-full"
                           src="https://images.unsplash.com/photo-1540845511934-7721dd7adec3?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&w=160&h=160&q=80"
@@ -165,7 +165,7 @@ function NodeList() {
                 <tr>
                   <td className="px-5 py-5 bg-white text-sm">
                     <div className="flex items-center">
-                      <div className="flex-shrink-0 w-10 h-10">
+                      <div className="shrink-0 w-10 h-10">
                         <img
                           className="w-full h-full rounded-full"
                           src="https://images.unsplash.com/photo-1522609925277-66fea332c575?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2.2&h=160&w=160&q=80"

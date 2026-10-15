@@ -31,7 +31,7 @@ export default function Navbar() {
         <a href="/" className="relative z-10 flex items-center w-auto text-2xl font-extrabold leading-none text-black select-none">
           grid ai.
         </a>
-        <nav className="top-0 left-0 z-0 flex items-center justify-center w-full h-full py-2 -ml-0 space-x-5 text-base md:-ml-5 md:py-0 md:absolute">
+        <nav className="top-0 left-0 z-0 flex items-center justify-center w-full h-full py-2 ml-0 space-x-5 text-base md:-ml-5 md:py-0 md:absolute">
           {navigation.map((item) => (
             /* x-data="{ hover: false }" @mouseenter="hover = true" @mouseleave="hover = false" */
             <a href={item.href} key={item.name} className="relative font-medium leading-6 text-gray-600 transition duration-150 ease-out hover:text-gray-900">
@@ -44,10 +44,10 @@ export default function Navbar() {
         </nav>
         {username ? (
           <div className="relative z-10 inline-flex items-center space-x-3 md:ml-5 lg:justify-end">
-            <a onClick={signOut} className="cursor-pointer inline-flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-gray-600 whitespace-no-wrap bg-white border border-gray-200 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:shadow-none">
+            <a onClick={signOut} className="cursor-pointer inline-flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-gray-600 whitespace-no-wrap bg-white border border-gray-200 rounded-md shadow-xs hover:bg-gray-50 focus:outline-hidden focus:shadow-none">
               Sign Out
             </a>
-            <span className="inline-flex rounded-md shadow-sm">
+            <span className="inline-flex rounded-md shadow-xs">
               <Link href={`/${username}`}>
                 <img alt="profile" className="rounded-full w-11 h-11 cursor-pointer" src={user?.photoURL || '/user.png'} />
               </Link>
@@ -55,11 +55,11 @@ export default function Navbar() {
           </div>
         ) : (
           <div className="relative z-10 inline-flex items-center space-x-3 md:ml-5 lg:justify-end">
-            <a href="/enter" className="inline-flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-white whitespace-no-wrap bg-blue-600 border border-blue-700 rounded-md shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+            <a href="/enter" className="inline-flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-white whitespace-no-wrap bg-blue-600 border border-blue-700 rounded-md shadow-xs hover:bg-blue-700 focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
               Sign in / Sign up
             </a>
-            {/* <span className="inline-flex rounded-md shadow-sm">
-              <a href="/enter" className="inline-flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-gray-600 whitespace-no-wrap bg-white border border-gray-200 rounded-md shadow-sm hover:bg-gray-50 focus:outline-none focus:shadow-none">
+            {/* <span className="inline-flex rounded-md shadow-xs">
+              <a href="/enter" className="inline-flex items-center justify-center px-4 py-2 text-base font-medium leading-6 text-gray-600 whitespace-no-wrap bg-white border border-gray-200 rounded-md shadow-xs hover:bg-gray-50 focus:outline-hidden focus:shadow-none">
                 Sign up
               </a>
             </span> */}
